@@ -1,0 +1,58 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            String    @id @default(uuid())
+  full_name     String
+  display_name  String
+  title         String?
+  profile_photo String    @default("https://ca.slack-edge.com/T2JUP6F0A-U03L7HL9WBF-g6ea89c2bc88-512")
+  email         String    @unique
+  phone         String?
+  messages      Message[]
+}
+
+model Message {
+  id         String   @id @default(uuid())
+  text       String
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  author    User   @relation(fields: [author_id], references: [id])
+  author_id String
+
+  channel    Channel? @relation(fields: [channel_id], references: [id])
+  channel_id String?
+
+  thread    Thread? @relation("thread", fields: [thread_id], references: [id])
+  thread_id String?
+
+  root_for_thread Thread? @relation("root_thread")
+}
+
+model Channel {
+  id       String    @id @default(uuid())
+  name     String
+  messages Message[]
+  threads  Thread[]
+}
+
+model Thread {
+  id       String    @id @default(uuid())
+  messages Message[] @relation("thread")
+
+  channel    Channel @relation(fields: [channel_id], references: [id])
+  channel_id String
+
+  root_message    Message @relation("root_thread", fields: [root_message_id], references: [id])
+  root_message_id String  @unique
+}

@@ -1,0 +1,53 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&display=swap');
+
+:root {
+   font-size: 62.5%;
+}
+
+*,*::after, *::before {
+   padding: 0;
+   margin: 0;
+   box-sizing: border-box;
+}
+
+body {
+  font-family: 'Inter', sans-serif;
+}
+
+a {
+   text-decoration: none;
+}
+
+button {
+   outline: none;
+   border: none;
+   cursor: pointer;
+}
+
+button:disabled {
+   cursor: crosshair;
+}
+
+li {
+   list-style: none;
+}
+
+input,textarea {
+   outline: none;
+}
+
+::-webkit-scrollbar {
+    width: 5px;
+    height: 5px;
+   }
+   
+ ::-webkit-scrollbar-thumb {
+      background-color: #b2afb9;
+      border-radius: 5rem;
+}
+   
+::-webkit-scrollbar-track {
+      margin-top: .2rem;
+    margin-bottom: .2rem;
+}
+
