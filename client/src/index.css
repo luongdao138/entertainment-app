@@ -44,10 +44,9 @@ input,textarea {
  ::-webkit-scrollbar-thumb {
       background-color: #b2afb9;
       border-radius: 5rem;
-}
+   }
    
 ::-webkit-scrollbar-track {
-      margin-top: .2rem;
-    margin-bottom: .2rem;
+      background-color: #170F23;
 }
 

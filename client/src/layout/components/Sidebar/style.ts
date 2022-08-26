@@ -74,6 +74,10 @@ export const Menu = styled.ul`
    }
 `;
 
+interface MenuItemProps {
+  active?: boolean;
+}
+
 export const MenuItem = styled.ul`
   &  a {
      display: flex;
@@ -82,17 +86,43 @@ export const MenuItem = styled.ul`
     font-weight: 700;
     font-size: 1.3rem;
     padding: .7rem 2.5rem;
-    border-left: ${(props: {active?: boolean}) => props.active ? '3px solid #7200a1' : '3px solid transparent'};
-    background-color: ${(props: {active?: boolean}) => props.active ? 'hsla(0,0%,100%,0.1)' : 'transparent'};
+    border-left: ${(props: MenuItemProps) => props.active ? '3px solid #7200a1' : '3px solid transparent'};
+    background-color: ${(props: MenuItemProps) => props.active ? 'hsla(0,0%,100%,0.1)' : 'transparent'};
     transition: color 0.1s;
+    position: relative;
 
-    & svg {
+    & > svg {
          font-size: 2.4rem;
          margin-right: 1rem;
     }
 
     &:hover { 
         color: #fff;
+    }
+
+    & .music { 
+       position: absolute;
+       top: 50%;
+       transform: translateY(-50%);
+       right: 2rem;
+       display: grid;
+       place-items: center;
+       width: 1.8rem;
+       aspect-ratio: 1;
+       border: 1px solid #fff;
+       border-radius: 100%;
+       opacity: 0;
+       visibility: hidden;
+       transition: all .1s ease-in-out;
+
+       & svg {
+         font-size: 1.2rem;
+       }
+    }
+
+    &:hover .music {
+       opacity: 1;
+       visibility: visible;
     }
   }
 `;

@@ -1,9 +1,12 @@
 import React from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useLocation } from 'react-router-dom'
 import { Container, Divider, Logo, Menu, MenuItem } from './style'
 import {MdAdd, MdOutlineLibraryMusic} from 'react-icons/md'
+import {BsFillPlayFill} from 'react-icons/bs'
 
 const Sidebar = () => {
+  const location = useLocation()
+
   return (
     <Container>
         <div className='sidebar-top'>
@@ -14,13 +17,17 @@ const Sidebar = () => {
         </Logo>
 
         <Menu>
-            <MenuItem>
-                <Link to='/'>
+            <MenuItem active={location.pathname.includes('/mymusic')}>
+                <Link to='/mymusic'>
                       <MdOutlineLibraryMusic/>
                       <span>Cá nhân</span>
+
+                      <span className='music'>
+                         <BsFillPlayFill/>
+                      </span>
                 </Link>
             </MenuItem>
-            <MenuItem active>
+            <MenuItem >
                 <Link to='/'>
                       <MdOutlineLibraryMusic/>
                       <span>Khám phá</span>
@@ -30,6 +37,10 @@ const Sidebar = () => {
                 <Link to='/'>
                       <MdOutlineLibraryMusic/>
                       <span>#zingchart</span>
+
+                      <span className='music'>
+                         <BsFillPlayFill/>
+                      </span>
                 </Link>
             </MenuItem>
         </Menu>
@@ -39,7 +50,7 @@ const Sidebar = () => {
         <Menu>
              <h2>Thư viện</h2>
              <MenuItem>
-                <Link to='/'>
+                <Link to='/mymusic'>
                 <MdOutlineLibraryMusic/>
                       <span>Bài hát</span>
                 </Link>
