@@ -11,6 +11,6 @@ const firebaseConfig = {
 };
 
 const app = initializeApp(firebaseConfig);
-const storage = getStorage(import.meta.env.VITE_FIREBASE_BUCKET_URL);
+const storage = getStorage(app, import.meta.env.VITE_FIREBASE_BUCKET_URL);
 
 export default storage;

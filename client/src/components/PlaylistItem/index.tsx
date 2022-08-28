@@ -7,6 +7,11 @@ import { Link } from 'react-router-dom';
 interface Props {}
 
 const PlaylistItem: React.FC<Props> = () => {
+  const handleClickMore = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.stopPropagation();
+    e.preventDefault();
+  };
+
   return (
     <Container>
       <Link to='/' className='thumbnail-container'>
@@ -24,13 +29,18 @@ const PlaylistItem: React.FC<Props> = () => {
           <button className='play-state'>
             <BsFillPlayFill />
           </button>
-          <button className='action'>
-            <MdMoreHoriz />
-          </button>
+
+          <div>
+            <button className='action' onClick={handleClickMore}>
+              <MdMoreHoriz />
+            </button>
+          </div>
         </div>
       </Link>
 
-      <Link to='/' className='name'>Nhạc hoa hay nhất</Link>
+      <Link to='/' className='name'>
+        Nhạc hoa hay nhất
+      </Link>
       <p className='author'>Đào Văn Lương</p>
     </Container>
   );

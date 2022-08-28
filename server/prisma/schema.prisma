@@ -13,13 +13,14 @@ datasource db {
 model User {
   id            String    @id @default(uuid())
   full_name     String
-  display_name  String
-  title         String?
   profile_photo String    @default("https://ca.slack-edge.com/T2JUP6F0A-U03L7HL9WBF-g6ea89c2bc88-512")
   email         String    @unique
   phone         String?
+  password String
+  refresh_token String?
 
-  songs Song[]
+  songs Song[] @relation("uploaded")
+  favourite_songs Song[] @relation("favourite")
 }
 
 model Song {
@@ -28,8 +29,12 @@ model Song {
   thumbnail String
   name String  
   singer_name String
+  duration Int 
 
-  user User @relation(fields: [user_id], references: [id])
-  user_id String 
+  user User @relation("uploaded", fields: [user_id], references: [id])
+  user_id String
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt 
+
+  liked_by User[] @relation("favourite")
 }
-

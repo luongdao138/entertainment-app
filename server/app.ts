@@ -1,22 +1,57 @@
-import express from 'express'
-import cors from 'cors'
-import dotenv from 'dotenv'
+import express from 'express';
+import cors, { CorsOptions } from 'cors';
+import dotenv from 'dotenv';
+import morgan from 'morgan';
+import cookieParser from 'cookie-parser';
+import corsConfig from './config/corsConfig';
+import credentialMiddleware from './middlewares/credentials';
+import authRouter from './routes/auth';
+import userRouter from './routes/user';
+import songRouter from './routes/song';
+import verifyTokenMiddleware from './middlewares/verifyJwt';
+import prisma from './config/prisma';
 
-dotenv.config()
+dotenv.config();
 
-const app = express()
+const app = express();
 
-app.use(express.json())
-app.use(cors({ 
-     origin: [process.env.CLIENT_URL || ''],
-     credentials: true
-}))
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+app.use(cookieParser());
+app.use(
+  morgan(
+    ':remote-addr :remote-user :method :url HTTP/:http-version :status :res[content-length] - :response-time ms'
+  )
+);
 
-app.get('/', (req, res) => {
-     return res.json({msg: 'Hello'})
-})
+app.use(credentialMiddleware);
+app.use(cors(corsConfig as CorsOptions));
+
+app.get('/', async (req, res) => {
+  const data = await prisma.song.findMany({
+    include: {
+      user: {
+        select: {
+          id: true,
+          email: true,
+        },
+      },
+      liked_by: {
+        select: {
+          id: true,
+          email: true,
+        },
+      },
+    },
+  });
+  return res.json({ data });
+});
+
+app.use('/auth', authRouter);
+app.use('/user', userRouter);
+app.use('/song', songRouter);
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
-      console.log(`server listening on port ${PORT}`)
-})
+  console.log(`server listening on port ${PORT}`);
+});
