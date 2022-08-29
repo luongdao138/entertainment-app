@@ -7,5 +7,6 @@ const router = Router();
 router.use(verifyTokenMiddleware);
 
 router.get('/', userController.getLoggedInUser);
+router.put('/updateProfile', userController.updateProfile)
 
 export default router;

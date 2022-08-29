@@ -1,4 +1,5 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
+import { toast } from 'react-toastify';
 import * as services from '../../services/song';
 import { logout } from '../auth/authSlice';
 import { RootState } from '../store';
@@ -21,8 +22,11 @@ export const uploadSong = createAsyncThunk<
           updated_at: new Date(),
         },
       };
+
+      toast.success('Tải bài hát thành công');
       return new_res;
     } catch (error: any) {
+      toast.error(error.response?.data?.msg);
       if (error.response?.status === 403) {
         localStorage.removeItem('music_token');
         dispatch(logout());

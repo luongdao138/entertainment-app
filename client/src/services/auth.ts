@@ -6,6 +6,8 @@ export interface AuthUser {
   profile_photo: string;
   email: string;
   full_name: string;
+  is_premium: boolean;
+  is_verified: boolean;
 }
 
 export interface LoginParams {

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Container } from './style';
 import { FiMusic } from 'react-icons/fi';
 import { BsFillPlayFill, BsMusicNoteList } from 'react-icons/bs';
@@ -40,6 +40,10 @@ const SongItem: React.FC<Props> = ({ song }) => {
       }
     });
   };
+
+  useEffect(( ) => {
+    setIsLiked(song.is_liked)
+  }, [song.is_liked]);
 
   return (
     <Container is_liked={is_liked}>

@@ -64,9 +64,8 @@ const UploadSongForm: React.FC<Props> = ({ closeUploadModal }) => {
             url: audioUrl,
           })
         ).then(() => {
-          toast.success('Tải bài hát thành công');
           closeUploadModal();
-        });
+        })
       } else {
         try {
           await uploadNewSong({
@@ -82,6 +81,8 @@ const UploadSongForm: React.FC<Props> = ({ closeUploadModal }) => {
           if (error.response?.status === 403) {
             localStorage.removeItem('music_token');
             dispatch(logout());
+          } else {
+            toast.error(error.response?.data.msg);
           }
         }
       }

@@ -6,6 +6,12 @@ const songController = {
     const { duration, name, singer_name, thumbnail, url } = req.body;
     const user = req.user;
 
+    const songCount = await prisma.song.count({ where: { user_id: user.id } });
+    console.log({songCount})
+    if(songCount >= 20 && !user.is_premium) {
+       return res.status(400).json({ msg: 'Tải lên thất bại, trở thành thành viên premium để tải thêm bài hát' })
+    }
+
     const newSong = await prisma.song.create({
       data: {
         name,
