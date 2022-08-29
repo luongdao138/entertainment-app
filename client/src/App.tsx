@@ -8,6 +8,7 @@ import UploadedSong from './pages/MyMusicPage/Song/UploadedSong';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import RequiredAuth from './components/LoginRequired/RequiredAuth';
+import UserProfilePage from './pages/UserProfilePage';
 
 function App() {
   return (
@@ -27,6 +28,7 @@ function App() {
                 <Route path='upload' element={<UploadedSong />} />
               </Route>
             </Route>
+            <Route path='profile' element={<UserProfilePage />} />
           </Route>
         </Route>
       </Routes>

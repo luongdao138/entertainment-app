@@ -11,6 +11,9 @@ import { Container } from './style';
 import { toast } from 'react-toastify';
 import { useUploadContext } from '../../../context/UploadContext';
 import { getUsersUploadedSongs } from '../../../redux/song/songSelectors';
+import { FaUser } from 'react-icons/fa';
+import { Link } from 'react-router-dom';
+import appRoutes from '../../../constants/appRoutes';
 
 const Header = () => {
   const songs = useAppSelector(getUsersUploadedSongs);
@@ -117,6 +120,14 @@ const Header = () => {
                 <MdLogout />
                 <span>Đăng xuất</span>
               </button>
+              <Link
+                to={appRoutes.USER_PROFILE}
+                className='header-avatar-menu-item'
+                onClick={handleCloseAvatarMenu}
+              >
+                <FaUser />
+                <span>Thông tin cá nhân</span>
+              </Link>
             </div>
           </Menu>
         </div>

@@ -8,6 +8,10 @@ export interface AuthUser {
   full_name: string;
   is_premium: boolean;
   is_verified: boolean;
+  date_of_birth: Date | null;
+  address: string | null;
+  title: string | null;
+  phone: string | null;
 }
 
 export interface LoginParams {

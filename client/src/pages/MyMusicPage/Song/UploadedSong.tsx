@@ -8,6 +8,7 @@ import SongItem from '../../../components/SongItem';
 import Progress from '../../../components/LinearProgress';
 import { useUploadContext } from '../../../context/UploadContext';
 import { MAX_SONG_UPLOADED } from '../../../constants';
+import { useAuthContext } from '../../../context/AuthContext';
 
 export const NoSongContainer = styled.div`
   display: flex;
@@ -59,6 +60,16 @@ export const Container = styled.div`
         display: block;
         margin-bottom: 0.25rem;
       }
+
+      .premium {
+        background-color: #ffdb00;
+        padding: 9px 24px;
+        border-radius: 10rem;
+        width: fit-content;
+        color: #333;
+        font-weight: 600;
+        user-select: none;
+      }
     }
 
     & .right {
@@ -77,6 +88,7 @@ const UploadedSong = () => {
   const dispatch = useAppDispatch();
   const firstRenderRef = useRef<boolean>(true);
   const songs = useAppSelector(getUsersUploadedSongs);
+  const { authUser } = useAuthContext();
 
   const total_songs_uploaded = songs.length;
 
@@ -101,14 +113,20 @@ const UploadedSong = () => {
         <Container>
           <div className='total-upload'>
             <div className='left'>
-              <span>
-                Đã tải lên: {total_songs_uploaded}/{MAX_SONG_UPLOADED}
-              </span>
-              <Progress
-                value={Math.round(
-                  (total_songs_uploaded * 100) / MAX_SONG_UPLOADED
-                )}
-              />
+              {authUser?.is_premium ? (
+                <span className='premium'>Premium</span>
+              ) : (
+                <>
+                  <span>
+                    Đã tải lên: {total_songs_uploaded}/{MAX_SONG_UPLOADED}
+                  </span>
+                  <Progress
+                    value={Math.round(
+                      (total_songs_uploaded * 100) / MAX_SONG_UPLOADED
+                    )}
+                  />
+                </>
+              )}
             </div>
 
             {total_songs_uploaded < 50 && (

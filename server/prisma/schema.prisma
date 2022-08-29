@@ -16,6 +16,9 @@ model User {
   profile_photo String  @default("https://ca.slack-edge.com/T2JUP6F0A-U03L7HL9WBF-g6ea89c2bc88-512")
   email         String  @unique
   phone         String?
+  date_of_birth DateTime?
+  address String?
+  title String?
   password      String
   refresh_token String?
   is_verified   Boolean @default(false)

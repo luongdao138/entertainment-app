@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { AuthUser, LoginResponse } from '../../services/auth';
-import { getUserInfo } from './authActions';
+import { getUserInfo, updateProfile } from './authActions';
 
 interface SliceState {
   user: AuthUser | null;
@@ -22,9 +22,13 @@ const authSlice = createSlice({
     },
   },
   extraReducers(builder) {
-    builder.addCase(getUserInfo.fulfilled, (state, action) => {
-      state.user = action.payload.user;
-    });
+    builder
+      .addCase(getUserInfo.fulfilled, (state, action) => {
+        state.user = action.payload.user;
+      })
+      .addCase(updateProfile.fulfilled, (state, action) => {
+        state.user = { ...state.user, ...(action.payload as AuthUser) };
+      });
   },
 });
 

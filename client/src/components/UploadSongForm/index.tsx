@@ -1,4 +1,4 @@
-import React, { startTransition, useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { BsFillPlayFill } from 'react-icons/bs';
 import { FiMusic } from 'react-icons/fi';
 import {
@@ -7,9 +7,6 @@ import {
 } from '../../utils/uploadFormat';
 import { Container } from './style';
 import { toast } from 'react-toastify';
-import { ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
-import { v4 as uuid } from 'uuid';
-import storage from '../../firebase';
 import Progress from '../LinearProgress';
 import { formatSongDuration } from '../../utils/formatTime';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
@@ -19,6 +16,7 @@ import { useLocation } from 'react-router-dom';
 import { uploadSong as uploadNewSong } from '../../services/song';
 import { logout } from '../../redux/auth/authSlice';
 import appRoutes from '../../constants/appRoutes';
+import useUploadFile from '../../hooks/useUploadFile';
 
 interface Props {
   closeUploadModal: () => void;
@@ -28,11 +26,7 @@ const uploadSongMetadataSelector = createMetaSelector(uploadSong);
 
 const UploadSongForm: React.FC<Props> = ({ closeUploadModal }) => {
   const [name, setName] = useState<string | null>(null);
-  const [audioUrl, setAudioUrl] = useState<string | null>(null);
   const [singerName, setSingerName] = useState<string | null>(null);
-  const [thumbnail, setThumbnail] = useState<string>(
-    'https://photo-resize-zmp3.zmdcdn.me/w240_r1x1_webp/cover/3/2/a/3/32a35f4d26ee56366397c09953f6c269.jpg'
-  );
   const [duration, setDuration] = useState<number>(0);
   const [type, setType] = useState<'image' | 'audio'>('audio');
   const inputRef = useRef<HTMLInputElement>(null);
@@ -40,10 +34,23 @@ const UploadSongForm: React.FC<Props> = ({ closeUploadModal }) => {
   const dispatch = useAppDispatch();
   const location = useLocation();
 
-  const [imageProgress, setImageProgress] = useState<number>(0);
-  const [audioProgress, setAudioProgress] = useState<number>(0);
-  const [isUploadingImage, setIsUploadingImage] = useState<boolean>(false);
-  const [isUploadingAudio, setIsUploadingAudio] = useState<boolean>(false);
+  const {
+    handleUploadFile: handleUploadImage,
+    isUploading: isUploadingImage,
+    progress: imageProgress,
+    url: thumbnail,
+  } = useUploadFile(
+    'https://photo-resize-zmp3.zmdcdn.me/w240_r1x1_webp/cover/3/2/a/3/32a35f4d26ee56366397c09953f6c269.jpg'
+  );
+
+  const {
+    handleUploadFile: handleUploadAudio,
+    isUploading: isUploadingAudio,
+    progress: audioProgress,
+    url: audioUrl,
+  } = useUploadFile();
+
+  console.log({ thumbnail });
 
   const uploadSongMeta = useAppSelector(uploadSongMetadataSelector);
 
@@ -65,7 +72,7 @@ const UploadSongForm: React.FC<Props> = ({ closeUploadModal }) => {
           })
         ).then(() => {
           closeUploadModal();
-        })
+        });
       } else {
         try {
           await uploadNewSong({
@@ -115,8 +122,6 @@ const UploadSongForm: React.FC<Props> = ({ closeUploadModal }) => {
     const file = e.target.files[0];
     const fileType = file.type;
 
-    const fileName = uuid() + '_' + file.name;
-
     if (type === 'image') {
       // upload image
       if (!allowedImageFormat.includes(fileType)) {
@@ -124,37 +129,8 @@ const UploadSongForm: React.FC<Props> = ({ closeUploadModal }) => {
         return;
       }
 
-      toast.info('1 file đang được tải lên', { autoClose: 1500 });
-      setIsUploadingImage(true);
-      setThumbnail(URL.createObjectURL(file));
-
-      const storageRef = ref(storage, `/images/${fileName}`);
-      const uploadTask = uploadBytesResumable(storageRef, file);
-      uploadTask.on(
-        'state_changed',
-        (snapshot) => {
-          const byteTransfered = snapshot.bytesTransferred;
-          const totalBytes = snapshot.totalBytes;
-
-          startTransition(() => {
-            setImageProgress(Math.ceil((byteTransfered * 100) / totalBytes));
-          });
-        },
-        (error) => {
-          console.log(error);
-          setIsUploadingImage(false);
-          setImageProgress(0);
-          toast.error('Tải ảnh lên thất bại');
-        },
-        () => {
-          getDownloadURL(uploadTask.snapshot.ref).then((url) => {
-            console.log('Upload image success: ', url);
-            setThumbnail(url);
-            setImageProgress(0);
-            setIsUploadingImage(false);
-          });
-        }
-      );
+      toast.info('Một file đang được tải lên', { autoClose: 1500 });
+      handleUploadImage(file, '/images/');
     } else {
       // upload audio
       if (!allowedAudioFormat.includes(fileType)) {
@@ -162,8 +138,8 @@ const UploadSongForm: React.FC<Props> = ({ closeUploadModal }) => {
         return;
       }
 
-      toast.info('1 file đang được tải lên', { autoClose: 1500 });
-      setIsUploadingAudio(true);
+      toast.info('Một file đang được tải lên', { autoClose: 1500 });
+      // setIsUploadingAudio(true);
       window.jsmediatags.read(file, {
         onSuccess(data) {
           setName(data.tags.title || null);
@@ -174,33 +150,7 @@ const UploadSongForm: React.FC<Props> = ({ closeUploadModal }) => {
         },
       });
 
-      const storageRef = ref(storage, `/audios/${fileName}`);
-      const uploadTask = uploadBytesResumable(storageRef, file);
-      uploadTask.on(
-        'state_changed',
-        (snapshot) => {
-          const byteTransfered = snapshot.bytesTransferred;
-          const totalBytes = snapshot.totalBytes;
-
-          startTransition(() => {
-            setAudioProgress(Math.ceil((byteTransfered * 100) / totalBytes));
-          });
-        },
-        (error) => {
-          console.log(error);
-          setIsUploadingAudio(false);
-          setAudioProgress(0);
-          toast.error('Tải audio thất bại');
-        },
-        () => {
-          getDownloadURL(uploadTask.snapshot.ref).then((url) => {
-            console.log('Upload audio success: ', url);
-            setAudioUrl(url);
-            setAudioProgress(0);
-            setIsUploadingAudio(false);
-          });
-        }
-      );
+      handleUploadAudio(file, '/audios/');
     }
   };
 

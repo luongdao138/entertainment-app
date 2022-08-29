@@ -8,6 +8,8 @@ const apiEndpoints = {
   GET_UPLOADED_SONG: '/song/upload',
   GET_FAVOURITE_SONG: '/song/favourite',
   CHANGE_FAVOURITE: '/song/favourite/:id',
+  UPDATE_PROFILE: '/user/updateProfile',
+  RESET_PASSWORD: '/user/resetPassword',
 };
 
 export default apiEndpoints;

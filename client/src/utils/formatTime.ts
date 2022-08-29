@@ -22,3 +22,12 @@ export const formatSongDuration = (time: number): string => {
 
   return result;
 };
+
+export const formatDateToInputDateFormat = (date: string | null | Date) => {
+  if (!date) return null;
+
+  date = new Date(date);
+  return `${date.getFullYear()}-${formatTimeNumber(
+    date.getMonth() + 1
+  )}-${formatTimeNumber(date.getDate())}`;
+};
