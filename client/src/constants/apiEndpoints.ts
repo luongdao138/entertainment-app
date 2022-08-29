@@ -3,6 +3,7 @@ const apiEndpoints = {
   SIGNUP: '/auth/signup',
   REFRESH_TOKEN: '/auth/refresh',
   LOGOUT: '/auth/logout',
+  VERIFY_EMAIL: '/auth/verifyEmail',
   GET_USER_INFO: '/user',
   UPLOAD_SONG: '/song/upload',
   GET_UPLOADED_SONG: '/song/upload',

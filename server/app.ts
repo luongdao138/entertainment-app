@@ -28,23 +28,12 @@ app.use(credentialMiddleware);
 app.use(cors(corsConfig as CorsOptions));
 
 app.get('/', async (req, res) => {
-  const data = await prisma.song.findMany({
-    include: {
-      user: {
-        select: {
-          id: true,
-          email: true,
-        },
-      },
-      liked_by: {
-        select: {
-          id: true,
-          email: true,
-        },
-      },
+  await prisma.user.delete({
+    where: {
+      email: 'jw2006lm@gmail.com',
     },
   });
-  return res.json({ data });
+  return res.json({ msg: 'Success' });
 });
 
 app.use('/auth', authRouter);

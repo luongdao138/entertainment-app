@@ -3,7 +3,12 @@ import jwt from 'jsonwebtoken';
 import { Request, Response } from 'express';
 import prisma from '../config/prisma';
 import _ from 'lodash';
-import { ACCESS_TOKEN_DURATION, REFRESH_TOKEN_DURATION } from '../utils/token';
+import {
+  ACCESS_TOKEN_DURATION,
+  REFRESH_TOKEN_DURATION,
+  VERIFY_ACCOUNT_TOKEN_DURATION,
+} from '../utils/token';
+import sendMail from '../utils/sendEmail';
 
 const authController = {
   async signup(req: Request, res: Response) {
@@ -32,6 +37,31 @@ const authController = {
       });
 
       const returnedUser = _.omit(user, 'password');
+      const verify_token = jwt.sign(
+        { id: user.id },
+        process.env.VERIFY_ACCOUNT_SECRET || '',
+        { expiresIn: VERIFY_ACCOUNT_TOKEN_DURATION }
+      );
+      const veify_link = `${process.env.CLIENT_URL}/account/verify?token=${verify_token}`;
+
+      await prisma.user.update({
+        where: { id: user.id },
+        data: {
+          verify_token,
+        },
+      });
+
+      // send confirmation mail to user
+      sendMail({
+        to: email,
+        subject: 'Please verify your email account',
+        html: `
+                  <h3>Let's verify your single sender so you can start uploading songs.</h3>
+                  <h4>${email}</h4>
+                  <p>Your link is active for 24 hours. After that, you will need to resend the verification email.</p>
+                  <a href="${veify_link}">Verify Email</a>
+          `,
+      });
 
       return res.status(201).json({
         msg: 'New user created',
@@ -51,7 +81,7 @@ const authController = {
 
     // check for duplicate emails in the db
     let user = await prisma.user.findUnique({ where: { email } });
-    if (!user) {
+    if (!user || !user.is_verified) {
       return res.status(401).json({ msg: 'Email or password is not correct' });
     }
 
@@ -154,6 +184,47 @@ const authController = {
 
     res.clearCookie('jwt', { httpOnly: true, maxAge: 24 * 60 * 60 * 1000 });
     return res.sendStatus(204);
+  },
+  async verifyEmail(req: Request, res: Response) {
+    const { token } = req.body;
+
+    jwt.verify(
+      token,
+      process.env.VERIFY_ACCOUNT_SECRET || '',
+      async (error: any, decoded: any) => {
+        if (error) {
+          return res.status(400).json({ msg: 'Token không hợp lệ', code: 1 });
+        }
+
+        const { id } = decoded;
+        const user = await prisma.user.findUnique({ where: { id } });
+        if (!user) {
+          return res.status(400).json({ msg: 'User không tồn tại', code: 2 });
+        }
+
+        if (user.is_verified) {
+          return res
+            .status(400)
+            .json({ msg: 'User đã được xác thực', code: 3 });
+        }
+
+        if (user.verify_token === token) {
+          await prisma.user.update({
+            where: {
+              id: user.id,
+            },
+            data: {
+              is_verified: true,
+              verify_token: null,
+            },
+          });
+
+          return res.json({ msg: 'Xác thực email thành công' });
+        } else {
+          return res.status(400).json({ msg: 'Token không hợp lệ', code: 1 });
+        }
+      }
+    );
   },
 };
 

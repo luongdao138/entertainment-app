@@ -21,6 +21,7 @@ model User {
   title String?
   password      String
   refresh_token String?
+  verify_token String?
   is_verified   Boolean @default(false)
   is_premium    Boolean @default(false)
 

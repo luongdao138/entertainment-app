@@ -8,6 +8,7 @@ import { useAppDispatch } from '../../redux/hooks';
 import { loginSuccess } from '../../redux/auth/authSlice';
 import { useNavigate } from 'react-router-dom';
 import * as Yup from 'yup';
+import appRoutes from '../../constants/appRoutes';
 
 interface FormState {
   email: string;
@@ -53,6 +54,8 @@ const Login = () => {
       toast.success('Đăng nhập thành công');
       if (redirectUrl) {
         navigate(redirectUrl);
+      } else {
+        navigate(appRoutes.HOME);
       }
     } catch (error: any) {
       if (!error.response) {

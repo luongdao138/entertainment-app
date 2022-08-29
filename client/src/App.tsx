@@ -9,6 +9,8 @@ import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import RequiredAuth from './components/LoginRequired/RequiredAuth';
 import UserProfilePage from './pages/UserProfilePage';
+import VerifyAccount from './pages/Auth/VerifyAccount';
+import AlreadyAuth from './components/AlreadyAuth';
 
 function App() {
   return (
@@ -29,6 +31,10 @@ function App() {
               </Route>
             </Route>
             <Route path='profile' element={<UserProfilePage />} />
+          </Route>
+
+          <Route element={<AlreadyAuth />}>
+            <Route path='/account/verify' element={<VerifyAccount />} />
           </Route>
         </Route>
       </Routes>
