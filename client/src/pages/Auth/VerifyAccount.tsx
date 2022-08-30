@@ -5,6 +5,9 @@ import apiEndpoints from '../../constants/apiEndpoints';
 import { client } from '../../services/client';
 import { BsFillCheckCircleFill } from 'react-icons/bs';
 import { IoMdCloseCircle } from 'react-icons/io';
+import { toast } from 'react-toastify';
+import successIcon from '../../assets/successful-icon.png';
+import { resendVerifyEmail } from '../../services/auth';
 
 type Status = 'pending' | 'success' | 'error';
 
@@ -51,6 +54,24 @@ const Container = styled.div`
       filter: brightness(0.9);
     }
   }
+
+  & .resent-email {
+    width: 100%;
+    background-color: rgb(114, 0, 161);
+    padding: 2rem;
+    border-radius: 4px;
+    color: #fff;
+    font-size: 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 2rem;
+
+    & img {
+      width: 3rem;
+      margin-right: 1rem;
+    }
+  }
 `;
 
 const VerifyAccount = () => {
@@ -58,8 +79,10 @@ const VerifyAccount = () => {
   const isFirstRenderRef = useRef<boolean>(true);
   const [status, setStatus] = useState<Status | null>(null);
   const [errorCode, setErrorCode] = useState<number | null>(null);
+  const [isResentEmail, setIsResentEmail] = useState<boolean>(false);
 
   const token = params.get('token');
+  const email = params.get('email') || '';
 
   useEffect(() => {
     if (isFirstRenderRef.current) {
@@ -103,10 +126,34 @@ const VerifyAccount = () => {
     }
   };
 
+  const handleResendEmail = async () => {
+    try {
+      setIsResentEmail(false);
+      await resendVerifyEmail({ email });
+      setIsResentEmail(true);
+      toast.success('Gủi email xác thực thành công');
+    } catch (error: any) {
+      if (error.response) {
+        toast.error(error.response.data.msg);
+      } else {
+        toast.error('Có lỗi xảy ra, vui lòng thử lại');
+      }
+    }
+  };
+
   return (
     <>
       {status && status !== 'pending' ? (
         <Container>
+          {isResentEmail && (
+            <div className='resent-email'>
+              <img src={successIcon} alt='' />
+              <span>
+                Email đã được gửi, vui lòng kiểm tra mail {email} để xác thực
+                tài khoản
+              </span>
+            </div>
+          )}
           {status === 'success' ? (
             <BsFillCheckCircleFill className='icon success-icon' />
           ) : (
@@ -118,7 +165,7 @@ const VerifyAccount = () => {
           </h3>
           {errorCode && <p>{getMessage(errorCode)}</p>}
           {status === 'error' && errorCode === 1 ? (
-            <button>Resend email</button>
+            <button onClick={handleResendEmail}>Resend email</button>
           ) : null}
         </Container>
       ) : (

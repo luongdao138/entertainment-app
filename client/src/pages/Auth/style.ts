@@ -11,48 +11,6 @@ export const Container = styled.div`
     font-size: 3rem;
   }
 
-  .form-group + .form-group {
-    margin-top: 2rem;
-  }
-
-  & .form-group {
-    display: flex;
-    flex-direction: column;
-
-    & label {
-      color: #dadada;
-      font-size: 1.4rem;
-      margin-bottom: 0.75rem;
-    }
-
-    & .error {
-      display: block;
-      margin: 0.75rem;
-      font-size: 1.2rem;
-      color: #ff0a0a;
-    }
-
-    input {
-      width: 100%;
-      height: 4rem;
-      border-radius: 2rem;
-      background-color: hsla(0, 0%, 100%, 0.1);
-      border: none;
-      color: #eee;
-      padding: 5px 0;
-      font-size: 1.4rem;
-      padding: 0 2rem;
-
-      ::placeholder {
-        color: hsla(0, 0%, 100%, 0.5);
-      }
-
-      :focus {
-        background-color: #432275;
-      }
-    }
-  }
-
   & .nav {
     text-align: right;
     margin-top: 2rem;
@@ -75,6 +33,16 @@ export const Container = styled.div`
 
     &:hover {
       filter: brightness(0.9);
+    }
+  }
+  & .forgot-pw {
+    background-color: transparent;
+    color: #fff;
+    /* text-decoration: underline; */
+    font-size: 1.4rem;
+    &:hover {
+      text-decoration: underline;
+      color: #7200a1;
     }
   }
 `;

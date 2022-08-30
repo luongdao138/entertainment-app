@@ -40,6 +40,17 @@ export interface RefreshTokenResponse {
   access_token: string;
 }
 
+export interface ResendEmailVerifyParams {
+  email: string;
+}
+export interface ChangePasswordParams {
+  token: string;
+  new_password: string;
+}
+export interface ForgotPasswordParams {
+  email: string;
+}
+
 export const login = async (params: LoginParams): Promise<LoginResponse> => {
   const res = await client.post<LoginResponse>(apiEndpoints.LOGIN, params);
 
@@ -56,6 +67,22 @@ export const refreshToken = async (): Promise<RefreshTokenResponse> => {
   const res = await client.post<RefreshTokenResponse>(
     apiEndpoints.REFRESH_TOKEN
   );
+
+  return res.data;
+};
+
+export const resendVerifyEmail = async (params: ResendEmailVerifyParams) => {
+  const res = await client.post(apiEndpoints.RESEND_VERIFY_EMAIL, params);
+
+  return res.data;
+};
+export const forgotPassword = async (params: ForgotPasswordParams) => {
+  const res = await client.post(apiEndpoints.FORGOT_PASSWORD, params);
+
+  return res.data;
+};
+export const changePassword = async (params: ChangePasswordParams) => {
+  const res = await client.post(apiEndpoints.CHANGE_PASSWORD, params);
 
   return res.data;
 };

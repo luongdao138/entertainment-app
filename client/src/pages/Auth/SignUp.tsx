@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
-import { useAuthContext } from '../../context/AuthContext';
+import { AuthType, useAuthContext } from '../../context/AuthContext';
 import { Container } from './style';
 import * as Yup from 'yup';
-import { Formik, Form, ErrorMessage, Field, FormikHelpers } from 'formik';
+import { Formik, Form, FormikHelpers } from 'formik';
 import { signup } from '../../services/auth';
 import { toast } from 'react-toastify';
 import {
@@ -10,6 +10,7 @@ import {
   fullNameRegex,
   passwordRegex,
 } from '../../utils/validationRegex';
+import Input from '../../components/Input';
 
 interface FormState {
   full_name: string;
@@ -47,8 +48,8 @@ const validationSchema = Yup.object({
 });
 
 const SignUp = () => {
-  const { changeAuthType } = useAuthContext();
-  const changeToLogin = () => changeAuthType('login');
+  const { changeAuthType, setRegistrationEmail } = useAuthContext();
+  const changeToLogin = () => changeAuthType(AuthType.LOGIN);
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const handleSubmit = async (
@@ -64,7 +65,8 @@ const SignUp = () => {
       });
 
       toast.success('Đăng ký thành công');
-      changeAuthType('login');
+      setRegistrationEmail(values.email);
+      changeAuthType(AuthType.SIGNUP_SUCCESS);
     } catch (error: any) {
       if (!error.response) {
         toast.error('Server not response!');
@@ -86,62 +88,25 @@ const SignUp = () => {
       >
         {(formik) => (
           <Form>
-            <div className='form-group'>
-              <label htmlFor='full_name'>Tên đầy đủ</label>
-              <Field
-                type='text'
-                id='full_name'
-                name='full_name'
-                autoComplete='off'
-                placeholder='Họ tên'
-              />
-              <ErrorMessage
-                className='error'
-                name='full_name'
-                component='span'
-              />
-            </div>
-            <div className='form-group'>
-              <label htmlFor='email'>Email</label>
-              <Field
-                type='text'
-                id='email'
-                name='email'
-                placeholder='Email'
-                autoComplete='off'
-              />
-              <ErrorMessage className='error' name='email' component='span' />
-            </div>
-            <div className='form-group'>
-              <label htmlFor='password'>Mật khẩu</label>
-              <Field
-                type='password'
-                id='password'
-                name='password'
-                placeholder='Mật khẩu'
-                autoComplete='off'
-              />
-              <ErrorMessage
-                className='error'
-                name='password'
-                component='span'
-              />
-            </div>
-            <div className='form-group'>
-              <label htmlFor='cf_password'>Xác nhận mật khẩu</label>
-              <Field
-                type='password'
-                id='cf_password'
-                name='cf_password'
-                placeholder='Nhập lại mật khẩu'
-                autoComplete='off'
-              />
-              <ErrorMessage
-                className='error'
-                name='cf_password'
-                component='span'
-              />
-            </div>
+            <Input
+              name='full_name'
+              type='text'
+              label='Tên đầy đủ'
+              placeholder='Họ tên'
+            />
+            <Input name='email' type='text' label='Email' placeholder='Email' />
+            <Input
+              name='password'
+              type='password'
+              label='Mật khẩu'
+              placeholder='Mật khẩu'
+            />
+            <Input
+              name='cf_password'
+              type='password'
+              label='Xác nhận mật khẩu'
+              placeholder='Nhập lại mật khảu'
+            />
 
             <div className='nav'>
               Already have an account?{' '}

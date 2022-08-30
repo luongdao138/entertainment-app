@@ -11,6 +11,7 @@ import RequiredAuth from './components/LoginRequired/RequiredAuth';
 import UserProfilePage from './pages/UserProfilePage';
 import VerifyAccount from './pages/Auth/VerifyAccount';
 import AlreadyAuth from './components/AlreadyAuth';
+import RetrievePassword from './pages/Auth/RetrievePassword';
 
 function App() {
   return (
@@ -35,6 +36,10 @@ function App() {
 
           <Route element={<AlreadyAuth />}>
             <Route path='/account/verify' element={<VerifyAccount />} />
+            <Route
+              path='/account/forgotPassword'
+              element={<RetrievePassword />}
+            />
           </Route>
         </Route>
       </Routes>

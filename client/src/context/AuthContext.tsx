@@ -16,16 +16,24 @@ interface ContextState {
   access_token: string | null;
   isLoadingUser: boolean;
   setIsLoadingUser: React.Dispatch<React.SetStateAction<boolean>>;
+  registrationEmail: string;
+  setRegistrationEmail: React.Dispatch<React.SetStateAction<string>>;
 }
 
 const AuthContext = React.createContext<ContextState>({} as ContextState);
 
-type AuthType = 'login' | 'signup';
+export enum AuthType {
+  LOGIN = 'login',
+  SIGNUP = 'signup',
+  SIGNUP_SUCCESS = 'signup_success',
+  FORGOT_PASSWORD = 'forgot_password',
+}
 
 const AuthProvider = ({ children }: { children: React.ReactNode }) => {
-  const [authType, setAuthType] = useState<AuthType>('login');
+  const [authType, setAuthType] = useState<AuthType>(AuthType.LOGIN);
   const [isLoadingUser, setIsLoadingUser] = useState<boolean>(true);
   const [redirectUrl, setRedirectUrl] = useState<string | null>(null);
+  const [registrationEmail, setRegistrationEmail] = useState<string>('');
   const { value: isOpenAuthModal, setTrue, setFalse } = useBoolean();
 
   const changeAuthType = (type: AuthType) => setAuthType(type);
@@ -33,7 +41,7 @@ const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   const openAuthModal = () => {
     startTransition(() => {
-      setAuthType('login');
+      setAuthType(AuthType.LOGIN);
     });
     setTrue();
   };
@@ -60,6 +68,8 @@ const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         authUser,
         isLoadingUser,
         setIsLoadingUser,
+        registrationEmail,
+        setRegistrationEmail,
       }}
     >
       {children}

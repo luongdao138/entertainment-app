@@ -2,12 +2,13 @@ import React, { useEffect } from 'react';
 import { Container } from './style';
 import * as Yup from 'yup';
 import { passwordRegex } from '../../utils/validationRegex';
-import { ErrorMessage, Field, Form, Formik, FormikHelpers } from 'formik';
+import { Form, Formik, FormikHelpers } from 'formik';
 import { toast } from 'react-toastify';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import { createMetaSelector } from '../../redux/metadata/selectors';
 import { resetUserPassword } from '../../redux/auth/authActions';
 import { clearMetaData } from '../../redux/metadata/actions';
+import Input from '../Input';
 
 interface Props {
   closeResetPasswordForm: () => void;
@@ -82,45 +83,24 @@ const ResetPasswordForm: React.FC<Props> = ({ closeResetPasswordForm }) => {
       >
         {(formik) => (
           <Form>
-            <div className='form-group'>
-              <label htmlFor='password'>Mật khẩu cũ</label>
-              <Field
-                type='password'
-                name='password'
-                placeholder='Nhập mật khẩu cũ'
-              />
-              <ErrorMessage
-                name='password'
-                component='span'
-                className='error'
-              />
-            </div>
-            <div className='form-group'>
-              <label htmlFor='new_password'>Mật khẩu mới</label>
-              <Field
-                type='password'
-                name='new_password'
-                placeholder='Nhập mật khẩu mới'
-              />
-              <ErrorMessage
-                name='new_password'
-                component='span'
-                className='error'
-              />
-            </div>
-            <div className='form-group'>
-              <label htmlFor='cf_new_password'>Xác nhận mật khẩu mới</label>
-              <Field
-                type='password'
-                name='cf_new_password'
-                placeholder='Xác nhận mật khẩu mới'
-              />
-              <ErrorMessage
-                name='cf_new_password'
-                component='span'
-                className='error'
-              />
-            </div>
+            <Input
+              name='password'
+              type='password'
+              placeholder='Nhập mật khẩu cũ'
+              label='Mật khẩu cũ'
+            />
+            <Input
+              name='new_password'
+              type='password'
+              placeholder='Nhập mật khẩu mới'
+              label='Mật khẩu mới'
+            />
+            <Input
+              name='cf_new_password'
+              type='password'
+              placeholder='Xác nhân mật khẩu mới'
+              label='Xác nhận mật khẩu mới'
+            />
 
             <div className='btn-container'>
               <button

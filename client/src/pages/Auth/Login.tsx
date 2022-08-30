@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import { useAuthContext } from '../../context/AuthContext';
+import { AuthType, useAuthContext } from '../../context/AuthContext';
 import { Container } from './style';
-import { Formik, Form, ErrorMessage, FormikHelpers, Field } from 'formik';
+import { Formik, Form, FormikHelpers } from 'formik';
 import { login } from '../../services/auth';
 import { toast } from 'react-toastify';
 import { useAppDispatch } from '../../redux/hooks';
@@ -9,6 +9,7 @@ import { loginSuccess } from '../../redux/auth/authSlice';
 import { useNavigate } from 'react-router-dom';
 import * as Yup from 'yup';
 import appRoutes from '../../constants/appRoutes';
+import Input from '../../components/Input';
 
 interface FormState {
   email: string;
@@ -37,7 +38,9 @@ const Login = () => {
 
   const { changeAuthType, closeAuthModal, redirectUrl } = useAuthContext();
 
-  const changeToSignup = () => changeAuthType('signup');
+  const changeToSignup = () => changeAuthType(AuthType.SIGNUP);
+  const changeToForgotPassword = () => changeAuthType(AuthType.FORGOT_PASSWORD);
+
   const handleSubmit = async (
     values: FormState,
     formikHelpers: FormikHelpers<FormState>
@@ -79,31 +82,28 @@ const Login = () => {
       >
         {(formik) => (
           <Form>
-            <div className='form-group'>
-              <label htmlFor='email'>Email</label>
-              <Field name='email' type='text' placeholder='Email' id='email' />
-              <ErrorMessage name='email' component='span' className='error' />
-            </div>
-            <div className='form-group'>
-              <label htmlFor='password'>Mật khẩu</label>
-              <Field
-                type='password'
-                name='password'
-                id='password'
-                placeholder='Mật khẩu'
-              />
-              <ErrorMessage
-                name='password'
-                component='span'
-                className='error'
-              />
-            </div>
+            <Input name='email' type='text' label='Email' placeholder='Email' />
+            <Input
+              name='password'
+              type='password'
+              label='Mật khẩu'
+              placeholder='Mật khẩu'
+            />
 
-            <div className='nav'>
-              Don't have account?{' '}
-              <button type='button' onClick={changeToSignup}>
-                Sign up
-              </button>
+            <button
+              type='button'
+              className='forgot-pw'
+              onClick={changeToForgotPassword}
+            >
+              Forgot your password
+            </button>
+            <div>
+              <div className='nav'>
+                Don't have account?{' '}
+                <button type='button' onClick={changeToSignup}>
+                  Sign up
+                </button>
+              </div>
             </div>
 
             <button

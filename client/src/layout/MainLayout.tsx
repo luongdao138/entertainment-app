@@ -7,12 +7,14 @@ import Header from './components/Header';
 import Modal from '../components/Modal';
 import SignUp from '../pages/Auth/SignUp';
 import Login from '../pages/Auth/Login';
-import { useAuthContext } from '../context/AuthContext';
-import { useEffect, useRef } from 'react';
+import { AuthType, useAuthContext } from '../context/AuthContext';
+import { useEffect, useMemo, useRef } from 'react';
 import { useAppDispatch } from '../redux/hooks';
 import { getUserInfo } from '../redux/auth/authActions';
 import UploadSongForm from '../components/UploadSongForm';
 import { useUploadContext } from '../context/UploadContext';
+import SignupSuccess from '../pages/Auth/SignupSuccess';
+import ForgotPassword from '../pages/Auth/ForgotPassword';
 
 const Container = styled.div`
   & .content {
@@ -32,6 +34,25 @@ const MainLayout = () => {
   const dispatch = useAppDispatch();
   const isFirstRenderRef = useRef<boolean>(true);
 
+  const renderAuthLayout = useMemo(() => {
+    switch (authType) {
+      case AuthType.LOGIN:
+        return <Login />;
+
+      case AuthType.SIGNUP:
+        return <SignUp />;
+
+      case AuthType.SIGNUP_SUCCESS:
+        return <SignupSuccess />;
+
+      case AuthType.FORGOT_PASSWORD:
+        return <ForgotPassword />;
+
+      default:
+        return <></>;
+    }
+  }, [authType]);
+
   useEffect(() => {
     if (isFirstRenderRef.current) {
       isFirstRenderRef.current = false;
@@ -50,7 +71,7 @@ const MainLayout = () => {
       <Header />
 
       <Modal open={isOpenAuthModal} maxWidth='sm' onClose={closeAuthModal}>
-        {authType === 'login' ? <Login /> : <SignUp />}
+        {renderAuthLayout}
       </Modal>
 
       <Modal open={isOpenUploadForm} onClose={closeUploadForm}>
