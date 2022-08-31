@@ -8,6 +8,7 @@ import credentialMiddleware from './middlewares/credentials';
 import authRouter from './routes/auth';
 import userRouter from './routes/user';
 import songRouter from './routes/song';
+import playlistRouter from './routes/playlist';
 import verifyTokenMiddleware from './middlewares/verifyJwt';
 import prisma from './config/prisma';
 
@@ -30,15 +31,22 @@ app.use(cors(corsConfig as CorsOptions));
 app.get('/', async (req, res) => {
   await prisma.user.delete({
     where: {
-      email: 'jw2006lm@gmail.com',
+      email: 'luongtuduong296@gmail.com',
     },
   });
+  // const data = await prisma.user.update({
+  //   where: { email: 'daovanluongpdl@gmail.com' },
+  //   data: {
+  //     is_verified: true,
+  //   },
+  // });
   return res.json({ msg: 'Success' });
 });
 
 app.use('/auth', authRouter);
 app.use('/user', userRouter);
 app.use('/song', songRouter);
+app.use('/playlist', playlistRouter);
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {

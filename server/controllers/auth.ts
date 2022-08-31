@@ -5,6 +5,7 @@ import prisma from '../config/prisma';
 import _ from 'lodash';
 import {
   ACCESS_TOKEN_DURATION,
+  FORGOT_PASSWORD_TOKEN_DURATION,
   REFRESH_TOKEN_DURATION,
   VERIFY_ACCOUNT_TOKEN_DURATION,
 } from '../utils/token';
@@ -42,7 +43,7 @@ const authController = {
         process.env.VERIFY_ACCOUNT_SECRET || '',
         { expiresIn: VERIFY_ACCOUNT_TOKEN_DURATION }
       );
-      const veify_link = `${process.env.CLIENT_URL}/account/verify?token=${verify_token}`;
+      const verify_link = `${process.env.CLIENT_URL}/account/verify?token=${verify_token}&email=${user.email}`;
 
       await prisma.user.update({
         where: { id: user.id },
@@ -56,10 +57,10 @@ const authController = {
         to: email,
         subject: 'Please verify your email account',
         html: `
-                  <h3>Let's verify your single sender so you can start uploading songs.</h3>
+                  <h3>Let's verify your account so you can start uploading songs.</h3>
                   <h4>${email}</h4>
                   <p>Your link is active for 24 hours. After that, you will need to resend the verification email.</p>
-                  <a href="${veify_link}">Verify Email</a>
+                  <a href="${verify_link}">Verify Email</a>
           `,
       });
 
@@ -220,6 +221,132 @@ const authController = {
           });
 
           return res.json({ msg: 'Xác thực email thành công' });
+        } else {
+          return res.status(400).json({ msg: 'Token không hợp lệ', code: 1 });
+        }
+      }
+    );
+  },
+  async resendEmail(req: Request, res: Response) {
+    const { email } = req.body;
+    const user = await prisma.user.findUnique({ where: { email } });
+
+    if (!user) {
+      return res.status(400).json({ msg: 'User không tồn tại' });
+    }
+
+    if (user.is_verified) {
+      return res.status(400).json({ msg: 'User đã được xác thực' });
+    }
+
+    const verify_token = jwt.sign(
+      { id: user.id },
+      process.env.VERIFY_ACCOUNT_SECRET || '',
+      { expiresIn: VERIFY_ACCOUNT_TOKEN_DURATION }
+    );
+    const veify_link = `${process.env.CLIENT_URL}/account/verify?token=${verify_token}&email=${user.email}`;
+
+    await prisma.user.update({
+      where: { id: user.id },
+      data: {
+        verify_token,
+      },
+    });
+
+    // send confirmation mail to user
+    sendMail({
+      to: user.email,
+      subject: 'Please verify your email account',
+      html: `
+                  <h3>Let's verify your account so you can start uploading songs.</h3>
+                  <h4>${user.email}</h4>
+                  <p>Your link is active for 24 hours. After that, you will need to resend the verification email.</p>
+                  <a href="${veify_link}">Verify Email</a>
+          `,
+    });
+
+    return res.status(200).json({
+      msg: 'Gửi email xác thực thành công',
+    });
+  },
+  async verifyForgotPassword(req: Request, res: Response) {
+    const { email } = req.body;
+    if (!email) {
+      return res.status(400).json({ msg: 'Email không được để trống' });
+    }
+
+    const user = await prisma.user.findUnique({ where: { email } });
+
+    if (!user) {
+      return res
+        .status(400)
+        .json({ msg: 'Email chưa được đăng ký bởi tài khoản nào' });
+    }
+
+    const forgot_password_token = jwt.sign(
+      { id: user.id },
+      process.env.FORGOT_PASSWORD_SECRET || '',
+      { expiresIn: FORGOT_PASSWORD_TOKEN_DURATION }
+    );
+    const verify_link = `${process.env.CLIENT_URL}/account/forgotPassword?token=${forgot_password_token}`;
+
+    await prisma.user.update({
+      where: { id: user.id },
+      data: {
+        forgot_password_token,
+      },
+    });
+
+    // send confirmation mail to user
+    sendMail({
+      to: email,
+      subject: 'Forgot password',
+      html: `
+                  <h3>Click the link below to retrieve your password</h3>
+                  <h4>${email}</h4>
+                  <p>Your link is active for 24 hours. After that, you will need to resend the verification email.</p>
+                  <a href="${verify_link}">Retrieve password</a>
+          `,
+    });
+
+    return res.json({ msg: 'Xác nhận email thành công' });
+  },
+  async changePassword(req: Request, res: Response) {
+    const { token, new_password } = req.body;
+
+    jwt.verify(
+      token,
+      process.env.FORGOT_PASSWORD_SECRET || '',
+      async (error: any, decoded: any) => {
+        if (error) {
+          return res.status(400).json({ msg: 'Token không hợp lệ', code: 1 });
+        }
+
+        const { id } = decoded;
+        const user = await prisma.user.findUnique({ where: { id } });
+        if (!user) {
+          return res.status(400).json({ msg: 'User không tồn tại', code: 2 });
+        }
+
+        if (!user.is_verified) {
+          return res
+            .status(400)
+            .json({ msg: 'User chưa được xác thực', code: 3 });
+        }
+
+        if (user.forgot_password_token === token) {
+          const hash_pw = await bcrypt.hash(new_password, 10);
+          await prisma.user.update({
+            where: {
+              id: user.id,
+            },
+            data: {
+              forgot_password_token: null,
+              password: hash_pw,
+            },
+          });
+
+          return res.json({ msg: 'Đổi mật khẩu thành công' });
         } else {
           return res.status(400).json({ msg: 'Token không hợp lệ', code: 1 });
         }

@@ -8,7 +8,12 @@ type Props = DialogProps & {
 
 const Modal: React.FC<Props> = ({ open, children, ...props }) => {
   return (
-    <Dialog open={open} fullWidth {...props}>
+    <Dialog
+      open={open}
+      fullWidth
+      PaperProps={{ sx: { backgroundColor: 'transparent' } }}
+      {...props}
+    >
       {children}
     </Dialog>
   );

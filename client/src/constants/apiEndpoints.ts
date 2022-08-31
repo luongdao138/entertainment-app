@@ -14,6 +14,10 @@ const apiEndpoints = {
   CHANGE_FAVOURITE: '/song/favourite/:id',
   UPDATE_PROFILE: '/user/updateProfile',
   RESET_PASSWORD: '/user/resetPassword',
+  CREATE_NEW_PLAYLIST: '/playlist',
+  GET_PRIVATE_PLAYLIST: '/playlist/private',
+  EIDT_PLAYLIST: '/playlist/:playlist_id',
+  DELETE_PLAYLIST: '/playlist/:playlist_id',
 };
 
 export default apiEndpoints;

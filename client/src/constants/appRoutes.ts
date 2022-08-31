@@ -6,6 +6,9 @@ const appRoutes = {
   MYMUSIC_SONG_UPLOAD: '/mymusic/song/upload',
 
   USER_PROFILE: '/profile',
+  PLAYLIST_DETAIL: '/playlist/:playlist_id',
+  VERIFY_ACCOUNT: '/account/verify',
+  FORGOT_PASSWORD: '/account/forgotPassword',
 };
 
 export default appRoutes;

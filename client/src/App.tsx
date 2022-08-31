@@ -12,6 +12,8 @@ import UserProfilePage from './pages/UserProfilePage';
 import VerifyAccount from './pages/Auth/VerifyAccount';
 import AlreadyAuth from './components/AlreadyAuth';
 import RetrievePassword from './pages/Auth/RetrievePassword';
+import appRoutes from './constants/appRoutes';
+import PlaylistDetailPage from './pages/PlaylistDetailPage';
 
 function App() {
   return (
@@ -34,10 +36,18 @@ function App() {
             <Route path='profile' element={<UserProfilePage />} />
           </Route>
 
+          <Route
+            path={appRoutes.PLAYLIST_DETAIL}
+            element={<PlaylistDetailPage />}
+          />
+
           <Route element={<AlreadyAuth />}>
-            <Route path='/account/verify' element={<VerifyAccount />} />
             <Route
-              path='/account/forgotPassword'
+              path={appRoutes.VERIFY_ACCOUNT}
+              element={<VerifyAccount />}
+            />
+            <Route
+              path={appRoutes.FORGOT_PASSWORD}
               element={<RetrievePassword />}
             />
           </Route>

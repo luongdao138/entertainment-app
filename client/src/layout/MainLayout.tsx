@@ -15,6 +15,8 @@ import UploadSongForm from '../components/UploadSongForm';
 import { useUploadContext } from '../context/UploadContext';
 import SignupSuccess from '../pages/Auth/SignupSuccess';
 import ForgotPassword from '../pages/Auth/ForgotPassword';
+import { useUploadPlaylistContext } from '../context/UploadPlaylistContext';
+import NewPlaylistForm from '../components/NewPlaylistForm';
 
 const Container = styled.div`
   & .content {
@@ -31,6 +33,11 @@ const MainLayout = () => {
   const { authType, isOpenAuthModal, closeAuthModal, setIsLoadingUser } =
     useAuthContext();
   const { closeUploadForm, isOpenUploadForm } = useUploadContext();
+  const {
+    closeUploadPlaylistForm,
+    isOpenUploadPlaylistForm,
+    openUploadPlaylistForm,
+  } = useUploadPlaylistContext();
   const dispatch = useAppDispatch();
   const isFirstRenderRef = useRef<boolean>(true);
 
@@ -76,6 +83,14 @@ const MainLayout = () => {
 
       <Modal open={isOpenUploadForm} onClose={closeUploadForm}>
         <UploadSongForm closeUploadModal={closeUploadForm} />
+      </Modal>
+
+      <Modal
+        maxWidth='xs'
+        open={isOpenUploadPlaylistForm}
+        onClose={closeUploadPlaylistForm}
+      >
+        <NewPlaylistForm closeUploadModal={closeUploadPlaylistForm} />
       </Modal>
 
       {/* <Player /> */}

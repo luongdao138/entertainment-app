@@ -21,12 +21,23 @@ model User {
   title String?
   password      String
   refresh_token String?
+  forgot_password_token String?
   verify_token String?
   is_verified   Boolean @default(false)
   is_premium    Boolean @default(false)
 
   songs           Song[] @relation("uploaded")
   favourite_songs Song[] @relation("favourite")
+
+  playlists Playlist[] @relation("created")
+  is_deleted Boolean @default(false)
+  deleted_at DateTime?
+  favourite_playlists Playlist[] @relation("favourite_playlist")
+}
+
+enum Privacy {
+   private
+   public
 }
 
 model Song {
@@ -42,5 +53,30 @@ model Song {
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
 
+  privacy Privacy @default(private)
+  public_at DateTime? 
+
   liked_by User[] @relation("favourite")
+  is_deleted Boolean @default(false)
+  deleted_at DateTime?
+  playlists Playlist[] @relation("belong_to")
+}
+
+model Playlist {
+   id String @id @default(uuid())
+   thumbnail String @default("https://photo-zmp3.zmdcdn.me/album_default.png")
+   title String
+   
+   creator User @relation("created",  fields: [creator_id], references: [id])
+   creator_id String
+   songs Song[] @relation("belong_to")
+
+   privacy Privacy @default(private)
+   play_random  Boolean @default(true)
+   public_at DateTime? 
+   created_at DateTime @default(now())
+   updated_at DateTime @updatedAt
+   is_deleted Boolean @default(false)
+   deleted_at DateTime?
+   liked_by User[] @relation("favourite_playlist")
 }

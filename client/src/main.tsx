@@ -7,6 +7,7 @@ import { Provider } from 'react-redux';
 import { store } from './redux/store';
 import AuthProvider from './context/AuthContext';
 import UploadProvider from './context/UploadContext';
+import UploadPlaylistProvider from './context/UploadPlaylistContext';
 
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
   <React.StrictMode>
@@ -14,7 +15,9 @@ ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
       <Router>
         <AuthProvider>
           <UploadProvider>
-            <App />
+            <UploadPlaylistProvider>
+              <App />
+            </UploadPlaylistProvider>
           </UploadProvider>
         </AuthProvider>
       </Router>

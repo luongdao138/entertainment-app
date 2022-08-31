@@ -12,7 +12,7 @@ import { formatSongDuration } from '../../utils/formatTime';
 import { useAppDispatch } from '../../redux/hooks';
 import { changeFavourite } from '../../redux/song/songActions';
 import { toast } from 'react-toastify';
-
+import fileSaver from 'file-saver';
 interface Props {
   song: Song;
 }
@@ -41,8 +41,12 @@ const SongItem: React.FC<Props> = ({ song }) => {
     });
   };
 
-  useEffect(( ) => {
-    setIsLiked(song.is_liked)
+  const handleDownloadSong = () => {
+    fileSaver.saveAs(song.url);
+  };
+
+  useEffect(() => {
+    setIsLiked(song.is_liked);
   }, [song.is_liked]);
 
   return (
@@ -113,7 +117,7 @@ const SongItem: React.FC<Props> = ({ song }) => {
               </div>
 
               <div className='menu-btns'>
-                <button>
+                <button onClick={handleDownloadSong}>
                   <FiDownload />
                   <span>Tải xuống</span>
                 </button>

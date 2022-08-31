@@ -1,0 +1,111 @@
+import { createAsyncThunk } from '@reduxjs/toolkit';
+import { toast } from 'react-toastify';
+import * as services from '../../services/playlist';
+import { logout } from '../auth/authSlice';
+import { PLAYLIST_ACTION_TYPES } from './playlistTypes';
+
+interface CreatePlaylistParams {
+  data: services.CreatePlaylistParams;
+  onSuccess?: (id: string) => void;
+}
+
+interface EditPlaylistParams {
+  data: services.UpdatePlaylistParams;
+  onSuccess?: () => void;
+}
+
+interface DeletePlaylistParams {
+  data: services.DeletePlaylistParams;
+  onSuccess?: () => void;
+}
+
+export const createNewPlaylist = createAsyncThunk<
+  services.CreatePlaylistResponse,
+  CreatePlaylistParams
+>(
+  PLAYLIST_ACTION_TYPES.CREATE_NEW_PLAYLIST,
+  async (params, { dispatch, rejectWithValue }) => {
+    try {
+      const res = await services.createNewPlaylist(params.data);
+      params.onSuccess?.(res.play_list.id);
+      return res;
+    } catch (error: any) {
+      if (error.response?.status === 403) {
+        localStorage.removeItem('music_token');
+        dispatch(logout());
+      }
+      return rejectWithValue(
+        error.response?.data?.msg || 'Something went wrong!'
+      );
+    }
+  }
+);
+
+export const getPrivatePlaylists = createAsyncThunk<
+  services.GetPrivatePlaylistResponse,
+  services.GetPrivatePlaylistParams
+>(
+  PLAYLIST_ACTION_TYPES.GET_PRIVATE_PLAYLIST,
+  async (params, { dispatch, rejectWithValue }) => {
+    try {
+      const res = await services.getPrivatePlaylists(params);
+      return res;
+    } catch (error: any) {
+      if (error.response?.status === 403) {
+        localStorage.removeItem('music_token');
+        dispatch(logout());
+      }
+      return rejectWithValue(
+        error.response?.data?.msg || 'Something went wrong!'
+      );
+    }
+  }
+);
+export const editPlaylist = createAsyncThunk<
+  services.UpdatePlaylistParams,
+  EditPlaylistParams
+>(
+  PLAYLIST_ACTION_TYPES.EDIT_PLAYLIST,
+  async (params, { dispatch, rejectWithValue }) => {
+    try {
+      await services.updatePlaylist(params.data);
+      toast.success('Chỉnh sửa playlist thành công');
+      params.onSuccess?.();
+      return params.data;
+    } catch (error: any) {
+      toast.error('Chỉnh sửa playist thất bại');
+      if (error.response?.status === 403) {
+        localStorage.removeItem('music_token');
+        dispatch(logout());
+      }
+      return rejectWithValue(
+        error.response?.data?.msg || 'Something went wrong!'
+      );
+    }
+  }
+);
+
+export const deletePlaylist = createAsyncThunk<
+  services.DeletePlaylistParams,
+  DeletePlaylistParams
+>(
+  PLAYLIST_ACTION_TYPES.DELETE_PLAYLIST,
+  async (params, { dispatch, rejectWithValue }) => {
+    try {
+      await services.deletePlaylist(params.data);
+      params.onSuccess?.();
+      toast.success('Xóa playlist thành công');
+
+      return params.data;
+    } catch (error: any) {
+      toast.success('Xóa playlist thất bại');
+      if (error.response?.status === 403) {
+        localStorage.removeItem('music_token');
+        dispatch(logout());
+      }
+      return rejectWithValue(
+        error.response?.data?.msg || 'Something went wrong!'
+      );
+    }
+  }
+);

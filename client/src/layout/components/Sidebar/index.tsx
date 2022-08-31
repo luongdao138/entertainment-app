@@ -6,10 +6,12 @@ import { BsFillPlayFill } from 'react-icons/bs';
 import LoginRequired from '../../../components/LoginRequired';
 import appRoutes from '../../../constants/appRoutes';
 import { useAuthContext } from '../../../context/AuthContext';
+import { useUploadPlaylistContext } from '../../../context/UploadPlaylistContext';
 
 const Sidebar = () => {
   const { authUser, openAuthModal } = useAuthContext();
   const location = useLocation();
+  const { openUploadPlaylistForm } = useUploadPlaylistContext();
 
   return (
     <Container>
@@ -90,7 +92,7 @@ const Sidebar = () => {
         )}
       </div>
 
-      <button className='sidebar-bottom'>
+      <button className='sidebar-bottom' onClick={openUploadPlaylistForm}>
         <MdAdd />
         <span>Tạo playlist mới</span>
       </button>

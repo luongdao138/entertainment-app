@@ -3,6 +3,11 @@ import { BsChevronRight } from 'react-icons/bs';
 import { Link, Outlet, useLocation } from 'react-router-dom';
 import styled from 'styled-components';
 import PlaylistItem from '../../components/PlaylistItem';
+import { useUploadPlaylistContext } from '../../context/UploadPlaylistContext';
+import { useEffect, useRef } from 'react';
+import { useAppDispatch, useAppSelector } from '../../redux/hooks';
+import { getPrivatePlaylists } from '../../redux/playlist/playlistActions';
+import { getPrivatePlaylist } from '../../redux/playlist/playlistSelector';
 
 const Container = styled.div`
   padding-top: 7rem;
@@ -132,6 +137,19 @@ const NavigationItem = styled.li`
 
 const MyMusicPage = () => {
   const location = useLocation();
+  const { openUploadPlaylistForm } = useUploadPlaylistContext();
+  const isFirstRenderRef = useRef<boolean>(false);
+  const dispatch = useAppDispatch();
+  const privatePlaylists = useAppSelector(getPrivatePlaylist);
+
+  useEffect(() => {
+    if (isFirstRenderRef.current) {
+      isFirstRenderRef.current = false;
+      return;
+    }
+
+    dispatch(getPrivatePlaylists({ limit: 5, page: 1 }));
+  }, []);
 
   return (
     <Container>
@@ -140,7 +158,7 @@ const MyMusicPage = () => {
         <div className='playlist__header'>
           <div className='playlist__header__left'>
             <span>Playlist</span>
-            <button>
+            <button onClick={openUploadPlaylistForm}>
               <MdAdd />
             </button>
           </div>
@@ -151,8 +169,8 @@ const MyMusicPage = () => {
         </div>
 
         <div className='playlist__list'>
-          {[...new Array(5)].map((_, index) => (
-            <PlaylistItem key={index} />
+          {privatePlaylists.map((playlist) => (
+            <PlaylistItem key={playlist.id} playlist={playlist} />
           ))}
         </div>
       </div>
