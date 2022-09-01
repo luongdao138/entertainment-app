@@ -13,6 +13,7 @@ export const Container = styled.div`
   & .sidebar-top {
     flex-grow: 1;
     overflow-y: auto;
+    padding-bottom: 1rem;
   }
 
   & .sidebar-bottom {

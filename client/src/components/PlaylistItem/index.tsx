@@ -1,7 +1,7 @@
 import React, { startTransition, useEffect, useState } from 'react';
 import { MdClose, MdMoreHoriz } from 'react-icons/md';
 import { BsFillPlayFill } from 'react-icons/bs';
-import { Container } from './style';
+import { Container, SidebarItemContainer } from './style';
 import { Link } from 'react-router-dom';
 import { Playlist } from '../../services/playlist';
 import { Menu } from '@mui/material';
@@ -9,21 +9,30 @@ import PlaylistItemMenu from '../PlaylistItemMenu';
 import ConfirmDialog from '../ConfirmDialog';
 import { useUploadPlaylistContext } from '../../context/UploadPlaylistContext';
 import appRoutes from '../../constants/appRoutes';
-import {
-  deletePlaylist,
-  getPrivatePlaylists,
-} from '../../redux/playlist/playlistActions';
+import { deletePlaylist } from '../../redux/playlist/playlistActions';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import { createMetaSelector } from '../../redux/metadata/selectors';
 import { clearMetaData } from '../../redux/metadata/actions';
+import { AiFillHeart, AiOutlineHeart } from 'react-icons/ai';
+import LoginRequired from '../LoginRequired';
 
 interface Props {
   playlist: Playlist;
+  is_from_sidebar?: boolean;
+  onDeletePlaylistSuccess?: () => void;
+  onClickLikePlaylist?: () => void;
+  showChangeFavouriteConfirmModal?: boolean;
 }
 
 const deletePlaylistMetaSelector = createMetaSelector(deletePlaylist);
 
-const PlaylistItem: React.FC<Props> = ({ playlist }) => {
+const PlaylistItem: React.FC<Props> = ({
+  playlist,
+  onDeletePlaylistSuccess,
+  onClickLikePlaylist,
+  showChangeFavouriteConfirmModal = false,
+  is_from_sidebar = false,
+}) => {
   const { changeToEditMode, setEditedPlaylist, openUploadPlaylistForm } =
     useUploadPlaylistContext();
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
@@ -31,6 +40,9 @@ const PlaylistItem: React.FC<Props> = ({ playlist }) => {
   const [openDeleteConfirmModal, setOpenDeleteConfirmModal] =
     useState<boolean>(false);
   const dispatch = useAppDispatch();
+  const [is_liked, setIsLiked] = useState<boolean>(Boolean(playlist.is_liked));
+  const [isShowChangeFavouriteModal, setIsShowChangeFavouriteModal] =
+    useState<boolean>(false);
 
   const deletePlaylistMeta = useAppSelector(deletePlaylistMetaSelector);
 
@@ -55,13 +67,21 @@ const PlaylistItem: React.FC<Props> = ({ playlist }) => {
     setOpenDeleteConfirmModal(false);
   };
 
+  const openChangeFavouriteConfirmModal = () => {
+    setIsShowChangeFavouriteModal(true);
+  };
+
+  const closeChangeFavouriteConfirmModal = () => {
+    setIsShowChangeFavouriteModal(false);
+  };
+
   const handleDeletePlaylist = async () => {
     dispatch(
       deletePlaylist({
         data: { id: playlist.id },
         onSuccess: () => {
           handleCloseDeleteConfirmModal();
-          dispatch(getPrivatePlaylists({ limit: 5, page: 1 }));
+          onDeletePlaylistSuccess?.();
         },
       })
     );
@@ -76,18 +96,30 @@ const PlaylistItem: React.FC<Props> = ({ playlist }) => {
     openUploadPlaylistForm();
   };
 
+  const handleLikePlaylist = (e: React.MouseEvent<HTMLElement>) => {
+    e.preventDefault();
+    e.stopPropagation();
+
+    if (showChangeFavouriteConfirmModal) {
+      openChangeFavouriteConfirmModal();
+    } else {
+      setIsLiked((prev) => !prev);
+      onClickLikePlaylist?.();
+    }
+  };
+
   useEffect(() => {
     clearMetaData(deletePlaylist.typePrefix);
   }, []);
 
   return (
-    <Container>
+    <>
       <Menu
         id='playlist-item-menu'
         MenuListProps={{
           'aria-labelledby': 'playlist-item-button',
         }}
-        disablePortal
+        // disablePortal
         anchorEl={anchorEl}
         open={openPlaylistMenu}
         onClose={handleClose}
@@ -120,49 +152,95 @@ const PlaylistItem: React.FC<Props> = ({ playlist }) => {
           open={openDeleteConfirmModal}
           onCancel={handleCloseDeleteConfirmModal}
           onOk={handleDeletePlaylist}
-          meta={deletePlaylistMeta}
+          is_pending={deletePlaylistMeta.pending}
         />
       )}
 
-      <Link
-        to={appRoutes.PLAYLIST_DETAIL.replace(':playlist_id', playlist.id)}
-        className='thumbnail-container'
-      >
-        <img src={playlist.thumbnail} alt='' />
+      {showChangeFavouriteConfirmModal && (
+        <ConfirmDialog
+          desc='Playlist bạn yêu thích sẽ bị xóa khỏi thư viện cá nhân. Bạn có muốn xóa?'
+          title='Xóa Playlist'
+          open={isShowChangeFavouriteModal}
+          onCancel={closeChangeFavouriteConfirmModal}
+          onOk={() => {
+            setIsLiked((prev) => !prev);
+            onClickLikePlaylist?.();
+          }}
+        />
+      )}
 
-        <div className='thumbnail-backdrop'></div>
+      {is_from_sidebar ? (
+        <SidebarItemContainer
+          to={appRoutes.PLAYLIST_DETAIL.replace(':playlist_id', playlist.id)}
+        >
+          <span className='name'> {playlist.title}</span>
 
-        <div className='thumbnail-actions'>
-          <button className='action' onClick={handleOpenDeleteConfirmModal}>
-            <MdClose />
+          <button
+            className='more-btn'
+            aria-label='more'
+            id='playlist-item-button'
+            aria-controls={openPlaylistMenu ? 'playlist-item-menu' : undefined}
+            aria-expanded={openPlaylistMenu ? 'true' : undefined}
+            aria-haspopup='true'
+            onClick={handleClickMore}
+          >
+            <MdMoreHoriz />
           </button>
-          <button className='play-state'>
-            <BsFillPlayFill />
-          </button>
+        </SidebarItemContainer>
+      ) : (
+        <Container is_liked={is_liked}>
+          <Link
+            to={appRoutes.PLAYLIST_DETAIL.replace(':playlist_id', playlist.id)}
+            className='thumbnail-container'
+          >
+            <img src={playlist.thumbnail} alt='' />
 
-          <div>
-            <button
-              className='action'
-              aria-label='more'
-              id='playlist-item-button'
-              aria-controls={
-                openPlaylistMenu ? 'playlist-item-menu' : undefined
-              }
-              aria-expanded={openPlaylistMenu ? 'true' : undefined}
-              aria-haspopup='true'
-              onClick={handleClickMore}
-            >
-              <MdMoreHoriz />
-            </button>
-          </div>
-        </div>
-      </Link>
+            <div className='thumbnail-backdrop'></div>
 
-      <Link to='/' className='name'>
-        {playlist.title}
-      </Link>
-      <p className='author'>{playlist.creator.full_name}</p>
-    </Container>
+            <div className='thumbnail-actions'>
+              {playlist.is_owner && playlist.can_delete ? (
+                <button
+                  className='action'
+                  onClick={handleOpenDeleteConfirmModal}
+                >
+                  <MdClose />
+                </button>
+              ) : (
+                <LoginRequired>
+                  <button className='favorite' onClick={handleLikePlaylist}>
+                    {playlist.is_liked ? <AiFillHeart /> : <AiOutlineHeart />}
+                  </button>
+                </LoginRequired>
+              )}
+              <button className='play-state'>
+                <BsFillPlayFill />
+              </button>
+
+              <div>
+                <button
+                  className='action'
+                  aria-label='more'
+                  id='playlist-item-button'
+                  aria-controls={
+                    openPlaylistMenu ? 'playlist-item-menu' : undefined
+                  }
+                  aria-expanded={openPlaylistMenu ? 'true' : undefined}
+                  aria-haspopup='true'
+                  onClick={handleClickMore}
+                >
+                  <MdMoreHoriz />
+                </button>
+              </div>
+            </div>
+          </Link>
+
+          <Link to='/' className='name'>
+            {playlist.title}
+          </Link>
+          <p className='author'>{playlist.creator.full_name}</p>
+        </Container>
+      )}
+    </>
   );
 };
 

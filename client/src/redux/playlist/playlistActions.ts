@@ -19,6 +19,11 @@ interface DeletePlaylistParams {
   onSuccess?: () => void;
 }
 
+interface GetUserPlaylistsResponse {
+  data: services.GetPrivatePlaylistResponse;
+  is_own: boolean;
+}
+
 export const createNewPlaylist = createAsyncThunk<
   services.CreatePlaylistResponse,
   CreatePlaylistParams
@@ -42,14 +47,17 @@ export const createNewPlaylist = createAsyncThunk<
 );
 
 export const getPrivatePlaylists = createAsyncThunk<
-  services.GetPrivatePlaylistResponse,
+  GetUserPlaylistsResponse,
   services.GetPrivatePlaylistParams
 >(
   PLAYLIST_ACTION_TYPES.GET_PRIVATE_PLAYLIST,
   async (params, { dispatch, rejectWithValue }) => {
     try {
       const res = await services.getPrivatePlaylists(params);
-      return res;
+      return {
+        data: res,
+        is_own: Boolean(params.is_own),
+      };
     } catch (error: any) {
       if (error.response?.status === 403) {
         localStorage.removeItem('music_token');
@@ -61,6 +69,7 @@ export const getPrivatePlaylists = createAsyncThunk<
     }
   }
 );
+
 export const editPlaylist = createAsyncThunk<
   services.UpdatePlaylistParams,
   EditPlaylistParams
@@ -99,6 +108,29 @@ export const deletePlaylist = createAsyncThunk<
       return params.data;
     } catch (error: any) {
       toast.success('Xóa playlist thất bại');
+      if (error.response?.status === 403) {
+        localStorage.removeItem('music_token');
+        dispatch(logout());
+      }
+      return rejectWithValue(
+        error.response?.data?.msg || 'Something went wrong!'
+      );
+    }
+  }
+);
+
+export const changePlaylistFavourite = createAsyncThunk<
+  services.ChangePlaylistFavouriteParams,
+  services.ChangePlaylistFavouriteParams
+>(
+  PLAYLIST_ACTION_TYPES.CHANGE_PLAYLIST_FAVOURITE,
+  async (params, { dispatch, rejectWithValue }) => {
+    try {
+      const res = await services.changePlaylistFavourite(params);
+      toast.success(res.msg);
+
+      return params;
+    } catch (error: any) {
       if (error.response?.status === 403) {
         localStorage.removeItem('music_token');
         dispatch(logout());

@@ -9,6 +9,7 @@ const appRoutes = {
   PLAYLIST_DETAIL: '/playlist/:playlist_id',
   VERIFY_ACCOUNT: '/account/verify',
   FORGOT_PASSWORD: '/account/forgotPassword',
+  LIBRARY_PLAYLIST: '/library/playlist',
 };
 
 export default appRoutes;

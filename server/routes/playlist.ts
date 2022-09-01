@@ -12,4 +12,6 @@ router
   .put(playlistController.editPlaylist)
   .delete(playlistController.deletePlaylist);
 
+router.put('/favourite/:playlist_id', playlistController.likeOrUnlikePlaylist);
+
 export default router;

@@ -12,7 +12,7 @@ type Props = DialogProps & {
   onOk: () => void;
   cancelText?: string;
   okText?: string;
-  meta: Meta;
+  is_pending?: boolean;
 };
 
 const ConfirmDialog: React.FC<Props> = ({
@@ -23,7 +23,7 @@ const ConfirmDialog: React.FC<Props> = ({
   title,
   cancelText = 'Không',
   okText = 'Có',
-  meta,
+  is_pending,
   ...rest
 }) => {
   return (
@@ -36,7 +36,11 @@ const ConfirmDialog: React.FC<Props> = ({
           <button className='cancel-btn' onClick={onCancel}>
             {cancelText}
           </button>
-          <button className='ok-btn' disabled={meta.pending} onClick={onOk}>
+          <button
+            className='ok-btn'
+            disabled={Boolean(is_pending)}
+            onClick={onOk}
+          >
             {okText}
           </button>
         </div>

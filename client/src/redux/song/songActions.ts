@@ -5,6 +5,12 @@ import { logout } from '../auth/authSlice';
 import { RootState } from '../store';
 import { SONG_ACTION_TYPES } from './songTypes';
 
+interface ActionParams<T, R> {
+  data: T;
+  onSuccess?: (res: R) => void;
+  onError?: (error: string) => void;
+}
+
 export const uploadSong = createAsyncThunk<
   services.UploadSongResponse,
   services.UploadSongParams
@@ -80,12 +86,17 @@ export const getFavouriteSong = createAsyncThunk<
   }
 );
 
-export const changeFavourite = createAsyncThunk<void, string>(
+export const changeFavourite = createAsyncThunk<
+  void,
+  ActionParams<string, void>
+>(
   SONG_ACTION_TYPES.CHANGE_FAVOURITE,
   async (params, { rejectWithValue, dispatch }) => {
     try {
-      await services.changeFavourite(params);
+      await services.changeFavourite(params.data);
+      params.onSuccess?.();
     } catch (error: any) {
+      params.onError?.(error.response?.data.msg || 'Có lỗi xảy ra');
       if (error.response?.status === 403) {
         localStorage.removeItem('music_token');
         dispatch(logout());

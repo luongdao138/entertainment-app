@@ -14,6 +14,7 @@ import AlreadyAuth from './components/AlreadyAuth';
 import RetrievePassword from './pages/Auth/RetrievePassword';
 import appRoutes from './constants/appRoutes';
 import PlaylistDetailPage from './pages/PlaylistDetailPage';
+import LibraryPlaylist from './pages/MyMusicPage/LibraryPlaylist';
 
 function App() {
   return (
@@ -33,6 +34,10 @@ function App() {
                 <Route path='upload' element={<UploadedSong />} />
               </Route>
             </Route>
+            <Route
+              path={appRoutes.LIBRARY_PLAYLIST}
+              element={<LibraryPlaylist />}
+            />
             <Route path='profile' element={<UserProfilePage />} />
           </Route>
 

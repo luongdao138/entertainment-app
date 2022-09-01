@@ -3,6 +3,10 @@ import styled from 'styled-components';
 interface Props {
   openMenu?: boolean;
   is_liked?: boolean;
+  is_current_audio?: boolean;
+  is_active?: boolean;
+  is_show_checkbox?: boolean;
+  is_selected?: boolean;
 }
 
 export const Container = styled.div`
@@ -24,6 +28,29 @@ export const Container = styled.div`
       margin-right: 1rem;
       font-size: 1.5rem;
       color: hsla(0, 0%, 100%, 0.5);
+      opacity: ${(props: Props) =>
+        props.is_show_checkbox ? 0 : props.is_active ? 0 : 1};
+      visibility: ${(props: Props) =>
+        props.is_show_checkbox
+          ? 'hidden'
+          : props.is_active
+          ? 'hidden'
+          : 'visible'};
+    }
+
+    & .song-checkbox {
+      position: absolute;
+      top: 50%;
+      z-index: 10;
+      transform: translateY(-50%);
+      opacity: ${(props: Props) =>
+        !props.is_show_checkbox ? (props.is_active ? 1 : 0) : 1};
+      visibility: ${(props: Props) =>
+        !props.is_show_checkbox
+          ? props.is_active
+            ? 'visible'
+            : 'hidden'
+          : 'visible'};
     }
   }
 
@@ -116,7 +143,17 @@ export const Container = styled.div`
   }
 
   &:hover {
-    background-color: #2f283a;
+    background-color: ${(props: Props) =>
+      props.is_active ? '#3A3344' : '#2f283a'};
+
+    & .music-icon {
+      opacity: 0;
+      visibility: hidden;
+    }
+    & .song-checkbox {
+      opacity: 1;
+      visibility: visible;
+    }
 
     & .song-thumbnail {
       cursor: pointer;
@@ -247,6 +284,13 @@ export const Container = styled.div`
       }
     }
   }
+
+  background-color: ${(props: Props) =>
+    props.is_active
+      ? '#3A3344'
+      : props.is_current_audio
+      ? '#2f283a'
+      : 'transparent'};
 `;
 
 export const ProgressItem = styled.div`

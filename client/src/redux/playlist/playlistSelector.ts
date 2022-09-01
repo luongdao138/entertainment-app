@@ -7,3 +7,8 @@ export const getPrivatePlaylist = createSelector(
   getRoot,
   (state) => state.private.data
 );
+
+export const getLibraryPlaylist = createSelector(
+  getRoot,
+  (state) => state.library.data
+);

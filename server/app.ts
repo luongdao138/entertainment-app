@@ -29,18 +29,100 @@ app.use(credentialMiddleware);
 app.use(cors(corsConfig as CorsOptions));
 
 app.get('/', async (req, res) => {
-  await prisma.user.delete({
-    where: {
-      email: 'luongtuduong296@gmail.com',
-    },
-  });
+  // await prisma.user.delete({
+  //   where: {
+  //     email: 'luongtuduong296@gmail.com',
+  //   },
+  // });
   // const data = await prisma.user.update({
   //   where: { email: 'daovanluongpdl@gmail.com' },
   //   data: {
   //     is_verified: true,
   //   },
   // });
-  return res.json({ msg: 'Success' });
+
+  // const data = await prisma.user.create({
+  //   data: {
+  //     email: 'zingmp3@gmail.com',
+  //     full_name: 'Zing MP3',
+  //     password: '$2a$10$WIFDCyPIjVsH4eeOPhMJKOxBZL2p7MnA.iBFeH0HQAaSf99f82UUe',
+  //     is_premium: true,
+  //     is_verified: true,
+  //   },
+  // });
+
+  // const data = await prisma.user.findMany();
+  // const data = await prisma.user.update({
+  //   where: { email: 'zingmp3@gmail.com' },
+  //   data: {
+  //     password: '$2a$10$WIFDCyPIjVsH4eeOPhMJKOxBZL2p7MnA.iBFeH0HQAaSf99f82UUe',
+  //   },
+  // });
+
+  // await prisma.playlist.update({
+  //   where: {
+  //     id: 'f3a92822-2bd3-43c8-abab-93777c02ecc4',
+  //   },
+  //   data: {
+  //     liked_by: {
+  //       connect: {
+  //         id: '9ec85640-b04a-4fab-ad81-238fb084c908',
+  //       },
+  //     },
+  //   },
+  // });
+
+  // await prisma.playlist.update({
+  //   where: {
+  //     id: 'cb171ee9-ba6f-48fd-9389-c247b89c154f',
+  //   },
+  //   data: {
+  //     liked_by: {
+  //       connect: {
+  //         id: '9ec85640-b04a-4fab-ad81-238fb084c908',
+  //       },
+  //     },
+  //   },
+  // });
+  // const data = await prisma.playlist.findMany({
+  //   where: {
+  //     liked_by: { some: { id: '9ec85640-b04a-4fab-ad81-238fb084c908' } },
+  //   },
+  // });
+
+  // await prisma.playlist.update({
+  //   where: {
+  //     id: 'f3a92822-2bd3-43c8-abab-93777c02ecc4',
+  //   },
+  //   data: {
+  //     liked_by: {
+  //       create: {
+  //         user: {
+  //           connect: {
+  //             id: '9ec85640-b04a-4fab-ad81-238fb084c908',
+  //           },
+  //         },
+  //       },
+  //     },
+  //   },
+  // });
+
+  const data = await prisma.user.findMany({
+    include: {
+      favourite_playlists: {
+        select: {
+          playlist: {
+            select: {
+              id: true,
+              title: true,
+            },
+          },
+        },
+      },
+    },
+  });
+
+  return res.json({ data });
 });
 
 app.use('/auth', authRouter);

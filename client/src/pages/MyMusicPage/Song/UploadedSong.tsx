@@ -9,6 +9,7 @@ import Progress from '../../../components/LinearProgress';
 import { useUploadContext } from '../../../context/UploadContext';
 import { MAX_SONG_UPLOADED } from '../../../constants';
 import { useAuthContext } from '../../../context/AuthContext';
+import SongList from '../../../components/SongList';
 
 export const NoSongContainer = styled.div`
   display: flex;
@@ -135,9 +136,7 @@ const UploadedSong = () => {
               </button>
             )}
           </div>
-          {songs.map((song) => (
-            <SongItem song={song} key={song.id} />
-          ))}
+          <SongList songs={songs} />
         </Container>
       )}
     </>

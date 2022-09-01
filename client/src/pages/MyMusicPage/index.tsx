@@ -6,8 +6,12 @@ import PlaylistItem from '../../components/PlaylistItem';
 import { useUploadPlaylistContext } from '../../context/UploadPlaylistContext';
 import { useEffect, useRef } from 'react';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
-import { getPrivatePlaylists } from '../../redux/playlist/playlistActions';
-import { getPrivatePlaylist } from '../../redux/playlist/playlistSelector';
+import {
+  changePlaylistFavourite,
+  getPrivatePlaylists,
+} from '../../redux/playlist/playlistActions';
+import { getLibraryPlaylist } from '../../redux/playlist/playlistSelector';
+import appRoutes from '../../constants/appRoutes';
 
 const Container = styled.div`
   padding-top: 7rem;
@@ -140,7 +144,11 @@ const MyMusicPage = () => {
   const { openUploadPlaylistForm } = useUploadPlaylistContext();
   const isFirstRenderRef = useRef<boolean>(false);
   const dispatch = useAppDispatch();
-  const privatePlaylists = useAppSelector(getPrivatePlaylist);
+  const library_playlists = useAppSelector(getLibraryPlaylist);
+
+  const handleChangeFavouritePlaylist = (id: string) => {
+    dispatch(changePlaylistFavourite({ id }));
+  };
 
   useEffect(() => {
     if (isFirstRenderRef.current) {
@@ -162,15 +170,28 @@ const MyMusicPage = () => {
               <MdAdd />
             </button>
           </div>
-          <Link to='/' className='playlist__header__right'>
+          <Link
+            to={appRoutes.LIBRARY_PLAYLIST}
+            className='playlist__header__right'
+          >
             <span>Tất cả</span>
             <BsChevronRight />
           </Link>
         </div>
 
         <div className='playlist__list'>
-          {privatePlaylists.map((playlist) => (
-            <PlaylistItem key={playlist.id} playlist={playlist} />
+          {library_playlists.map((playlist) => (
+            <PlaylistItem
+              key={playlist.id}
+              playlist={playlist}
+              onDeletePlaylistSuccess={() => {
+                dispatch(getPrivatePlaylists({ page: 1, limit: 5 }));
+              }}
+              onClickLikePlaylist={() =>
+                handleChangeFavouritePlaylist(playlist.id)
+              }
+              showChangeFavouriteConfirmModal
+            />
           ))}
         </div>
       </div>

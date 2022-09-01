@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Container, Divider, Logo, Menu, MenuItem } from './style';
 import { MdAdd, MdOutlineLibraryMusic } from 'react-icons/md';
@@ -7,11 +7,43 @@ import LoginRequired from '../../../components/LoginRequired';
 import appRoutes from '../../../constants/appRoutes';
 import { useAuthContext } from '../../../context/AuthContext';
 import { useUploadPlaylistContext } from '../../../context/UploadPlaylistContext';
+import { useAppDispatch, useAppSelector } from '../../../redux/hooks';
+import { getPrivatePlaylists } from '../../../redux/playlist/playlistActions';
+import { getPrivatePlaylist } from '../../../redux/playlist/playlistSelector';
+import PlaylistItem from '../../../components/PlaylistItem';
 
 const Sidebar = () => {
   const { authUser, openAuthModal } = useAuthContext();
   const location = useLocation();
   const { openUploadPlaylistForm } = useUploadPlaylistContext();
+  const dispatch = useAppDispatch();
+  const isFirstRenderRef = useRef<boolean>(true);
+  const private_playlists = useAppSelector(getPrivatePlaylist);
+
+  const handleGetPlaylists = () => {
+    dispatch(
+      getPrivatePlaylists({
+        is_own: true,
+      })
+    );
+
+    dispatch(
+      getPrivatePlaylists({
+        page: 1,
+        limit: 5,
+      })
+    );
+  };
+
+  useEffect(() => {
+    if (isFirstRenderRef.current) {
+      isFirstRenderRef.current = false;
+      return;
+    }
+    if (authUser) {
+      handleGetPlaylists();
+    }
+  }, [authUser]);
 
   return (
     <Container>
@@ -90,12 +122,25 @@ const Sidebar = () => {
             <button onClick={openAuthModal}>Đăng nhập</button>
           </div>
         )}
+
+        <div className='private-playlists'>
+          {private_playlists.map((playlist) => (
+            <PlaylistItem
+              playlist={playlist}
+              is_from_sidebar
+              key={playlist.id}
+              onDeletePlaylistSuccess={handleGetPlaylists}
+            />
+          ))}
+        </div>
       </div>
 
-      <button className='sidebar-bottom' onClick={openUploadPlaylistForm}>
-        <MdAdd />
-        <span>Tạo playlist mới</span>
-      </button>
+      <LoginRequired>
+        <button className='sidebar-bottom' onClick={openUploadPlaylistForm}>
+          <MdAdd />
+          <span>Tạo playlist mới</span>
+        </button>
+      </LoginRequired>
     </Container>
   );
 };

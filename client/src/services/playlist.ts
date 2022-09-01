@@ -16,6 +16,7 @@ export interface Playlist {
   public_at: Date;
   is_owner: boolean;
   can_edit: boolean;
+  is_liked?: boolean;
   can_delete: boolean;
 }
 
@@ -32,6 +33,7 @@ export interface CreatePlaylistResponse {
 export interface GetPrivatePlaylistParams {
   page?: number;
   limit?: number;
+  is_own?: boolean;
 }
 
 export interface GetPrivatePlaylistResponse {
@@ -48,6 +50,10 @@ export interface UpdatePlaylistParams {
 }
 
 export interface DeletePlaylistParams {
+  id: string;
+}
+
+export interface ChangePlaylistFavouriteParams {
   id: string;
 }
 
@@ -83,9 +89,20 @@ export const updatePlaylist = async (params: UpdatePlaylistParams) => {
 
   return res.data;
 };
+
 export const deletePlaylist = async (params: DeletePlaylistParams) => {
   const res = await privateClient.delete(
     apiEndpoints.DELETE_PLAYLIST.replace(':playlist_id', params.id)
+  );
+
+  return res.data;
+};
+
+export const changePlaylistFavourite = async (
+  params: ChangePlaylistFavouriteParams
+): Promise<{ msg: string }> => {
+  const res = await privateClient.put(
+    apiEndpoints.CHANGE_PLAYLIST_FAVOURITE.replace(':playlist_id', params.id)
   );
 
   return res.data;

@@ -1,5 +1,6 @@
 import React, { useEffect, useRef } from 'react';
 import SongItem from '../../../components/SongItem';
+import SongList from '../../../components/SongList';
 import { useAppDispatch, useAppSelector } from '../../../redux/hooks';
 import { getFavouriteSong } from '../../../redux/song/songActions';
 import { getUsersFavouriteSongs } from '../../../redux/song/songSelectors';
@@ -17,13 +18,7 @@ const FavouriteSong = () => {
 
     dispatch(getFavouriteSong());
   }, []);
-  return (
-    <div>
-      {songs.map((song) => (
-        <SongItem song={song} key={song.id} />
-      ))}
-    </div>
-  );
+  return <SongList songs={songs} />;
 };
 
 export default FavouriteSong;

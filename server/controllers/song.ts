@@ -7,9 +7,11 @@ const songController = {
     const user = req.user;
 
     const songCount = await prisma.song.count({ where: { user_id: user.id } });
-    console.log({songCount})
-    if(songCount >= 20 && !user.is_premium) {
-       return res.status(400).json({ msg: 'Tải lên thất bại, trở thành thành viên premium để tải thêm bài hát' })
+    console.log({ songCount });
+    if (songCount >= 20 && !user.is_premium) {
+      return res.status(400).json({
+        msg: 'Tải lên thất bại, trở thành thành viên premium để tải thêm bài hát',
+      });
     }
 
     const newSong = await prisma.song.create({
@@ -113,7 +115,6 @@ const songController = {
     }
 
     const is_liked = song.liked_by.some((x) => x.id === user.id);
-    console.log({ is_liked });
 
     if (is_liked) {
       // user already like this song => remove

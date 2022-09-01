@@ -18,6 +18,7 @@ const apiEndpoints = {
   GET_PRIVATE_PLAYLIST: '/playlist/private',
   EIDT_PLAYLIST: '/playlist/:playlist_id',
   DELETE_PLAYLIST: '/playlist/:playlist_id',
+  CHANGE_PLAYLIST_FAVOURITE: '/playlist/favourite/:playlist_id',
 };
 
 export default apiEndpoints;

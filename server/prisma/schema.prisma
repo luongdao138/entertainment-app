@@ -27,12 +27,13 @@ model User {
   is_premium    Boolean @default(false)
 
   songs           Song[] @relation("uploaded")
-  favourite_songs Song[] @relation("favourite")
+  favourite_songs Song[] @relation("FavouriteSong")
 
   playlists Playlist[] @relation("created")
   is_deleted Boolean @default(false)
   deleted_at DateTime?
-  favourite_playlists Playlist[] @relation("favourite_playlist")
+
+  favourite_playlists FavouritePlaylist[]
 }
 
 enum Privacy {
@@ -56,10 +57,10 @@ model Song {
   privacy Privacy @default(private)
   public_at DateTime? 
 
-  liked_by User[] @relation("favourite")
+  liked_by User[] @relation("FavouriteSong")
   is_deleted Boolean @default(false)
   deleted_at DateTime?
-  playlists Playlist[] @relation("belong_to")
+  playlists Playlist[] 
 }
 
 model Playlist {
@@ -69,7 +70,7 @@ model Playlist {
    
    creator User @relation("created",  fields: [creator_id], references: [id])
    creator_id String
-   songs Song[] @relation("belong_to")
+   songs Song[] 
 
    privacy Privacy @default(private)
    play_random  Boolean @default(true)
@@ -78,5 +79,51 @@ model Playlist {
    updated_at DateTime @updatedAt
    is_deleted Boolean @default(false)
    deleted_at DateTime?
-   liked_by User[] @relation("favourite_playlist")
+
+   artists Artist[] 
+   categories Category[]
+
+   liked_by FavouritePlaylist[]
+}
+
+model FavouritePlaylist {
+    user User @relation(fields: [user_id], references: [id])
+    user_id String
+    playlist Playlist @relation(fields: [playlist_id], references: [id])
+    playlist_id String
+    created_at DateTime @default(now())
+
+    @@id([user_id, playlist_id])
+}
+
+model Artist {
+   id String @id @default(uuid())
+   name String
+   thumbnail String @default("https://photo-zmp3.zmdcdn.me/artist_default_2.png")
+   birthday DateTime?
+   biography String?
+   national String?
+   realname String?
+   
+   play_lists Playlist[] 
+
+   created_at DateTime @default(now())
+   updated_at DateTime @updatedAt
+   is_deleted Boolean @default(false)
+   deleted_at DateTime?
+}
+
+model Category {
+   id String @id @default(uuid())
+   name String
+   thumbnail String
+   parent Category? @relation("NestCategory", fields: [parentId], references: [id])
+   parentId String
+   children Category[] @relation("NestCategory")
+   playlists Playlist[] 
+
+   created_at DateTime @default(now())
+   updated_at DateTime @updatedAt
+   is_deleted Boolean @default(false)
+   deleted_at DateTime?
 }

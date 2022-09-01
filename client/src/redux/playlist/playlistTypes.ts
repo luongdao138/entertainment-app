@@ -3,4 +3,5 @@ export const PLAYLIST_ACTION_TYPES = {
   GET_PRIVATE_PLAYLIST: 'playlist/getPrivate',
   EDIT_PLAYLIST: 'playlist/edit',
   DELETE_PLAYLIST: 'playlist/delete',
+  CHANGE_PLAYLIST_FAVOURITE: 'playlist/changeFavourite',
 };
