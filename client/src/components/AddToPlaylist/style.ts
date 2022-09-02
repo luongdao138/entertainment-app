@@ -51,6 +51,11 @@ export const PlaylistContainer = styled.div`
     }
   }
 
+  & .list-playlists {
+    max-height: 20rem;
+    overflow: auto;
+  }
+
   & .add-playlist-item {
     display: flex;
     align-items: center;

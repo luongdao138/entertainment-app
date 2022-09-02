@@ -11,34 +11,34 @@ datasource db {
 }
 
 model User {
-  id            String  @id @default(uuid())
-  full_name     String
-  profile_photo String  @default("https://ca.slack-edge.com/T2JUP6F0A-U03L7HL9WBF-g6ea89c2bc88-512")
-  email         String  @unique
-  phone         String?
-  date_of_birth DateTime?
-  address String?
-  title String?
-  password      String
-  refresh_token String?
+  id                    String    @id @default(uuid())
+  full_name             String
+  profile_photo         String    @default("https://ca.slack-edge.com/T2JUP6F0A-U03L7HL9WBF-g6ea89c2bc88-512")
+  email                 String    @unique
+  phone                 String?
+  date_of_birth         DateTime?
+  address               String?
+  title                 String?
+  password              String
+  refresh_token         String?
   forgot_password_token String?
-  verify_token String?
-  is_verified   Boolean @default(false)
-  is_premium    Boolean @default(false)
+  verify_token          String?
+  is_verified           Boolean   @default(false)
+  is_premium            Boolean   @default(false)
 
-  songs           Song[] @relation("uploaded")
-  favourite_songs Song[] @relation("FavouriteSong")
+  songs           Song[]          @relation("uploaded")
+  favourite_songs FavouriteSong[]
 
-  playlists Playlist[] @relation("created")
-  is_deleted Boolean @default(false)
+  playlists  Playlist[] @relation("created")
+  is_deleted Boolean    @default(false)
   deleted_at DateTime?
 
   favourite_playlists FavouritePlaylist[]
 }
 
 enum Privacy {
-   private
-   public
+  private
+  public
 }
 
 model Song {
@@ -54,76 +54,97 @@ model Song {
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
 
-  privacy Privacy @default(private)
-  public_at DateTime? 
+  privacy   Privacy   @default(private)
+  public_at DateTime?
 
-  liked_by User[] @relation("FavouriteSong")
-  is_deleted Boolean @default(false)
-  deleted_at DateTime?
-  playlists Playlist[] 
+  liked_by         FavouriteSong[]
+  is_deleted       Boolean         @default(false)
+  deleted_at       DateTime?
+  belong_playlists PlaylistSong[]
 }
 
 model Playlist {
-   id String @id @default(uuid())
-   thumbnail String @default("https://photo-zmp3.zmdcdn.me/album_default.png")
-   title String
-   
-   creator User @relation("created",  fields: [creator_id], references: [id])
-   creator_id String
-   songs Song[] 
+  id        String @id @default(uuid())
+  thumbnail String @default("https://photo-zmp3.zmdcdn.me/album_default.png")
+  title     String
 
-   privacy Privacy @default(private)
-   play_random  Boolean @default(true)
-   public_at DateTime? 
-   created_at DateTime @default(now())
-   updated_at DateTime @updatedAt
-   is_deleted Boolean @default(false)
-   deleted_at DateTime?
+  creator    User           @relation("created", fields: [creator_id], references: [id])
+  creator_id String
+  has_songs  PlaylistSong[]
 
-   artists Artist[] 
-   categories Category[]
+  privacy     Privacy   @default(private)
+  play_random Boolean   @default(true)
+  public_at   DateTime?
+  created_at  DateTime  @default(now())
+  updated_at  DateTime  @updatedAt
+  is_deleted  Boolean   @default(false)
+  deleted_at  DateTime?
 
-   liked_by FavouritePlaylist[]
+  artists    Artist[]
+  categories Category[]
+
+  liked_by FavouritePlaylist[]
+}
+
+model PlaylistSong {
+  playlist    Playlist @relation(fields: [playlist_id], references: [id])
+  playlist_id String
+  song        Song     @relation(fields: [song_id], references: [id])
+  song_id     String
+  created_at  DateTime @default(now())
+  position    Int
+
+  @@id([playlist_id, song_id])
 }
 
 model FavouritePlaylist {
-    user User @relation(fields: [user_id], references: [id])
-    user_id String
-    playlist Playlist @relation(fields: [playlist_id], references: [id])
-    playlist_id String
-    created_at DateTime @default(now())
+  user        User     @relation(fields: [user_id], references: [id])
+  user_id     String
+  playlist    Playlist @relation(fields: [playlist_id], references: [id])
+  playlist_id String
+  created_at  DateTime @default(now())
 
-    @@id([user_id, playlist_id])
+  @@id([user_id, playlist_id])
+}
+
+model FavouriteSong {
+  user       User     @relation(fields: [user_id], references: [id])
+  user_id    String
+  song       Song     @relation(fields: [song_id], references: [id])
+  song_id    String
+  created_at DateTime @default(now())
+
+  @@id([user_id, song_id])
 }
 
 model Artist {
-   id String @id @default(uuid())
-   name String
-   thumbnail String @default("https://photo-zmp3.zmdcdn.me/artist_default_2.png")
-   birthday DateTime?
-   biography String?
-   national String?
-   realname String?
-   
-   play_lists Playlist[] 
+  id        String    @id @default(uuid())
+  name      String
+  thumbnail String    @default("https://photo-zmp3.zmdcdn.me/artist_default_2.png")
+  birthday  DateTime?
+  biography String?
+  national  String?
+  realname  String?
 
-   created_at DateTime @default(now())
-   updated_at DateTime @updatedAt
-   is_deleted Boolean @default(false)
-   deleted_at DateTime?
+  play_lists Playlist[]
+
+  created_at DateTime  @default(now())
+  updated_at DateTime  @updatedAt
+  is_deleted Boolean   @default(false)
+  deleted_at DateTime?
 }
 
 model Category {
-   id String @id @default(uuid())
-   name String
-   thumbnail String
-   parent Category? @relation("NestCategory", fields: [parentId], references: [id])
-   parentId String
-   children Category[] @relation("NestCategory")
-   playlists Playlist[] 
+  id        String     @id @default(uuid())
+  name      String
+  thumbnail String
+  parent    Category?  @relation("NestCategory", fields: [parentId], references: [id])
+  parentId  String
+  children  Category[] @relation("NestCategory")
+  playlists Playlist[]
 
-   created_at DateTime @default(now())
-   updated_at DateTime @updatedAt
-   is_deleted Boolean @default(false)
-   deleted_at DateTime?
+  created_at DateTime  @default(now())
+  updated_at DateTime  @updatedAt
+  is_deleted Boolean   @default(false)
+  deleted_at DateTime?
 }

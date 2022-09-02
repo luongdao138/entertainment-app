@@ -91,7 +91,6 @@ export default function LibraryPlaylist() {
             <PlaylistItem
               playlist={playlist}
               key={playlist.id}
-              onDeletePlaylistSuccess={handleGetPlaylists}
               onClickLikePlaylist={() =>
                 handleChangeFavouritePlaylist(playlist.id)
               }
@@ -101,7 +100,7 @@ export default function LibraryPlaylist() {
         )}
       </div>
     );
-  }, [private_playlists, library_playlists]);
+  }, [private_playlists, library_playlists, value]);
 
   return (
     <Container>

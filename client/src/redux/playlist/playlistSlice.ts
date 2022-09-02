@@ -1,4 +1,4 @@
-import { createSlice } from '@reduxjs/toolkit';
+import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { Playlist } from '../../services/playlist';
 import {
   changePlaylistFavourite,
@@ -29,7 +29,11 @@ const initialState: SliceState = {
 const playlistSlice = createSlice({
   name: 'playlist',
   initialState,
-  reducers: {},
+  reducers: {
+    addFavouritePlaylist(state, action: PayloadAction<{ playlist: Playlist }>) {
+      state.library.data.unshift(action.payload.playlist);
+    },
+  },
   extraReducers(builder) {
     builder
       .addCase(getPrivatePlaylists.fulfilled, (state, { payload }) => {
@@ -69,7 +73,7 @@ const playlistSlice = createSlice({
         state.library.data = state.library.data.filter((p) => p.id !== id);
       })
       .addCase(changePlaylistFavourite.fulfilled, (state, action) => {
-        state.private.data = state.private.data.filter(
+        state.library.data = state.library.data.filter(
           (p) => p.id !== action.payload.id
         );
       })
@@ -79,4 +83,5 @@ const playlistSlice = createSlice({
   },
 });
 
+export const { addFavouritePlaylist } = playlistSlice.actions;
 export default playlistSlice.reducer;

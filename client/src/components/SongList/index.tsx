@@ -107,7 +107,6 @@ const SongList: React.FC<Props> = ({ songs }) => {
         MenuListProps={{
           'aria-labelledby': 'more-button',
         }}
-        disablePortal
         anchorEl={moreAnchorEl}
         open={openMoreMenu}
         onClose={handleCloseMoreMenu}

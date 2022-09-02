@@ -109,14 +109,15 @@ app.get('/', async (req, res) => {
 
   const data = await prisma.user.findMany({
     include: {
-      favourite_playlists: {
+      favourite_songs: {
         select: {
-          playlist: {
+          song: {
             select: {
+              name: true,
               id: true,
-              title: true,
             },
           },
+          created_at: true,
         },
       },
     },

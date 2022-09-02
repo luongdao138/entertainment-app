@@ -26,13 +26,6 @@ const Sidebar = () => {
         is_own: true,
       })
     );
-
-    dispatch(
-      getPrivatePlaylists({
-        page: 1,
-        limit: 5,
-      })
-    );
   };
 
   useEffect(() => {
@@ -129,7 +122,6 @@ const Sidebar = () => {
               playlist={playlist}
               is_from_sidebar
               key={playlist.id}
-              onDeletePlaylistSuccess={handleGetPlaylists}
             />
           ))}
         </div>

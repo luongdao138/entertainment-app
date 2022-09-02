@@ -158,8 +158,8 @@ const playlistController = {
         .json({ msg: 'Tên của playlist không được để trống' });
     }
 
-    const play_list = await prisma.playlist.findUnique({
-      where: { id: play_list_id },
+    const play_list = await prisma.playlist.findFirst({
+      where: { id: play_list_id, is_deleted: false },
     });
 
     if (!play_list || play_list.is_deleted) {
@@ -190,8 +190,8 @@ const playlistController = {
     const user = req.user;
     const { play_list_id } = req.params;
 
-    const play_list = await prisma.playlist.findUnique({
-      where: { id: play_list_id },
+    const play_list = await prisma.playlist.findFirst({
+      where: { id: play_list_id, is_deleted: false },
     });
 
     if (!play_list || play_list.is_deleted) {
@@ -220,9 +220,10 @@ const playlistController = {
     const user = req.user;
 
     const { playlist_id } = req.params;
-    const playlist = await prisma.playlist.findUnique({
+    const playlist = await prisma.playlist.findFirst({
       where: {
         id: playlist_id,
+        is_deleted: false,
       },
     });
 
@@ -234,49 +235,29 @@ const playlistController = {
       return res.status(400).json({ msg: 'User là người tạo ra playlist' });
     }
 
-    const is_liked = await prisma.playlist.findFirst({
+    const favourite_playlists = await prisma.favouritePlaylist.findMany({
       where: {
-        id: playlist_id,
-        liked_by: {
-          some: {
-            user_id: user._id,
-          },
-        },
+        playlist_id,
+      },
+      select: {
+        user_id: true,
       },
     });
 
+    const is_liked = favourite_playlists.some((fp) => fp.user_id === user.id);
+
     if (!is_liked) {
-      await prisma.playlist.update({
-        where: {
-          id: playlist_id,
-        },
-        data: {
-          liked_by: {
-            create: {
-              user: {
-                connect: {
-                  id: user.id,
-                },
-              },
-            },
-          },
-        },
+      await prisma.favouritePlaylist.create({
+        data: { playlist_id, user_id: user.id },
       });
 
       return res.json({ msg: 'Đã thêm playlist vào thư viện' });
     } else {
-      await prisma.playlist.update({
+      await prisma.favouritePlaylist.delete({
         where: {
-          id: playlist_id,
-        },
-        data: {
-          liked_by: {
-            delete: {
-              user_id_playlist_id: {
-                user_id: user.id,
-                playlist_id: playlist_id,
-              },
-            },
+          user_id_playlist_id: {
+            playlist_id,
+            user_id: user.id,
           },
         },
       });
