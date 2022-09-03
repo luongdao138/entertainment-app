@@ -39,6 +39,16 @@ const songSlice = createSlice({
     //        }
     //      })
     //  }
+
+    editSongSucess(state, action: PayloadAction<{ song: Song }>) {
+      state.uploaded.data = state.uploaded.data.map((song) => {
+        if (song.id === action.payload.song.id) {
+          return action.payload.song;
+        } else {
+          return song;
+        }
+      });
+    },
   },
   extraReducers(builder) {
     builder
@@ -56,4 +66,5 @@ const songSlice = createSlice({
   initialState,
 });
 
+export const { editSongSucess } = songSlice.actions;
 export default songSlice.reducer;

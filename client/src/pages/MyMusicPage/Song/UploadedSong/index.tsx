@@ -11,10 +11,13 @@ import SongList from '../../../../components/SongList';
 import { Container, NoSongContainer } from './style';
 import Modal from '../../../../components/Modal';
 import EditSongForm from '../../../../components/EditSongForm';
+import { Song } from '../../../../services/song';
 
 const UploadedSong = () => {
   const { openUploadForm } = useUploadContext();
   const dispatch = useAppDispatch();
+
+  const [editedSong, setEditedSong] = useState<Song | null>(null);
   const [openEditSongForm, setOpenEditSongForm] = useState<boolean>(false);
   // const firstRenderRef = useRef<boolean>(true);
   const songs = useAppSelector(getUsersUploadedSongs);
@@ -28,6 +31,10 @@ const UploadedSong = () => {
 
   const handleCloseEditSongForm = () => {
     setOpenEditSongForm(false);
+  };
+
+  const changeEditedSong = (song: Song) => {
+    setEditedSong(song);
   };
 
   useEffect(() => {
@@ -46,7 +53,10 @@ const UploadedSong = () => {
         onClose={handleCloseEditSongForm}
         maxWidth='sm'
       >
-        <EditSongForm closeEditSongModal={handleCloseEditSongForm} />
+        <EditSongForm
+          closeEditSongModal={handleCloseEditSongForm}
+          editedSong={editedSong}
+        />
       </Modal>
       {!songs.length ? (
         <NoSongContainer>
@@ -86,6 +96,7 @@ const UploadedSong = () => {
             can_delete_song
             can_edit_song
             handleOpenEditSongForm={handleOpenEditSongForm}
+            changeEditedSong={changeEditedSong}
           />
         </Container>
       )}

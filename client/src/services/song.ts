@@ -14,6 +14,7 @@ export interface Song {
   is_liked: boolean;
   privacy?: SongPrivacy;
   position?: number;
+  belong_categories: { id: string }[];
 }
 
 export interface UploadSongParams {
@@ -31,6 +32,17 @@ export interface UploadSongResponse {
 export interface GetUploadedSongResponse {
   songs: Song[];
 }
+
+export type EditSongParams = {
+  id: string;
+  data: {
+    name?: string;
+    singer_name?: string;
+    privacy?: SongPrivacy;
+    categories?: string[];
+    thumbnail?: string;
+  };
+};
 
 export const uploadSong = async (
   params: UploadSongParams
@@ -60,5 +72,16 @@ export const getFavouriteSong = async (): Promise<GetUploadedSongResponse> => {
 };
 
 export const changeFavourite = async (params: string) => {
-  await privateClient.put(apiEndpoints.CHANGE_FAVOURITE.replace(':id', params));
+  const res = await privateClient.put(
+    apiEndpoints.CHANGE_FAVOURITE.replace(':id', params)
+  );
+  return res.data;
+};
+
+export const editSong = async (params: EditSongParams) => {
+  const res = await privateClient.put(
+    apiEndpoints.EDIT_SONG.replace(':song_id', params.id),
+    params.data
+  );
+  return res.data;
 };

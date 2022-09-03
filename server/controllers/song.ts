@@ -1,3 +1,4 @@
+import { error } from 'console';
 import { Request, Response } from 'express';
 import prisma from '../config/prisma';
 
@@ -24,6 +25,11 @@ const songController = {
         url,
         duration,
         user_id: user.id,
+        belong_categories: {
+          connect: {
+            id: '1d24c45a-0904-4ec4-a4a4-d67edab38013',
+          },
+        },
       },
     });
 
@@ -47,6 +53,14 @@ const songController = {
         user_id: user.id,
         is_deleted: false,
       },
+      include: {
+        belong_categories: {
+          select: {
+            id: true,
+          },
+        },
+      },
+
       orderBy: {
         created_at: 'desc',
       },
@@ -88,7 +102,15 @@ const songController = {
       },
       select: {
         created_at: true,
-        song: true,
+        song: {
+          include: {
+            belong_categories: {
+              select: {
+                id: true,
+              },
+            },
+          },
+        },
       },
       orderBy: {
         created_at: 'desc',
@@ -162,6 +184,90 @@ const songController = {
     } catch (error) {
       console.log(error);
       return res.status(500).json({ msg: 'Có lỗi xảy ra' });
+    }
+  },
+
+  // edit bài hát
+  async editSong(req: any, res: Response) {
+    try {
+      const { song_id } = req.params;
+      const user = req.user;
+      const { categories, ...data } = req.body;
+
+      const song = await prisma.song.findFirst({
+        where: { id: song_id, is_deleted: false },
+        select: {
+          user_id: true,
+          belong_categories: {
+            select: {
+              id: true,
+            },
+          },
+        },
+      });
+
+      if (!song) return res.status(404).json({ msg: 'Bài hát không tồn tại' });
+
+      if (song.user_id !== user.id)
+        return res
+          .status(400)
+          .json({ msg: 'Không có quyền chỉnh sửa bài hát này' });
+
+      if (categories) {
+        // tìm ra những category đc thay đổi
+        const old_categories = song?.belong_categories.map((c) => c.id);
+
+        const added_categories = categories.filter(
+          (c: string) => !old_categories.includes(c)
+        );
+        const removed_categories = old_categories.filter(
+          (c) => !categories.includes(c)
+        );
+
+        for (const id of removed_categories) {
+          await prisma.song.update({
+            where: {
+              id: song_id,
+            },
+            data: {
+              belong_categories: {
+                disconnect: {
+                  id,
+                },
+              },
+            },
+          });
+        }
+
+        for (const id of added_categories) {
+          await prisma.song.update({
+            where: {
+              id: song_id,
+            },
+            data: {
+              belong_categories: {
+                connect: {
+                  id,
+                },
+              },
+            },
+          });
+        }
+      }
+
+      await prisma.song.update({
+        where: {
+          id: song_id,
+        },
+        data,
+      });
+
+      return res.json({ msg: 'Chỉnh sửa bài hát thành công' });
+    } catch (error) {
+      console.log(error);
+      return res.status(500).json({
+        msg: 'Có lỗi xảy ra',
+      });
     }
   },
 };

@@ -458,7 +458,7 @@ const playlistController = {
         },
       });
 
-      // nếu bài hát đã có sẵn trong playlist => trả về ngay message thành công
+      // nếu playlist ko có bài hát này
       if (!playlist_song) {
         return res
           .status(400)
@@ -544,7 +544,15 @@ const playlistController = {
             position: 'asc',
           },
           select: {
-            song: true,
+            song: {
+              include: {
+                belong_categories: {
+                  select: {
+                    id: true,
+                  },
+                },
+              },
+            },
             position: true,
           },
         });
@@ -561,7 +569,15 @@ const playlistController = {
             position: 'asc',
           },
           select: {
-            song: true,
+            song: {
+              include: {
+                belong_categories: {
+                  select: {
+                    id: true,
+                  },
+                },
+              },
+            },
             position: true,
           },
         });

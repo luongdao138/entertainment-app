@@ -9,27 +9,29 @@ import { useAppDispatch } from '../../redux/hooks';
 import { addSongToPlaylist } from '../../services/playlist';
 import { Song } from '../../services/song';
 import AddToPlaylist from '../AddToPlaylist';
-import {
-  MdOutlineDeleteOutline,
-  MdOutlineModeEdit,
-  MdPlaylistAdd,
-} from 'react-icons/md';
+import { MdOutlineDeleteOutline, MdOutlineModeEdit } from 'react-icons/md';
 import { Container } from './style';
 
 interface Props {
   song: Song;
   can_delete_song?: boolean;
+  can_remove_out_of_list?: boolean;
   can_edit_song?: boolean;
   handleOpenEditSongForm?: () => void;
   closeSongItemAction: () => void;
+  changeEditedSong?: (song: Song) => void;
+  handleRemoveSongOutOfPlaylist?: (song_id: string) => void;
 }
 
 const SongItemMenu: React.FC<Props> = ({
   song,
   can_delete_song,
   can_edit_song,
+  can_remove_out_of_list,
   handleOpenEditSongForm,
   closeSongItemAction,
+  changeEditedSong,
+  handleRemoveSongOutOfPlaylist,
 }) => {
   const dispatch = useAppDispatch();
   const handleDownloadSong = () => {
@@ -51,6 +53,7 @@ const SongItemMenu: React.FC<Props> = ({
 
   const handleClickEdit = () => {
     handleOpenEditSongForm?.();
+    changeEditedSong?.(song);
     closeSongItemAction();
   };
 
@@ -99,6 +102,12 @@ const SongItemMenu: React.FC<Props> = ({
           <li>
             <MdOutlineDeleteOutline />
             <span>Xóa</span>
+          </li>
+        )}
+        {can_remove_out_of_list && (
+          <li onClick={() => handleRemoveSongOutOfPlaylist?.(song.id)}>
+            <MdOutlineDeleteOutline />
+            <span>Xóa khỏi playlist này</span>
           </li>
         )}
       </ul>

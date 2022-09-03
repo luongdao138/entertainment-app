@@ -24,6 +24,8 @@ const apiEndpoints = {
   GET_SONGS_OF_PLAYLIST: '/playlist/getSong/:playlist_id',
   CHANGE_POSITION_PLAYLIST_SONGS: '/playlist/changeSongPosition',
   GET_PLAYLIST_DETAIL: '/playlist/:playlist_id',
+  GET_ALL_CATEGORIES: '/category',
+  EDIT_SONG: '/song/:song_id',
 };
 
 export default apiEndpoints;

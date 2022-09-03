@@ -5,6 +5,7 @@ import { editPlaylist } from '../playlist/playlistActions';
 import {
   getPlaylistDetailAction,
   getPlaylistSongsAction,
+  removeSongOutOfPlaylistAction,
 } from './playlistDetailActions';
 
 interface SliceState {
@@ -49,6 +50,19 @@ const playlistDetailSlice = createSlice({
       })
       .addCase(getPlaylistSongsAction.fulfilled, (state, action) => {
         state.songs.data = action.payload.songs;
+      })
+      .addCase(removeSongOutOfPlaylistAction.fulfilled, (state, action) => {
+        const { playlist_id, song_id } = action.payload;
+        if (state.data && playlist_id === state.data.id) {
+          state.songs.data = state.songs.data.filter((s) => s.id !== song_id);
+        }
+
+        const new_songs = [...state.songs.data];
+        for (const key in new_songs) {
+          new_songs[key].position = Number(key);
+        }
+
+        state.songs.data = new_songs;
       });
   },
 });

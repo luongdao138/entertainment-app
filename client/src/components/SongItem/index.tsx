@@ -5,13 +5,14 @@ import { BsFillPlayFill } from 'react-icons/bs';
 import { MdMoreHoriz, MdDragIndicator } from 'react-icons/md';
 import { AiOutlineHeart, AiFillHeart } from 'react-icons/ai';
 import { Checkbox, Menu } from '@mui/material';
-import { Song } from '../../services/song';
+import { Song, SongPrivacy } from '../../services/song';
 import { formatSongDuration } from '../../utils/formatTime';
 import { useAppDispatch } from '../../redux/hooks';
 import { changeFavourite } from '../../redux/song/songActions';
 import { toast } from 'react-toastify';
 import SongItemMenu from '../SongItemMenu';
 import SongPrivary from './SongPrivacy';
+import { editSongSucess } from '../../redux/song/songSlice';
 interface Props {
   song: Song;
   focusSong: string | null;
@@ -25,6 +26,9 @@ interface Props {
   can_delete_song?: boolean;
   can_drag?: boolean;
   handleOpenEditSongForm?: () => void;
+  changeEditedSong?: (song: Song) => void;
+  can_remove_out_of_list?: boolean;
+  handleRemoveSongOutOfPlaylist?: (song_id: string) => void;
 }
 
 const SongItem: React.FC<Props> = ({
@@ -39,7 +43,10 @@ const SongItem: React.FC<Props> = ({
   can_change_privacy,
   can_delete_song,
   can_edit_song,
+  changeEditedSong,
+  handleRemoveSongOutOfPlaylist,
   handleOpenEditSongForm,
+  can_remove_out_of_list,
 }) => {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const openMenu = Boolean(anchorEl);
@@ -90,6 +97,10 @@ const SongItem: React.FC<Props> = ({
     );
   };
 
+  const handleChangePrivacySuccess = (new_privacy: SongPrivacy) => {
+    dispatch(editSongSucess({ song: { ...song, privacy: new_privacy } }));
+  };
+
   useEffect(() => {
     setIsLiked(song.is_liked);
   }, [song.is_liked]);
@@ -122,7 +133,10 @@ const SongItem: React.FC<Props> = ({
           handleOpenEditSongForm={handleOpenEditSongForm}
           can_delete_song={can_delete_song}
           can_edit_song={can_edit_song}
+          changeEditedSong={changeEditedSong}
           closeSongItemAction={handleClose}
+          handleRemoveSongOutOfPlaylist={handleRemoveSongOutOfPlaylist}
+          can_remove_out_of_list={can_remove_out_of_list}
         />
       </Menu>
       <Container
@@ -175,6 +189,7 @@ const SongItem: React.FC<Props> = ({
           <SongPrivary
             song_id={song.id}
             initial_privacy={song.privacy || 'private'}
+            onChangePrivacySuccess={handleChangePrivacySuccess}
           />
         )}
 

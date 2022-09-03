@@ -1,4 +1,4 @@
-import React, { useMemo, useState, useCallback } from 'react';
+import React, { useMemo, useEffect, useState, useCallback } from 'react';
 import { MdSort, MdPlaylistAdd, MdMoreHoriz } from 'react-icons/md';
 import SongItem from '../SongItem';
 import { Container } from './style';
@@ -32,7 +32,10 @@ interface Props {
   can_change_privacy?: boolean;
   can_edit_song?: boolean;
   can_delete_song?: boolean;
+  can_remove_out_of_list?: boolean;
   handleOpenEditSongForm?: () => void;
+  changeEditedSong?: (song: Song) => void;
+  handleRemoveSongOutOfPlaylist?: (song_id: string) => void;
 }
 
 export type SortType = 'default' | 'name_az' | 'name_za';
@@ -44,7 +47,10 @@ const SongList: React.FC<Props> = ({
   can_delete_song,
   can_edit_song,
   can_change_privacy,
+  can_remove_out_of_list,
   handleOpenEditSongForm,
+  changeEditedSong,
+  handleRemoveSongOutOfPlaylist,
 }) => {
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
   const [moreAnchorEl, setMoreAnchorEl] = useState<HTMLElement | null>(null);
@@ -204,6 +210,18 @@ const SongList: React.FC<Props> = ({
     }
   };
 
+  const handleReset = () => {
+    clearSelectedSongs();
+    setFocusSong(null);
+    setSortType('default');
+    handleCloseSortMenu();
+    handleCloseMoreMenu();
+  };
+
+  useEffect(() => {
+    return handleReset;
+  }, [playlist_id]);
+
   return (
     <Container>
       <FullscreenLoading open={isAddingSongToPlaylist} />
@@ -351,6 +369,11 @@ const SongList: React.FC<Props> = ({
                             can_edit_song={can_edit_song}
                             can_delete_song={can_delete_song}
                             handleOpenEditSongForm={handleOpenEditSongForm}
+                            can_remove_out_of_list={can_remove_out_of_list}
+                            changeEditedSong={changeEditedSong}
+                            handleRemoveSongOutOfPlaylist={
+                              handleRemoveSongOutOfPlaylist
+                            }
                           />
                         </div>
                       )}

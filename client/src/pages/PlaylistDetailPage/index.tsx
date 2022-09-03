@@ -15,6 +15,7 @@ import {
 import {
   getPlaylistDetailAction,
   getPlaylistSongsAction,
+  removeSongOutOfPlaylistAction,
 } from '../../redux/playlistDetail/playlistDetailActions';
 import { useNavigate, useParams } from 'react-router-dom';
 import PlaylistDetailInfor from '../../components/PlaylistDetailInfor';
@@ -33,6 +34,7 @@ const mockSongs: Song[] = [...new Array(6)].fill({}).map(() => ({
     'https://photo-resize-zmp3.zmdcdn.me/w94_r1x1_webp/cover/3/b/5/9/3b5928ebe6a396a280104733e0e71f5c.jpg',
   updated_at: new Date(),
   url: '',
+  belong_categories: [],
 }));
 
 const PlaylistDetailPage = () => {
@@ -70,6 +72,15 @@ const PlaylistDetailPage = () => {
 
   if (!playlist_detail) return null;
 
+  const handleRemoveSongOutOfPlaylist = (song_id: string) => {
+    dispatch(
+      removeSongOutOfPlaylistAction({
+        playlist_id: playlist_detail.id,
+        song_id,
+      })
+    );
+  };
+
   return (
     <Container>
       <div className='detail-top'>
@@ -90,6 +101,8 @@ const PlaylistDetailPage = () => {
                 can_drag={playlist_detail.is_owner}
                 songs={playlist_songs}
                 playlist_id={playlist_detail.id}
+                can_remove_out_of_list={playlist_detail.is_owner}
+                handleRemoveSongOutOfPlaylist={handleRemoveSongOutOfPlaylist}
               />
 
               <div className='song-count'>

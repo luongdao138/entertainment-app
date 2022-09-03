@@ -33,6 +33,7 @@ const MySelect: React.FC<Props> = ({ name, options, ...props }) => {
           lineHeight: '1.8rem',
           fontFamily: "'Inter', sans-serif",
           padding: '9px 15px',
+
           '&:hover': {
             border: 'none',
           },

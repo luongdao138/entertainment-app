@@ -11,5 +11,6 @@ router
   .post(songController.uploadSong);
 router.route('/favourite').get(songController.getFavouriteSong);
 router.route('/favourite/:songId').put(songController.addOrRemoveFavourite);
+router.route('/:song_id').put(songController.editSong);
 
 export default router;

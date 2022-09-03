@@ -1,5 +1,9 @@
 import styled from 'styled-components';
 
+interface Props {
+  isUploading?: boolean;
+}
+
 export const Container = styled.div`
   width: 100%;
   border-radius: 8px;
@@ -38,7 +42,27 @@ export const Container = styled.div`
       }
       position: relative;
 
+      & .opacity {
+        position: absolute;
+        z-index: 15;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        top: 0;
+        background-color: rgba(0, 0, 0, 0.5);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        opacity: ${(props: Props) => (!props.isUploading ? 0 : 1)};
+        visibility: ${(props: Props) =>
+          !props.isUploading ? 'hidden' : 'visible'};
+        position: absolute;
+      }
+
       .upload-image {
+        opacity: ${(props: Props) => (props.isUploading ? 0 : 1)};
+        visibility: ${(props: Props) =>
+          props.isUploading ? 'hidden' : 'visible'};
         position: absolute;
         z-index: 10;
         left: 0;

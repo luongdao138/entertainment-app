@@ -3,17 +3,26 @@ import {
   MdOutlineKeyboardArrowDown,
   MdOutlineKeyboardArrowUp,
 } from 'react-icons/md';
-import { SongPrivacy } from '../../services/song';
+import { editSong, SongPrivacy } from '../../services/song';
 import { Menu } from '@mui/material';
 import { BsCheck } from 'react-icons/bs';
 import { PrivacyMenu } from './style';
+import { toast } from 'react-toastify';
+import { logout } from '../../redux/auth/authSlice';
+import { useAppDispatch } from '../../redux/hooks';
 
 interface Props {
   song_id: string;
   initial_privacy: SongPrivacy;
+  onChangePrivacySuccess: (new_privacy: SongPrivacy) => void;
 }
 
-const privacyOptions = [
+interface PrivacyOption {
+  label: string;
+  value: SongPrivacy;
+}
+
+const privacyOptions: PrivacyOption[] = [
   {
     label: 'Cá nhân',
     value: 'private',
@@ -24,7 +33,11 @@ const privacyOptions = [
   },
 ];
 
-const SongPrivary: React.FC<Props> = ({ initial_privacy, song_id }) => {
+const SongPrivary: React.FC<Props> = ({
+  initial_privacy,
+  song_id,
+  onChangePrivacySuccess,
+}) => {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const openPrivacyMenu = Boolean(anchorEl);
   const handleOpenPrivacyMenu = (event: React.MouseEvent<HTMLElement>) => {
@@ -33,7 +46,34 @@ const SongPrivary: React.FC<Props> = ({ initial_privacy, song_id }) => {
   const handleClosePrivacyMenu = () => {
     setAnchorEl(null);
   };
+  const dispatch = useAppDispatch();
+
   const [privacy, setPrivacy] = useState<SongPrivacy>(initial_privacy);
+
+  const handleChangeSongPrivacy = async (new_privacy: SongPrivacy) => {
+    if (new_privacy === privacy) return;
+
+    try {
+      await editSong({
+        id: song_id,
+        data: { privacy: new_privacy },
+      });
+      setPrivacy(new_privacy);
+
+      toast.success(
+        `Đã chuyển bài hát thành chế độ ${
+          new_privacy === 'private' ? 'riêng tư' : 'công khai'
+        }`
+      );
+      onChangePrivacySuccess(new_privacy);
+      handleClosePrivacyMenu();
+    } catch (error: any) {
+      if (error.response?.status === 403) {
+        localStorage.removeItem('music_token');
+        dispatch(logout());
+      }
+    }
+  };
 
   return (
     <div className='song-privacy'>
@@ -61,7 +101,7 @@ const SongPrivary: React.FC<Props> = ({ initial_privacy, song_id }) => {
         <PrivacyMenu>
           <ul>
             {privacyOptions.map((po, index) => (
-              <li key={index}>
+              <li key={index} onClick={() => handleChangeSongPrivacy(po.value)}>
                 <span>{po.label}</span>
                 {po.value === privacy && <BsCheck />}
               </li>

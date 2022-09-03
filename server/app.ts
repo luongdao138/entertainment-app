@@ -9,6 +9,7 @@ import authRouter from './routes/auth';
 import userRouter from './routes/user';
 import songRouter from './routes/song';
 import playlistRouter from './routes/playlist';
+import categoryRouter from './routes/category';
 import verifyTokenMiddleware from './middlewares/verifyJwt';
 import prisma from './config/prisma';
 
@@ -107,29 +108,104 @@ app.get('/', async (req, res) => {
   //   },
   // });
 
-  const data = await prisma.user.findMany({
-    include: {
-      favourite_songs: {
-        select: {
-          song: {
-            select: {
-              name: true,
-              id: true,
-            },
-          },
-          created_at: true,
-        },
-      },
-    },
-  });
+  // await prisma.category.createMany({
+  //   data: [
+  //     {
+  //       name: 'Nhạc Hoa',
+  //     },
+  //     {
+  //       name: 'Nhạc Hàn',
+  //     },
+  //     {
+  //       name: 'Nhạc Việt',
+  //     },
+  //     {
+  //       name: 'Nhạc Âu Mỹ',
+  //     },
+  //     {
+  //       name: 'Nhạc phim',
+  //     },
+  //     {
+  //       name: 'Nhạc Thiếu Nhi',
+  //     },
+  //     {
+  //       name: 'Nhạc Không Lời',
+  //     },
+  //     {
+  //       name: 'Trữ Tình & Bolero',
+  //     },
+  //     {
+  //       name: 'EDM',
+  //     },
+  //     {
+  //       name: 'Remix',
+  //     },
+  //     {
+  //       name: 'Hip-hop',
+  //     },
+  //     {
+  //       name: 'R&B',
+  //     },
+  //     {
+  //       name: 'Latin',
+  //     },
+  //     {
+  //       name: 'Acoustic',
+  //     },
+  //     {
+  //       name: 'Jazz',
+  //     },
+  //     {
+  //       name: 'Nhạc Việt Bất Hủ',
+  //     },
+  //     {
+  //       name: 'Piano',
+  //     },
+  //     {
+  //       name: 'Guitar',
+  //     },
+  //     {
+  //       name: 'Rock',
+  //     },
+  //     {
+  //       name: 'Nhạc Trịnh',
+  //     },
+  //     {
+  //       name: 'Indie',
+  //     },
+  //     {
+  //       name: 'Nhạc Âu Mỹ Bất Hủ',
+  //     },
+  //     {
+  //       name: 'Nhạc Trịnh',
+  //     },
+  //   ],
+  // });
 
-  return res.json({ data });
+  // const data = await prisma.user.findMany({
+  //   include: {
+  //     favourite_songs: {
+  //       select: {
+  //         song: {
+  //           select: {
+  //             name: true,
+  //             id: true,
+  //           },
+  //         },
+  //         created_at: true,
+  //       },
+  //     },
+  //   },
+  // });
+
+  return res.json({ msg: 'Success' });
 });
 
 app.use('/auth', authRouter);
 app.use('/user', userRouter);
 app.use('/song', songRouter);
 app.use('/playlist', playlistRouter);
+app.use('/category', categoryRouter);
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {

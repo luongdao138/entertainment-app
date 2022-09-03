@@ -61,6 +61,8 @@ model Song {
   is_deleted       Boolean         @default(false)
   deleted_at       DateTime?
   belong_playlists PlaylistSong[]
+
+  belong_categories Category[]
 }
 
 model Playlist {
@@ -137,9 +139,10 @@ model Artist {
 model Category {
   id        String     @id @default(uuid())
   name      String
-  thumbnail String
+  thumbnail String?
+  cover     String?
   parent    Category?  @relation("NestCategory", fields: [parentId], references: [id])
-  parentId  String
+  parentId  String?
   children  Category[] @relation("NestCategory")
   playlists Playlist[]
 
@@ -147,4 +150,6 @@ model Category {
   updated_at DateTime  @updatedAt
   is_deleted Boolean   @default(false)
   deleted_at DateTime?
+
+  has_songs Song[]
 }

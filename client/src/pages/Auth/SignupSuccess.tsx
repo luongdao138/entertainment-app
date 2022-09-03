@@ -4,9 +4,10 @@ import successIcon from '../../assets/successful-icon.png';
 import { AuthType, useAuthContext } from '../../context/AuthContext';
 
 const Container = styled.div`
-  padding: 5rem 1.6rem;
-  background-color: #170f23;
+  padding: 3.2rem 1.6rem;
+  background-color: #432275;
   color: #fff;
+  border-radius: 4px;
   display: flex;
   align-items: center;
   flex-direction: column;

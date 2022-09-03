@@ -7,6 +7,7 @@ import {
   MdOutlineModeEdit,
   MdPlaylistAdd,
 } from 'react-icons/md';
+import useCopyToClipboard from '../../hooks/useCopyToClipboard';
 import { Container } from './style';
 
 interface Props {
@@ -14,6 +15,7 @@ interface Props {
   can_edit: boolean;
   can_delete: boolean;
   onOpenEditForm?: () => void;
+  closePlaylistItemMenu: () => void;
   onOpenDeleteConfirmModal?: (e: React.MouseEvent<HTMLElement>) => void;
 }
 
@@ -22,8 +24,18 @@ const PlaylistItemMenu: React.FC<Props> = ({
   can_edit,
   playlist_id,
   onOpenEditForm,
+  closePlaylistItemMenu,
   onOpenDeleteConfirmModal,
 }) => {
+  const [_, copyLink] = useCopyToClipboard(
+    'Link đã được sao chép vào clipboard'
+  );
+
+  const handleCopyLinkToClipboard = () => {
+    copyLink(`${import.meta.env.VITE_CLIENT_URL}/playlist/${playlist_id}`);
+    closePlaylistItemMenu();
+  };
+
   return (
     <>
       <Container>
@@ -40,7 +52,7 @@ const PlaylistItemMenu: React.FC<Props> = ({
             <FiDownload />
             <span>Tải xuống</span>
           </li>
-          <li>
+          <li onClick={handleCopyLinkToClipboard}>
             <BsLink45Deg />
             <span>Sao chép link</span>
           </li>

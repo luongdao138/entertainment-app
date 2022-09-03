@@ -140,6 +140,7 @@ const UploadSongForm: React.FC<Props> = ({ closeUploadModal }) => {
       // setIsUploadingAudio(true);
       window.jsmediatags.read(file, {
         onSuccess(data) {
+          console.log(data);
           setName(data.tags.title || null);
           setSingerName(data.tags.artist || null);
         },

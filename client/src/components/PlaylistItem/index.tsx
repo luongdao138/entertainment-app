@@ -143,6 +143,7 @@ const PlaylistItem: React.FC<Props> = ({
           can_edit={playlist.can_edit}
           onOpenDeleteConfirmModal={handleOpenDeleteConfirmModal}
           onOpenEditForm={handleOpenEditPlaylistForm}
+          closePlaylistItemMenu={handleClose}
         />
       </Menu>
 
