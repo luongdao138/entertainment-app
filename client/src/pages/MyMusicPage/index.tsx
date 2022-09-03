@@ -16,7 +16,7 @@ import { Container, NavigationItem } from './style';
 const MyMusicPage = () => {
   const location = useLocation();
   const { openUploadPlaylistForm } = useUploadPlaylistContext();
-  const isFirstRenderRef = useRef<boolean>(false);
+  // const isFirstRenderRef = useRef<boolean>(false);
   const dispatch = useAppDispatch();
   const library_playlists = useAppSelector(getLibraryPlaylist);
 
@@ -25,10 +25,10 @@ const MyMusicPage = () => {
   };
 
   useEffect(() => {
-    if (isFirstRenderRef.current) {
-      isFirstRenderRef.current = false;
-      return;
-    }
+    // if (isFirstRenderRef.current) {
+    //   isFirstRenderRef.current = false;
+    //   return;
+    // }
 
     dispatch(getPrivatePlaylists({ is_own: false }));
   }, []);

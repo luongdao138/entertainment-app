@@ -3,7 +3,7 @@ import styled from 'styled-components';
 export const Container = styled.div`
   display: flex;
   flex-direction: column;
-  margin-bottom: 2rem;
+  margin-bottom: 1.5rem;
 
   & label {
     color: #dadada;
@@ -21,21 +21,21 @@ export const Container = styled.div`
 
   input {
     width: 100%;
-    height: 4rem;
-    border-radius: 2rem;
-    background-color: hsla(0, 0%, 100%, 0.1);
+    background-color: transparent;
+    /* background-color: hsla(0, 0%, 100%, 0.1); */
     border: none;
     color: #eee;
-    padding: 5px 0;
-    font-size: 1.4rem;
-    padding: 0 2rem;
+    padding: 10px 15px;
+    font-size: 12px;
+    border-radius: 4px;
+    border: 1px solid hsla(0, 0%, 100%, 0.1);
 
     ::placeholder {
       color: hsla(0, 0%, 100%, 0.5);
     }
 
     :focus {
-      background-color: #432275;
+      border-color: #7200a1;
     }
   }
 

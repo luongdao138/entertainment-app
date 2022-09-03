@@ -15,6 +15,7 @@ import { createMetaSelector } from '../../redux/metadata/selectors';
 import { clearMetaData } from '../../redux/metadata/actions';
 import { AiFillHeart, AiOutlineHeart } from 'react-icons/ai';
 import LoginRequired from '../LoginRequired';
+import { DEFAULT_PLAYLIST_THUMBNAIL } from '../../constants/images';
 
 interface Props {
   playlist: Playlist;
@@ -188,12 +189,26 @@ const PlaylistItem: React.FC<Props> = ({
           </button>
         </SidebarItemContainer>
       ) : (
-        <Container is_liked={is_liked}>
+        <Container
+          is_multiple={playlist.has_songs.length >= 4}
+          is_liked={is_liked}
+        >
           <Link
             to={appRoutes.PLAYLIST_DETAIL.replace(':playlist_id', playlist.id)}
             className='thumbnail-container'
           >
-            <img src={playlist.thumbnail} alt='' />
+            {playlist.has_songs.length === 0 ? (
+              <img src={DEFAULT_PLAYLIST_THUMBNAIL} alt='' />
+            ) : playlist.has_songs.length >= 4 ? (
+              <div className='imgs'>
+                <img src={playlist.has_songs[0].song.thumbnail} alt='' />
+                <img src={playlist.has_songs[1].song.thumbnail} alt='' />
+                <img src={playlist.has_songs[2].song.thumbnail} alt='' />
+                <img src={playlist.has_songs[3].song.thumbnail} alt='' />
+              </div>
+            ) : (
+              <img src={playlist.has_songs[0].song.thumbnail} />
+            )}
 
             <div className='thumbnail-backdrop'></div>
 

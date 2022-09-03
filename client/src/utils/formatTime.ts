@@ -31,3 +31,20 @@ export const formatDateToInputDateFormat = (date: string | null | Date) => {
     date.getMonth() + 1
   )}-${formatTimeNumber(date.getDate())}`;
 };
+
+export const calcTotalPlaylistTime = (durations: number[]): string => {
+  const total_seconds = durations.reduce((acc, current) => acc + current, 0);
+
+  const total_minutes = Math.ceil(total_seconds / 60);
+
+  if (total_minutes < 60) {
+    return `${total_minutes} phút`;
+  }
+
+  const total_hours = Math.floor(total_minutes / 60);
+  const minutes = total_minutes % 60;
+
+  if (minutes === 0) return `${total_hours} giờ`;
+
+  return `${total_hours} giờ ${total_minutes} phút`;
+};

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useMemo, useState, useCallback } from 'react';
 import { MdSort, MdPlaylistAdd, MdMoreHoriz } from 'react-icons/md';
 import SongItem from '../SongItem';
 import { Container } from './style';
@@ -6,22 +6,75 @@ import { Checkbox, ClickAwayListener, Menu } from '@mui/material';
 import SongSortMenu from '../SongSortMenu';
 import { Song } from '../../services/song';
 import AddToPlaylist from '../AddToPlaylist';
+import {
+  DragDropContext,
+  Droppable,
+  Draggable,
+  DropResult,
+  ResponderProvided,
+} from 'react-beautiful-dnd';
+import { useAppDispatch } from '../../redux/hooks';
+import { changeSongsPosition } from '../../redux/playlistDetail/playlistDetailSlice';
+import {
+  addSongToPlaylist,
+  changeSongPositionInPlaylist,
+  ChangeSongPositionInPlaylistParams,
+} from '../../services/playlist';
+import { logout } from '../../redux/auth/authSlice';
+import { toast } from 'react-toastify';
+import FullscreenLoading from '../Loading/FullScreenLoading';
+import _ from 'lodash';
 
 interface Props {
   songs: Song[];
+  playlist_id?: string;
+  can_drag?: boolean;
+  can_change_privacy?: boolean;
+  can_edit_song?: boolean;
+  can_delete_song?: boolean;
+  handleOpenEditSongForm?: () => void;
 }
 
-const SongList: React.FC<Props> = ({ songs }) => {
+export type SortType = 'default' | 'name_az' | 'name_za';
+
+const SongList: React.FC<Props> = ({
+  songs,
+  playlist_id,
+  can_drag,
+  can_delete_song,
+  can_edit_song,
+  can_change_privacy,
+  handleOpenEditSongForm,
+}) => {
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
   const [moreAnchorEl, setMoreAnchorEl] = useState<HTMLElement | null>(null);
   const openSortMenu = Boolean(anchorEl);
   const openMoreMenu = Boolean(moreAnchorEl);
-  const [sort, setSort] = useState<string>('');
   const [focusSong, setFocusSong] = useState<string | null>(null);
   const [selectedSongs, setSelectedSongs] = useState<string[]>([]);
+  const dispatch = useAppDispatch();
+  const [sort_type, setSortType] = useState<SortType>('default');
+  const [isAddingSongToPlaylist, setIsAddingSongToPlaylist] =
+    useState<boolean>(false);
 
-  const changeSort = (value: string) => {
-    setSort(value);
+  const sorted_songs = useMemo(() => {
+    let new_songs = [...songs];
+    switch (sort_type) {
+      case 'name_az':
+        new_songs.sort((a, b) => (a.name > b.name ? 1 : -1));
+        return new_songs;
+      case 'name_za':
+        new_songs.sort((a, b) => (a.name < b.name ? 1 : -1));
+        return new_songs;
+
+      default:
+        return songs;
+    }
+  }, [sort_type, songs]);
+
+  const changeSortType = (value: SortType) => {
+    setSortType(value);
+    handleCloseSortMenu();
   };
 
   const handleOpenSortMenu = (e: React.MouseEvent<HTMLElement>) => {
@@ -75,8 +128,85 @@ const SongList: React.FC<Props> = ({ songs }) => {
     }
   };
 
+  const debounceChangeSongsPosition = useCallback(
+    _.debounce(async (params: ChangeSongPositionInPlaylistParams) => {
+      try {
+        await changeSongPositionInPlaylist(params);
+      } catch (error: any) {
+        toast.error(error.response?.data.msg || 'Có lỗi xảy ra');
+        if (error.response?.status === 403) {
+          localStorage.removeItem('music_token');
+          dispatch(logout());
+        }
+      }
+    }, 500),
+    []
+  );
+
+  const onDragEnd = async (result: DropResult, provided: ResponderProvided) => {
+    const { destination, draggableId, source } = result;
+    if (destination && playlist_id) {
+      if (destination.index === source.index) return;
+
+      console.log({ source, destination, draggableId });
+      let new_songs = [...songs];
+      const [removed] = new_songs.splice(source.index, 1);
+      new_songs.splice(destination.index, 0, removed);
+
+      dispatch(changeSongsPosition(new_songs));
+      debounceChangeSongsPosition({
+        playlist_id,
+        new_songs: new_songs.map((ns) => ns.id),
+      });
+      // try {
+      //   await changeSongPositionInPlaylist({
+      //     playlist_id,
+      //     new_songs: new_songs.map((ns) => ns.id),
+      //   });
+      // } catch (error: any) {
+      //   toast.error(error.response?.data.msg || 'Có lỗi xảy ra');
+      //   if (error.response?.status === 403) {
+      //     localStorage.removeItem('music_token');
+      //     dispatch(logout());
+      //   }
+      // }
+    }
+  };
+
+  const handleAddAllSongsToPlaylist = async (playlist_id: string) => {
+    try {
+      handleCloseMoreMenu();
+      setIsAddingSongToPlaylist(true);
+
+      // sắp xếp các bài hát đã được chọn theo thứ tự tăng dần về position
+      let new_selected_songs: any[] = selectedSongs.map((song_id) =>
+        songs.find((song) => song.id === song_id)
+      );
+
+      new_selected_songs = _.clone(new_selected_songs);
+      new_selected_songs.sort((a, b) => (a.position > b.position ? 1 : -1));
+
+      new_selected_songs = new_selected_songs.map((song) => song.id);
+
+      for (const song_id of new_selected_songs) {
+        await addSongToPlaylist({ playlist_id, song_id });
+      }
+
+      toast.success('Đã thêm tất cả các bài hát vào playlist');
+    } catch (error: any) {
+      toast.error(error.response?.data.msg || 'Có lỗi xảy ra');
+      if (error.response?.status === 403) {
+        localStorage.removeItem('music_token');
+        dispatch(logout());
+      }
+    } finally {
+      setIsAddingSongToPlaylist(false);
+    }
+  };
+
   return (
     <Container>
+      <FullscreenLoading open={isAddingSongToPlaylist} />
       <Menu
         id='sort-menu'
         MenuListProps={{
@@ -99,7 +229,7 @@ const SongList: React.FC<Props> = ({ songs }) => {
           },
         }}
       >
-        <SongSortMenu value={sort} changeValue={changeSort} />
+        <SongSortMenu value={sort_type} changeValue={changeSortType} />
       </Menu>
 
       <Menu
@@ -123,7 +253,7 @@ const SongList: React.FC<Props> = ({ songs }) => {
           },
         }}
       >
-        <AddToPlaylist />
+        <AddToPlaylist onAddToPlaylist={handleAddAllSongsToPlaylist} />
       </Menu>
       <div className='list-header'>
         {selectedSongs.length > 0 ? (
@@ -143,7 +273,7 @@ const SongList: React.FC<Props> = ({ songs }) => {
               checked={selectedSongs.length === songs.length}
             />
 
-            <button className='add-playlist'>
+            <button className='add-playlist' disabled={isAddingSongToPlaylist}>
               <MdPlaylistAdd />
               <span>Thêm vào danh sách phát</span>
             </button>
@@ -182,17 +312,55 @@ const SongList: React.FC<Props> = ({ songs }) => {
 
       <ClickAwayListener onClickAway={handleClickAway}>
         <div className='list-content'>
-          {songs.map((song) => (
-            <SongItem
-              key={song.id}
-              song={song}
-              changeFocusSong={changeFocusSong}
-              focusSong={focusSong}
-              clearSelectedSongs={clearSelectedSongs}
-              toggleSelectedSong={toggleSelectedSong}
-              selectedSongs={selectedSongs}
-            />
-          ))}
+          <DragDropContext onDragEnd={onDragEnd}>
+            <Droppable
+              key={'song-list-droppable'}
+              droppableId='song-list-droppable'
+            >
+              {({ droppableProps, innerRef, placeholder }) => (
+                <div ref={innerRef} {...droppableProps}>
+                  {sorted_songs.map((song, index) => (
+                    <Draggable
+                      key={song.id}
+                      draggableId={song.id}
+                      index={index}
+                      isDragDisabled={
+                        !Boolean(can_drag) || sort_type !== 'default'
+                      }
+                    >
+                      {(
+                        { draggableProps, innerRef, dragHandleProps },
+                        { isDragging }
+                      ) => (
+                        <div
+                          ref={innerRef}
+                          {...draggableProps}
+                          {...dragHandleProps}
+                        >
+                          <SongItem
+                            key={song.id}
+                            song={song}
+                            changeFocusSong={changeFocusSong}
+                            focusSong={focusSong}
+                            clearSelectedSongs={clearSelectedSongs}
+                            toggleSelectedSong={toggleSelectedSong}
+                            selectedSongs={selectedSongs}
+                            is_dragging={isDragging}
+                            can_change_privacy={can_change_privacy}
+                            can_drag={Boolean(can_drag)}
+                            can_edit_song={can_edit_song}
+                            can_delete_song={can_delete_song}
+                            handleOpenEditSongForm={handleOpenEditSongForm}
+                          />
+                        </div>
+                      )}
+                    </Draggable>
+                  ))}
+                  {placeholder}
+                </div>
+              )}
+            </Droppable>
+          </DragDropContext>
         </div>
       </ClickAwayListener>
     </Container>

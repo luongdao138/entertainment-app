@@ -24,15 +24,13 @@ const songController = {
         url,
         duration,
         user_id: user.id,
-        liked_by: {
-          create: {
-            user: {
-              connect: {
-                id: user.id,
-              },
-            },
-          },
-        },
+      },
+    });
+
+    await prisma.favouriteSong.create({
+      data: {
+        song_id: newSong.id,
+        user_id: user.id,
       },
     });
 

@@ -10,17 +10,17 @@ import UploadProvider from './context/UploadContext';
 import UploadPlaylistProvider from './context/UploadPlaylistContext';
 
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
-  <React.StrictMode>
-    <Provider store={store}>
-      <Router>
-        <AuthProvider>
-          <UploadProvider>
-            <UploadPlaylistProvider>
-              <App />
-            </UploadPlaylistProvider>
-          </UploadProvider>
-        </AuthProvider>
-      </Router>
-    </Provider>
-  </React.StrictMode>
+  // <React.StrictMode>
+  <Provider store={store}>
+    <Router>
+      <AuthProvider>
+        <UploadProvider>
+          <UploadPlaylistProvider>
+            <App />
+          </UploadPlaylistProvider>
+        </UploadProvider>
+      </AuthProvider>
+    </Router>
+  </Provider>
+  // </React.StrictMode>
 );

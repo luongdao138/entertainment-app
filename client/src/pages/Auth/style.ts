@@ -2,13 +2,23 @@ import styled from 'styled-components';
 
 export const Container = styled.div`
   padding: 3.2rem 1.6rem;
-  background-color: #170f23;
+  background-color: #432275;
   color: #fff;
+  border-radius: 4px;
 
   & .title {
     text-align: center;
     margin-bottom: 2rem;
     font-size: 3rem;
+  }
+
+  .logo {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 1rem;
+    img {
+      width: 150px;
+    }
   }
 
   & .nav {

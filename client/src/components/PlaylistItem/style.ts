@@ -3,6 +3,7 @@ import styled from 'styled-components';
 
 interface Props {
   is_liked: boolean;
+  is_multiple?: boolean;
 }
 
 export const SidebarItemContainer = styled(Link)`
@@ -55,14 +56,32 @@ export const Container = styled.div`
     display: block;
     position: relative;
     margin-bottom: 0.8rem;
+    aspect-ratio: 1;
+
     & img {
       transition: transform 0.35s ease-in-out;
       width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    & .imgs {
+      transition: transform 0.35s ease-in-out;
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      grid-template-rows: repeat(2, 1fr);
     }
 
     &:hover img {
-      transform: scale(1.1);
+      transform: ${(props: Props) =>
+        props.is_multiple ? 'scale(1)' : 'scale(1.1)'};
     }
+
+    &:hover .imgs {
+      transform: ${(props: Props) =>
+        props.is_multiple ? 'scale(1.1)' : 'scale(1)'};
+    }
+
     & .thumbnail-backdrop {
       z-index: 10;
       top: 0;

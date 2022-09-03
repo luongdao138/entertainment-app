@@ -1,6 +1,7 @@
 import apiEndpoints from '../constants/apiEndpoints';
 import { privateClient } from './client';
 
+export type SongPrivacy = 'private' | 'public';
 export interface Song {
   id: string;
   created_at: Date | string;
@@ -11,6 +12,8 @@ export interface Song {
   thumbnail: string;
   singer_name: string;
   is_liked: boolean;
+  privacy?: SongPrivacy;
+  position?: number;
 }
 
 export interface UploadSongParams {

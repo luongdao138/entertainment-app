@@ -50,8 +50,6 @@ const UploadSongForm: React.FC<Props> = ({ closeUploadModal }) => {
     url: audioUrl,
   } = useUploadFile();
 
-  console.log({ thumbnail });
-
   const uploadSongMeta = useAppSelector(uploadSongMetadataSelector);
 
   const canSavedToDB = name && singerName && audioUrl && thumbnail && duration;

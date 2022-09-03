@@ -1,18 +1,17 @@
 import React, { useEffect, useState } from 'react';
 import { Container } from './style';
 import { FiMusic } from 'react-icons/fi';
-import { BsFillPlayFill, BsMusicNoteList } from 'react-icons/bs';
-import { MdMoreHoriz, MdOutlineSkipNext } from 'react-icons/md';
+import { BsFillPlayFill } from 'react-icons/bs';
+import { MdMoreHoriz, MdDragIndicator } from 'react-icons/md';
 import { AiOutlineHeart, AiFillHeart } from 'react-icons/ai';
-import { FiDownload } from 'react-icons/fi';
 import { Checkbox, Menu } from '@mui/material';
-import { HiOutlineBan } from 'react-icons/hi';
 import { Song } from '../../services/song';
 import { formatSongDuration } from '../../utils/formatTime';
 import { useAppDispatch } from '../../redux/hooks';
 import { changeFavourite } from '../../redux/song/songActions';
 import { toast } from 'react-toastify';
-import fileSaver from 'file-saver';
+import SongItemMenu from '../SongItemMenu';
+import SongPrivary from './SongPrivacy';
 interface Props {
   song: Song;
   focusSong: string | null;
@@ -20,6 +19,12 @@ interface Props {
   toggleSelectedSong: (song_id: string) => void;
   clearSelectedSongs: () => void;
   selectedSongs: string[];
+  is_dragging?: boolean;
+  can_change_privacy?: boolean;
+  can_edit_song?: boolean;
+  can_delete_song?: boolean;
+  can_drag?: boolean;
+  handleOpenEditSongForm?: () => void;
 }
 
 const SongItem: React.FC<Props> = ({
@@ -29,6 +34,12 @@ const SongItem: React.FC<Props> = ({
   clearSelectedSongs,
   toggleSelectedSong,
   selectedSongs,
+  is_dragging,
+  can_drag,
+  can_change_privacy,
+  can_delete_song,
+  can_edit_song,
+  handleOpenEditSongForm,
 }) => {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const openMenu = Boolean(anchorEl);
@@ -43,6 +54,8 @@ const SongItem: React.FC<Props> = ({
   const isFocused = focusSong === song.id;
   const isShowCheckbox = selectedSongs.length > 0;
   const isActive = isFocused || isSelected;
+
+  // const is_owner = song.
 
   const dispatch = useAppDispatch();
 
@@ -77,28 +90,17 @@ const SongItem: React.FC<Props> = ({
     );
   };
 
-  const handleDownloadSong = () => {
-    fileSaver.saveAs(song.url);
-  };
-
   useEffect(() => {
     setIsLiked(song.is_liked);
   }, [song.is_liked]);
 
   return (
-    <Container
-      onClick={handleClickSong}
-      is_active={isActive}
-      is_liked={is_liked}
-      is_show_checkbox={isShowCheckbox}
-      is_selected={isSelected}
-    >
+    <>
       <Menu
-        id='long-menu'
+        id='song-item-menu'
         MenuListProps={{
-          'aria-labelledby': 'long-button',
+          'aria-labelledby': 'song-item-button',
         }}
-        disablePortal
         anchorEl={anchorEl}
         open={openMenu}
         onClose={handleClose}
@@ -115,97 +117,77 @@ const SongItem: React.FC<Props> = ({
           },
         }}
       >
-        <div className='song-menu'>
-          <div className='menu-info'>
-            <img
-              src='https://photo-resize-zmp3.zmdcdn.me/w320_r1x1_webp/covers/4/b/4b1c59c7728e2b1cb65f6cb20aaf5cf9_1499881926.jpg'
-              alt=''
-            />
-            <div className='menu-name'>
-              <h4>Đào Hoa Nặc (Thượng Cổ Tình Ca)</h4>
-              <p>Đặng Tử Kỳ</p>
-            </div>
-          </div>
-
-          <div className='menu-btns'>
-            <button onClick={handleDownloadSong}>
-              <FiDownload />
-              <span>Tải xuống</span>
-            </button>
-            <button>
-              <BsMusicNoteList />
-              <span>Lời bài hát</span>
-            </button>
-            <button>
-              <HiOutlineBan />
-              <span>Chặn</span>
-            </button>
-          </div>
-
-          <ul className='menu-list'>
-            <li>
-              <MdOutlineSkipNext />
-              <span>Phát tiếp theo</span>
-            </li>
-            <li>
-              <MdOutlineSkipNext />
-              <span>Phát tiếp theo</span>
-            </li>
-            <li>
-              <MdOutlineSkipNext />
-              <span>Phát tiếp theo</span>
-            </li>
-            <li>
-              <MdOutlineSkipNext />
-              <span>Phát tiếp theo</span>
-            </li>
-          </ul>
-        </div>
+        <SongItemMenu
+          song={song}
+          handleOpenEditSongForm={handleOpenEditSongForm}
+          can_delete_song={can_delete_song}
+          can_edit_song={can_edit_song}
+          closeSongItemAction={handleClose}
+        />
       </Menu>
-      <div className='song-left'>
-        <div className='music-icon'>
-          <FiMusic />
+      <Container
+        onClick={handleClickSong}
+        is_active={isActive}
+        is_liked={is_liked}
+        is_show_checkbox={isShowCheckbox}
+        is_selected={isSelected}
+        is_dragging={is_dragging}
+      >
+        <div className='song-left'>
+          <div className='music-icon'>
+            {can_drag ? (
+              <MdDragIndicator style={{ fontSize: '2rem' }} />
+            ) : (
+              <FiMusic />
+            )}
+          </div>
+
+          <div className='song-checkbox'>
+            <Checkbox
+              disableRipple
+              disableTouchRipple
+              disableFocusRipple
+              sx={{
+                padding: 0,
+                color: isActive ? '#fff' : 'hsla(0,0%,100%,0.2)',
+                '&.Mui-checked .MuiSvgIcon-root': {
+                  color: '#7200a1',
+                },
+              }}
+              onChange={handleSelectSong}
+              checked={isSelected}
+              onClick={handleClickCheckbox}
+            />
+          </div>
+
+          <div className='song-thumbnail'>
+            <img src={song.thumbnail} alt='' />
+            <div className='opacity'></div>
+            <BsFillPlayFill className='play-state' />
+          </div>
+          <div className='song-info'>
+            <h4 className='name'>{song.name}</h4>
+            <p className='singer'>{song.singer_name}</p>
+          </div>
         </div>
 
-        <div className='song-checkbox'>
-          <Checkbox
-            disableRipple
-            disableTouchRipple
-            disableFocusRipple
-            sx={{
-              padding: 0,
-              color: isActive ? '#fff' : 'hsla(0,0%,100%,0.2)',
-              '&.Mui-checked .MuiSvgIcon-root': {
-                color: '#7200a1',
-              },
-            }}
-            onChange={handleSelectSong}
-            checked={isSelected}
-            onClick={handleClickCheckbox}
+        {can_change_privacy && (
+          <SongPrivary
+            song_id={song.id}
+            initial_privacy={song.privacy || 'private'}
           />
-        </div>
+        )}
 
-        <div className='song-thumbnail'>
-          <img src={song.thumbnail} alt='' />
-          <div className='opacity'></div>
-          <BsFillPlayFill className='play-state' />
-        </div>
-        <div className='song-info'>
-          <h4 className='name'>{song.name}</h4>
-          <p className='singer'>{song.singer_name}</p>
-        </div>
-      </div>
-      <div className='song-right'>
-        <button className='favorite' onClick={handleClickFavourite}>
-          {is_liked ? <AiFillHeart /> : <AiOutlineHeart />}
-        </button>
-        <span className='duration'>{formatSongDuration(song.duration)}</span>
-        <div className='song-menu-wrapper'>
+        <div className='song-right'>
+          <button className='favorite' onClick={handleClickFavourite}>
+            {is_liked ? <AiFillHeart /> : <AiOutlineHeart />}
+          </button>
+          <span className='duration'>{formatSongDuration(song.duration)}</span>
           <button
             className='more-action'
             aria-label='more'
-            id='long-button'
-            aria-controls={openMenu ? 'long-menu' : undefined}
+            id='song-item-button'
+            aria-controls={openMenu ? 'song-item-menu' : undefined}
             aria-expanded={openMenu ? 'true' : undefined}
             aria-haspopup='true'
             onClick={handleClick}
@@ -213,8 +195,8 @@ const SongItem: React.FC<Props> = ({
             <MdMoreHoriz />
           </button>
         </div>
-      </div>
-    </Container>
+      </Container>
+    </>
   );
 };
 

@@ -1,4 +1,4 @@
-import { Routes, Route } from 'react-router-dom';
+import { Routes, Route, Navigate } from 'react-router-dom';
 import HomePage from './pages/HomePage';
 import MainLayout from './layout/MainLayout';
 import MyMusicPage from './pages/MyMusicPage';
@@ -23,6 +23,8 @@ function App() {
       <Routes>
         <Route path='/' element={<MainLayout />}>
           <Route index element={<HomePage />} />
+
+          {/* Những route cần người dùng đăng nhập vào */}
           <Route element={<RequiredAuth />}>
             <Route path='mymusic/' element={<MyMusicPage />}>
               <Route element={<Song />}>
@@ -41,11 +43,13 @@ function App() {
             <Route path='profile' element={<UserProfilePage />} />
           </Route>
 
+          {/* Những route đăng nhập hay không đều vào được */}
           <Route
             path={appRoutes.PLAYLIST_DETAIL}
             element={<PlaylistDetailPage />}
           />
 
+          {/* Những route mà nếu người dùng đã đăng nhập thì ko đc vào */}
           <Route element={<AlreadyAuth />}>
             <Route
               path={appRoutes.VERIFY_ACCOUNT}
@@ -56,6 +60,8 @@ function App() {
               element={<RetrievePassword />}
             />
           </Route>
+
+          <Route path='*' element={<Navigate to={appRoutes.HOME} />} />
         </Route>
       </Routes>
     </>

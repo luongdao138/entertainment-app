@@ -24,8 +24,8 @@ export const uploadSong = createAsyncThunk<
           ...res.song,
           is_liked: true,
           user_id: (getState() as RootState).auth.user?.id,
-          created_at: new Date(),
-          updated_at: new Date(),
+          created_at: new Date().toString(),
+          updated_at: new Date().toString(),
         },
       };
 

@@ -47,7 +47,7 @@ function a11yProps(index: number) {
 
 export default function LibraryPlaylist() {
   const [value, setValue] = useState(0);
-  const firstRenderRef = useRef<boolean>(false);
+  // const firstRenderRef = useRef<boolean>(false);
   const dispatch = useAppDispatch();
   const { openUploadPlaylistForm } = useUploadPlaylistContext();
 
@@ -71,10 +71,10 @@ export default function LibraryPlaylist() {
   };
 
   useEffect(() => {
-    if (firstRenderRef.current) {
-      firstRenderRef.current = false;
-      return;
-    }
+    // if (firstRenderRef.current) {
+    //   firstRenderRef.current = false;
+    //   return;
+    // }
 
     handleGetPlaylists();
   }, [value]);

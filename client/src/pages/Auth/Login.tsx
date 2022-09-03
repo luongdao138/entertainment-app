@@ -73,7 +73,12 @@ const Login = () => {
 
   return (
     <Container>
-      <h2 className='title'>Welcome back</h2>
+      <div className='logo'>
+        <img
+          src='https://zmp3-static.zmdcdn.me/skins/zmp3-v6.1/images/backgrounds/logo-dark.svg'
+          alt='logo'
+        />
+      </div>
 
       <Formik
         initialValues={initialValues}

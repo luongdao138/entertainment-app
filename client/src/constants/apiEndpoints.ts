@@ -19,6 +19,11 @@ const apiEndpoints = {
   EIDT_PLAYLIST: '/playlist/:playlist_id',
   DELETE_PLAYLIST: '/playlist/:playlist_id',
   CHANGE_PLAYLIST_FAVOURITE: '/playlist/favourite/:playlist_id',
+  ADD_SONGS_TO_PLAYLIST: '/playlist/addSong',
+  REMOVE_SONGS_OUT_OF_PLAYLIST: '/playlist/removeSong',
+  GET_SONGS_OF_PLAYLIST: '/playlist/getSong/:playlist_id',
+  CHANGE_POSITION_PLAYLIST_SONGS: '/playlist/changeSongPosition',
+  GET_PLAYLIST_DETAIL: '/playlist/:playlist_id',
 };
 
 export default apiEndpoints;

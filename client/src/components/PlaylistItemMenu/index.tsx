@@ -13,8 +13,8 @@ interface Props {
   playlist_id: string;
   can_edit: boolean;
   can_delete: boolean;
-  onOpenDeleteConfirmModal?: (e: React.MouseEvent<HTMLElement>) => void;
   onOpenEditForm?: () => void;
+  onOpenDeleteConfirmModal?: (e: React.MouseEvent<HTMLElement>) => void;
 }
 
 const PlaylistItemMenu: React.FC<Props> = ({
@@ -25,38 +25,40 @@ const PlaylistItemMenu: React.FC<Props> = ({
   onOpenDeleteConfirmModal,
 }) => {
   return (
-    <Container>
-      <ul className='list'>
-        <li>
-          <MdPlaylistAdd />
-          <span>Thêm vào danh sách phát</span>
-        </li>
-        <li>
-          <FaRegComment />
-          <span>Bình luận</span>
-        </li>
-        <li>
-          <FiDownload />
-          <span>Tải xuống</span>
-        </li>
-        <li>
-          <BsLink45Deg />
-          <span>Sao chép link</span>
-        </li>
-        {can_edit && (
-          <li onClick={onOpenEditForm}>
-            <MdOutlineModeEdit />
-            <span>Chỉnh sửa playlist</span>
+    <>
+      <Container>
+        <ul className='list'>
+          <li>
+            <MdPlaylistAdd />
+            <span>Thêm vào danh sách phát</span>
           </li>
-        )}
-        {can_delete && (
-          <li onClick={onOpenDeleteConfirmModal}>
-            <MdOutlineDeleteOutline />
-            <span>Xóa playlist</span>
+          <li>
+            <FaRegComment />
+            <span>Bình luận</span>
           </li>
-        )}
-      </ul>
-    </Container>
+          <li>
+            <FiDownload />
+            <span>Tải xuống</span>
+          </li>
+          <li>
+            <BsLink45Deg />
+            <span>Sao chép link</span>
+          </li>
+          {can_edit && (
+            <li onClick={onOpenEditForm}>
+              <MdOutlineModeEdit />
+              <span>Chỉnh sửa playlist</span>
+            </li>
+          )}
+          {can_delete && (
+            <li onClick={onOpenDeleteConfirmModal}>
+              <MdOutlineDeleteOutline />
+              <span>Xóa playlist</span>
+            </li>
+          )}
+        </ul>
+      </Container>
+    </>
   );
 };
 

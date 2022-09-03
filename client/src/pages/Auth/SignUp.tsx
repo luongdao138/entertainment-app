@@ -80,7 +80,12 @@ const SignUp = () => {
 
   return (
     <Container>
-      <h2 className='title'>Start for free</h2>
+      <div className='logo'>
+        <img
+          src='https://zmp3-static.zmdcdn.me/skins/zmp3-v6.1/images/backgrounds/logo-dark.svg'
+          alt='logo'
+        />
+      </div>
       <Formik
         initialValues={initialValues}
         onSubmit={handleSubmit}

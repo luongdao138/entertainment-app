@@ -7,8 +7,16 @@ router.use(verifyTokenMiddleware);
 
 router.post('/', playlistController.createNewPlaylist);
 router.get('/private', playlistController.getUserPrivatePlaylist);
+router.put(
+  '/changeSongPosition',
+  playlistController.changeSongPositionInPlaylist
+);
+router.post('/addSong', playlistController.addSongToPlaylist);
+router.post('/removeSong', playlistController.deleteSongOutOfPlaylist);
+router.get('/getSong/:playlist_id', playlistController.getAllSongsOfPlaylist);
 router
   .route('/:play_list_id')
+  .get(playlistController.getPlaylistDetail)
   .put(playlistController.editPlaylist)
   .delete(playlistController.deletePlaylist);
 

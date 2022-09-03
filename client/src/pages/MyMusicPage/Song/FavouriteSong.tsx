@@ -7,14 +7,14 @@ import { getUsersFavouriteSongs } from '../../../redux/song/songSelectors';
 
 const FavouriteSong = () => {
   const dispatch = useAppDispatch();
-  const firstRenderRef = useRef<boolean>(true);
+  // const firstRenderRef = useRef<boolean>(true);
   const songs = useAppSelector(getUsersFavouriteSongs);
 
   useEffect(() => {
-    if (firstRenderRef.current) {
-      firstRenderRef.current = false;
-      return;
-    }
+    // if (firstRenderRef.current) {
+    //   firstRenderRef.current = false;
+    //   return;
+    // }
 
     dispatch(getFavouriteSong());
   }, []);

@@ -7,6 +7,7 @@ interface Props {
   is_active?: boolean;
   is_show_checkbox?: boolean;
   is_selected?: boolean;
+  is_dragging?: boolean;
 }
 
 export const Container = styled.div`
@@ -23,6 +24,7 @@ export const Container = styled.div`
   & .song-left {
     display: flex;
     align-items: center;
+    width: 50%;
 
     & .music-icon {
       margin-right: 1rem;
@@ -98,6 +100,26 @@ export const Container = styled.div`
     }
   }
 
+  & .song-privacy {
+    button {
+      background-color: transparent;
+      display: flex;
+      align-items: center;
+      color: rgba(255, 255, 255, 0.5);
+
+      span {
+        font-size: 1.2rem;
+        font-weight: 500;
+        color: ${(props: Props) =>
+          props.is_active ? '#fff' : 'rrgba(255, 255, 255, 0.5)'};
+      }
+
+      svg {
+        font-size: 2.4rem;
+      }
+    }
+  }
+
   & .song-right {
     display: flex;
     align-items: center;
@@ -125,15 +147,27 @@ export const Container = styled.div`
     & .duration {
       font-size: 1.2rem;
       color: hsla(0, 0%, 100%, 0.5);
+      opacity: 1;
+      visibility: visible;
+      display: flex;
+      justify-content: flex-end;
+      min-width: 40px;
     }
 
     & .more-action {
-      display: none;
+      opacity: 0;
+      visibility: hidden;
+      /* display: none; */
       place-items: center;
       width: 3.8rem;
       height: 3.8rem;
       border-radius: 50%;
+      display: grid;
       background-color: transparent;
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      right: 1rem;
 
       svg {
         color: #fff;
@@ -181,11 +215,14 @@ export const Container = styled.div`
       }
 
       & .duration {
-        display: none;
+        opacity: 0;
+        visibility: hidden;
+        /* display: none; */
       }
 
       & .more-action {
-        display: grid;
+        opacity: 1;
+        visibility: visible;
 
         &:hover {
           background-color: #ffffff1a;
@@ -194,99 +231,10 @@ export const Container = styled.div`
     }
   }
 
-  & .song-menu {
-    background-color: #432275;
-    width: 280px;
-
-    & .menu-info {
-      img {
-        width: 4rem;
-        height: 4rem;
-        object-fit: cover;
-        border-radius: 4px;
-        margin-right: 1rem;
-      }
-
-      display: flex;
-      align-items: center;
-      padding: 15px;
-
-      & .menu-name h4 {
-        font-size: 1.4rem;
-        line-height: 1.8rem;
-        font-weight: 500;
-        color: #fff;
-        display: -webkit-box;
-        -webkit-line-clamp: 1;
-        -webkit-box-orient: vertical;
-        overflow: hidden;
-      }
-
-      & .menu-name p {
-        color: hsla(0, 0%, 100%, 0.5);
-        font-size: 1.2rem;
-      }
-    }
-
-    & .menu-btns {
-      margin: 0 15px 15px;
-      border-radius: 0.8rem;
-      background-color: #563983;
-      display: flex;
-
-      & button {
-        flex: 1 1;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        padding: 0.8rem 0;
-        border-radius: 8px;
-        transition: all 0.1s;
-        font-size: 1rem;
-        color: #fff;
-        background-color: transparent;
-
-        &:hover {
-          background-color: hsla(0, 0%, 100%, 0.1);
-          color: #fff;
-        }
-
-        & + & {
-          margin-left: 0.5rem;
-        }
-
-        & svg {
-          margin-bottom: 0.5rem;
-          font-size: 1.5rem;
-        }
-      }
-    }
-
-    & .menu-list {
-      & li {
-        padding: 10px 20px 10px 14px;
-        display: flex;
-        color: rgb(218, 218, 218);
-        font-size: 14px;
-        cursor: pointer;
-        align-items: center;
-
-        &:hover {
-          background-color: hsla(0, 0%, 100%, 0.1);
-          color: #fff;
-        }
-
-        & svg {
-          margin-right: 1.5rem;
-          font-size: 2rem;
-        }
-      }
-    }
-  }
-
   background-color: ${(props: Props) =>
-    props.is_active
+    props.is_dragging
+      ? '#432275'
+      : props.is_active
       ? '#3A3344'
       : props.is_current_audio
       ? '#2f283a'
@@ -295,4 +243,36 @@ export const Container = styled.div`
 
 export const ProgressItem = styled.div`
   margin-top: 2rem;
+`;
+
+export const PrivacyMenu = styled.div`
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  background-color: #432275;
+  border-radius: 4px;
+
+  & li {
+    width: 100px;
+    padding: 5px 10px;
+    font-size: 1.2rem;
+    line-height: 1.8rem;
+    color: rgba(255, 255, 255, 0.5);
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+
+    &:hover {
+      span {
+        color: #c662ef;
+      }
+    }
+
+    svg {
+      font-size: 2rem;
+      margin-left: 0.25rem;
+    }
+  }
+
+  li + li {
+    border-top: 1px solid hsla(0, 0%, 100%, 0.05);
+  }
 `;

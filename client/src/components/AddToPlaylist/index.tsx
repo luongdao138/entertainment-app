@@ -10,7 +10,11 @@ import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import { getPrivatePlaylists } from '../../redux/playlist/playlistActions';
 import { getPrivatePlaylist } from '../../redux/playlist/playlistSelector';
 
-const AddToPlaylist = () => {
+interface Props {
+  onAddToPlaylist: (playlist_id: string) => void;
+}
+
+const AddToPlaylist: React.FC<Props> = ({ onAddToPlaylist }) => {
   const { openUploadPlaylistForm } = useUploadPlaylistContext();
   const [title, setTitle] = useState('');
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
@@ -91,7 +95,14 @@ const AddToPlaylist = () => {
           {rendered_playlists.length > 0 ? (
             <div className='list-playlists'>
               {rendered_playlists.map((playlist) => (
-                <button className='add-playlist-item'>
+                <button
+                  className='add-playlist-item'
+                  key={playlist.id}
+                  onClick={() => {
+                    onAddToPlaylist(playlist.id);
+                    handleClose();
+                  }}
+                >
                   <MdPlaylistAdd />
                   <span>{playlist.title}</span>
                 </button>

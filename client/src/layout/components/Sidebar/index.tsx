@@ -17,7 +17,7 @@ const Sidebar = () => {
   const location = useLocation();
   const { openUploadPlaylistForm } = useUploadPlaylistContext();
   const dispatch = useAppDispatch();
-  const isFirstRenderRef = useRef<boolean>(true);
+  // const isFirstRenderRef = useRef<boolean>(true);
   const private_playlists = useAppSelector(getPrivatePlaylist);
 
   const handleGetPlaylists = () => {
@@ -29,10 +29,10 @@ const Sidebar = () => {
   };
 
   useEffect(() => {
-    if (isFirstRenderRef.current) {
-      isFirstRenderRef.current = false;
-      return;
-    }
+    // if (isFirstRenderRef.current) {
+    //   isFirstRenderRef.current = false;
+    //   return;
+    // }
     if (authUser) {
       handleGetPlaylists();
     }

@@ -39,7 +39,7 @@ const MainLayout = () => {
     openUploadPlaylistForm,
   } = useUploadPlaylistContext();
   const dispatch = useAppDispatch();
-  const isFirstRenderRef = useRef<boolean>(true);
+  // const isFirstRenderRef = useRef<boolean>(true);
 
   const renderAuthLayout = useMemo(() => {
     switch (authType) {
@@ -61,10 +61,10 @@ const MainLayout = () => {
   }, [authType]);
 
   useEffect(() => {
-    if (isFirstRenderRef.current) {
-      isFirstRenderRef.current = false;
-      return;
-    }
+    // if (isFirstRenderRef.current) {
+    //   isFirstRenderRef.current = false;
+    //   return;
+    // }
 
     setIsLoadingUser(true);
     dispatch(getUserInfo()).finally(() => {

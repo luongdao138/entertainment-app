@@ -76,7 +76,7 @@ const Container = styled.div`
 
 const VerifyAccount = () => {
   const [params] = useSearchParams();
-  const isFirstRenderRef = useRef<boolean>(true);
+  // const isFirstRenderRef = useRef<boolean>(true);
   const [status, setStatus] = useState<Status | null>(null);
   const [errorCode, setErrorCode] = useState<number | null>(null);
   const [isResentEmail, setIsResentEmail] = useState<boolean>(false);
@@ -85,10 +85,10 @@ const VerifyAccount = () => {
   const email = params.get('email') || '';
 
   useEffect(() => {
-    if (isFirstRenderRef.current) {
-      isFirstRenderRef.current = false;
-      return;
-    }
+    // if (isFirstRenderRef.current) {
+    //   isFirstRenderRef.current = false;
+    //   return;
+    // }
 
     const controller = new AbortController();
 

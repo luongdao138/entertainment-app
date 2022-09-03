@@ -65,24 +65,25 @@ export const Container = styled.div`
       max-width: 400px;
     }
     input {
-      width: 100%;
       flex-grow: 1;
       max-width: 400px;
-      height: 4rem;
-      border-radius: 2rem;
-      background-color: hsla(0, 0%, 100%, 0.1);
+
+      width: 100%;
+      background-color: #432275;
+      /* background-color: hsla(0, 0%, 100%, 0.1); */
       border: none;
       color: #eee;
-      padding: 5px 0;
-      font-size: 1.4rem;
-      padding: 0 2rem;
+      padding: 10px 15px;
+      font-size: 12px;
+      border-radius: 4px;
+      border: 1px solid hsla(0, 0%, 100%, 0.1);
 
       ::placeholder {
         color: hsla(0, 0%, 100%, 0.5);
       }
 
       :focus {
-        background-color: #432275;
+        border-color: #7200a1;
       }
     }
 

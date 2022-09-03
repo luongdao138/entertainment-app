@@ -1,18 +1,39 @@
 import React from 'react';
-import { Container } from './style';
+import { SortType } from '../SongList';
+import { Container, Item } from './style';
 
 interface Props {
-  value: string;
-  changeValue: (value: string) => void;
+  value: SortType;
+  changeValue: (value: SortType) => void;
 }
+
+const sortOptions: { label: string; value: SortType }[] = [
+  {
+    label: 'Mặc định',
+    value: 'default',
+  },
+  {
+    label: 'Tên bài hát (A-Z)',
+    value: 'name_az',
+  },
+  {
+    label: 'Tên bài hát (Z-A)',
+    value: 'name_za',
+  },
+];
 
 const SongSortMenu: React.FC<Props> = ({ value, changeValue }) => {
   return (
     <Container>
       <ul>
-        <li>Mặc định</li>
-        <li>Tên bài hát (A-Z)</li>
-        <li>Tên bài hát (Z-A)</li>
+        {sortOptions.map((so) => (
+          <Item
+            active={value === so.value}
+            onClick={() => changeValue(so.value)}
+          >
+            {so.label}
+          </Item>
+        ))}
       </ul>
     </Container>
   );
