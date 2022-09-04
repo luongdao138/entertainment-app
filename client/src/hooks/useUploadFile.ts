@@ -9,7 +9,11 @@ const useUploadFile = (initialUrl?: string) => {
   const [progress, setProgress] = useState<number>(0);
   const [url, setUrl] = useState<string | undefined>(initialUrl);
 
-  const handleUploadFile = (file: File, path: string) => {
+  const handleUploadFile = (
+    file: File,
+    path: string,
+    onUploadSuccess?: (new_url: string) => void
+  ) => {
     setIsUploading(true);
     const fileName = uuid() + '_' + file.name;
     const storageRef = ref(storage, `${path}${fileName}`);
@@ -35,6 +39,7 @@ const useUploadFile = (initialUrl?: string) => {
         getDownloadURL(uploadTask.snapshot.ref).then((url) => {
           console.log('Upload image success: ', url);
           setUrl(url);
+          onUploadSuccess?.(url);
           setProgress(0);
           setIsUploading(false);
         });

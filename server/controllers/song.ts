@@ -31,6 +31,13 @@ const songController = {
           },
         },
       },
+      include: {
+        belong_categories: {
+          select: {
+            id: true,
+          },
+        },
+      },
     });
 
     await prisma.favouriteSong.create({

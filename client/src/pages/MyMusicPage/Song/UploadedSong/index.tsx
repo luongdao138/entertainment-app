@@ -16,6 +16,7 @@ import Modal from '../../../../components/Modal';
 import EditSongForm from '../../../../components/EditSongForm';
 import { Song } from '../../../../services/song';
 import ConfirmDialog from '../../../../components/ConfirmDialog';
+import useDeleteFile from '../../../../hooks/useDeleteFile';
 
 const UploadedSong = () => {
   const { openUploadForm } = useUploadContext();
@@ -23,6 +24,7 @@ const UploadedSong = () => {
 
   const [selectedSong, setSelectedSong] = useState<Song | null>(null);
   const [openEditSongForm, setOpenEditSongForm] = useState<boolean>(false);
+  const deleteFile = useDeleteFile();
   // const firstRenderRef = useRef<boolean>(true);
   const songs = useAppSelector(getUsersUploadedSongs);
   const { authUser } = useAuthContext();
@@ -53,7 +55,14 @@ const UploadedSong = () => {
 
   const handleDeleteUploadSong = async () => {
     if (selectedSong) {
-      dispatch(deleteUploadSongAction(selectedSong.id));
+      dispatch(
+        deleteUploadSongAction({
+          data: selectedSong.id,
+          onSuccess(res) {
+            deleteFile(selectedSong.thumbnail);
+          },
+        })
+      );
       handleCloseDeleteConfirmModal();
     }
   };

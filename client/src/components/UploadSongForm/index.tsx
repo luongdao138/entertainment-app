@@ -17,6 +17,7 @@ import { uploadSong as uploadNewSong } from '../../services/song';
 import { logout } from '../../redux/auth/authSlice';
 import appRoutes from '../../constants/appRoutes';
 import useUploadFile from '../../hooks/useUploadFile';
+import useDeleteFile from '../../hooks/useDeleteFile';
 
 interface Props {
   closeUploadModal: () => void;
@@ -33,6 +34,7 @@ const UploadSongForm: React.FC<Props> = ({ closeUploadModal }) => {
   const audioRef = useRef<HTMLAudioElement>(null);
   const dispatch = useAppDispatch();
   const location = useLocation();
+  const delefile = useDeleteFile();
 
   const {
     handleUploadFile: handleUploadImage,
@@ -120,6 +122,9 @@ const UploadSongForm: React.FC<Props> = ({ closeUploadModal }) => {
     const file = e.target.files[0];
     const fileType = file.type;
 
+    const prevThumbnail = thumbnail;
+    const prevAudioUrl = audioUrl;
+
     if (type === 'image') {
       // upload image
       if (!allowedImageFormat.includes(fileType)) {
@@ -128,7 +133,11 @@ const UploadSongForm: React.FC<Props> = ({ closeUploadModal }) => {
       }
 
       toast.info('Một file đang được tải lên', { autoClose: 1500 });
-      handleUploadImage(file, '/images/');
+      handleUploadImage(file, '/images/', () => {
+        if (prevThumbnail) {
+          delefile(prevThumbnail);
+        }
+      });
     } else {
       // upload audio
       if (!allowedAudioFormat.includes(fileType)) {
@@ -149,7 +158,11 @@ const UploadSongForm: React.FC<Props> = ({ closeUploadModal }) => {
         },
       });
 
-      handleUploadAudio(file, '/audios/');
+      handleUploadAudio(file, '/audios/', () => {
+        if (prevAudioUrl) {
+          delefile(prevAudioUrl);
+        }
+      });
     }
   };
 

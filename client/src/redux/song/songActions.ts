@@ -108,13 +108,17 @@ export const changeFavourite = createAsyncThunk<
   }
 );
 
-export const deleteUploadSongAction = createAsyncThunk<string, string>(
+export const deleteUploadSongAction = createAsyncThunk<
+  string,
+  ActionParams<string, string>
+>(
   SONG_ACTION_TYPES.DELETE_UPLOAD_SONG,
   async (params, { rejectWithValue, dispatch }) => {
     try {
-      await services.deleteUploadSong(params);
+      await services.deleteUploadSong(params.data);
+      params.onSuccess?.(params.data);
       toast.success('Xóa bài hát thành công');
-      return params;
+      return params.data;
     } catch (error: any) {
       toast.error(error.response?.data.msg || 'Có lỗi xảy ra');
       if (error.response?.status === 403) {

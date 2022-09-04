@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { BsUpload } from 'react-icons/bs';
 import { Container } from './style';
 import { Formik, Form } from 'formik';
@@ -14,6 +14,9 @@ import { logout } from '../../redux/auth/authSlice';
 import { allowedImageFormat } from '../../utils/uploadFormat';
 import useUploadFile from '../../hooks/useUploadFile';
 import { ReactComponent as LoadingSpinner } from '../../assets/loading-spinner.svg';
+import _ from 'lodash';
+import useDeleteFile from '../../hooks/useDeleteFile';
+import * as Yup from 'yup';
 interface Props {
   editedSong: Song | null;
   closeEditSongModal: () => void;
@@ -31,11 +34,18 @@ const initialValues: FormState = {
   singer_name: '',
 };
 
+const validationSchema = Yup.object({
+  name: Yup.string().required('Tên bài hát không được để trống'),
+  singer_name: Yup.string().required('Tên nghệ sĩ không được để trống'),
+  category: Yup.string().required('Thể loại không được để trống'),
+});
+
 const EditSongForm: React.FC<Props> = ({ closeEditSongModal, editedSong }) => {
   const dispatch = useAppDispatch();
   const categories = useAppSelector(getAllCategoriesSelector);
+  const [changed_urls, setChangedUrl] = useState<string[]>([]);
   const inputFileRef = useRef<HTMLInputElement>(null);
-
+  const deleteFile = useDeleteFile();
   const { handleUploadFile, isUploading, progress, url } = useUploadFile();
 
   // const isFirstRenderRef = useRef<boolean>(true)
@@ -52,6 +62,13 @@ const EditSongForm: React.FC<Props> = ({ closeEditSongModal, editedSong }) => {
             thumbnail: url ?? editedSong.thumbnail,
           },
         });
+
+        let deleted_urls = _.clone(changed_urls);
+        deleted_urls.pop();
+        if (changed_urls.length > 0) {
+          deleted_urls.push(editedSong.thumbnail);
+        }
+
         dispatch(
           editSongSucess({
             song: {
@@ -63,8 +80,12 @@ const EditSongForm: React.FC<Props> = ({ closeEditSongModal, editedSong }) => {
           })
         );
         closeEditSongModal();
-
         toast.success('Chỉnh sửa bài hát thành công');
+
+        // remove redundant files
+        for (const deleted_url of deleted_urls) {
+          deleteFile(deleted_url);
+        }
       } catch (error: any) {
         if (error.response?.status === 403) {
           localStorage.removeItem('music_token');
@@ -91,7 +112,9 @@ const EditSongForm: React.FC<Props> = ({ closeEditSongModal, editedSong }) => {
       return;
     }
 
-    handleUploadFile(file, '/images/');
+    handleUploadFile(file, '/images/', (url) => {
+      setChangedUrl((prev) => [...prev, url]);
+    });
   };
 
   useEffect(() => {
@@ -129,6 +152,7 @@ const EditSongForm: React.FC<Props> = ({ closeEditSongModal, editedSong }) => {
         <div className='edit-song-right'>
           <Formik
             enableReinitialize
+            validationSchema={validationSchema}
             initialValues={
               editedSong
                 ? {
@@ -161,7 +185,12 @@ const EditSongForm: React.FC<Props> = ({ closeEditSongModal, editedSong }) => {
                   <button type='button' onClick={closeEditSongModal}>
                     Đóng
                   </button>
-                  <button type='submit'>Lưu</button>
+                  <button
+                    type='submit'
+                    disabled={isUploading || !formik.isValid}
+                  >
+                    Lưu
+                  </button>
                 </div>
               </Form>
             )}
