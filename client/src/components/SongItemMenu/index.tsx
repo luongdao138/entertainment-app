@@ -19,8 +19,9 @@ interface Props {
   can_edit_song?: boolean;
   handleOpenEditSongForm?: () => void;
   closeSongItemAction: () => void;
-  changeEditedSong?: (song: Song) => void;
+  changeSelectedSong?: (song: Song) => void;
   handleRemoveSongOutOfPlaylist?: (song_id: string) => void;
+  handleOpenDeleteConfirmModal: () => void;
 }
 
 const SongItemMenu: React.FC<Props> = ({
@@ -30,8 +31,9 @@ const SongItemMenu: React.FC<Props> = ({
   can_remove_out_of_list,
   handleOpenEditSongForm,
   closeSongItemAction,
-  changeEditedSong,
+  changeSelectedSong,
   handleRemoveSongOutOfPlaylist,
+  handleOpenDeleteConfirmModal,
 }) => {
   const dispatch = useAppDispatch();
   const handleDownloadSong = () => {
@@ -53,7 +55,13 @@ const SongItemMenu: React.FC<Props> = ({
 
   const handleClickEdit = () => {
     handleOpenEditSongForm?.();
-    changeEditedSong?.(song);
+    changeSelectedSong?.(song);
+    closeSongItemAction();
+  };
+
+  const handleClickDeleteSong = () => {
+    handleOpenDeleteConfirmModal?.();
+    changeSelectedSong?.(song);
     closeSongItemAction();
   };
 
@@ -99,7 +107,7 @@ const SongItemMenu: React.FC<Props> = ({
           </li>
         )}
         {can_delete_song && (
-          <li>
+          <li onClick={handleClickDeleteSong}>
             <MdOutlineDeleteOutline />
             <span>Xóa</span>
           </li>

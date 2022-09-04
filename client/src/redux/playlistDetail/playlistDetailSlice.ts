@@ -32,6 +32,17 @@ const playlistDetailSlice = createSlice({
     changeSongsPosition(state, action: PayloadAction<Song[]>) {
       state.songs.data = action.payload;
     },
+    deleteMultipleSongsOutOfPlaylist(state, action: PayloadAction<string[]>) {
+      state.songs.data = state.songs.data.filter(
+        (song) => !action.payload.includes(song.id)
+      );
+      const new_songs = [...state.songs.data];
+      for (const key in new_songs) {
+        new_songs[key].position = Number(key);
+      }
+
+      state.songs.data = new_songs;
+    },
   },
   extraReducers(builder) {
     builder
@@ -67,6 +78,9 @@ const playlistDetailSlice = createSlice({
   },
 });
 
-export const { likePlaylist, changeSongsPosition } =
-  playlistDetailSlice.actions;
+export const {
+  likePlaylist,
+  changeSongsPosition,
+  deleteMultipleSongsOutOfPlaylist,
+} = playlistDetailSlice.actions;
 export default playlistDetailSlice.reducer;

@@ -13,8 +13,6 @@ const verifyTokenMiddleware = async (
   if (!authHeader || !authHeader.startsWith('Bearer '))
     return res.status(401).json({ msg: 'Access token not provided' });
 
-  console.log(authHeader);
-
   const token = authHeader.replace('Bearer ', '');
   jwt.verify(
     token,
@@ -24,7 +22,9 @@ const verifyTokenMiddleware = async (
         return res.status(403).json({ msg: 'Access token invalid' });
       }
 
-      const user = await prisma.user.findFirst({ where: { id: decoded.id } });
+      const user = await prisma.user.findFirst({
+        where: { id: decoded.id, is_deleted: false, is_verified: true },
+      });
       if (!user) {
         return res.status(403).json({ msg: 'Access token invalid' });
       }

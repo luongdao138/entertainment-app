@@ -7,6 +7,10 @@ router.use(verifyTokenMiddleware);
 
 router.post('/', playlistController.createNewPlaylist);
 router.get('/private', playlistController.getUserPrivatePlaylist);
+router.get(
+  '/recommend/:playlist_id',
+  playlistController.getRecommendedSongsOfPlaylist
+);
 router.put(
   '/changeSongPosition',
   playlistController.changeSongPositionInPlaylist

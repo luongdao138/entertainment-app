@@ -198,6 +198,14 @@ app.get('/', async (req, res) => {
   //   },
   // });
 
+  const data = await prisma.user.findMany({
+    where: {
+      full_name: {
+        not: {},
+      },
+    },
+  });
+
   return res.json({ msg: 'Success' });
 });
 

@@ -85,3 +85,10 @@ export const editSong = async (params: EditSongParams) => {
   );
   return res.data;
 };
+
+export const deleteUploadSong = async (params: string) => {
+  const res = await privateClient.delete(
+    apiEndpoints.DELETE_UPLOAD_SONG.replace(':song_id', params)
+  );
+  return res.data;
+};

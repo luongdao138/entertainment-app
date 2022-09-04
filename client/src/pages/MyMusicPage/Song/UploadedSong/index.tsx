@@ -1,7 +1,10 @@
 import emptyUploadImage from '../../../../assets/empty-upload.png';
 import React, { useEffect, useRef, useState } from 'react';
 import { useAppDispatch, useAppSelector } from '../../../../redux/hooks';
-import { getUploadedSong } from '../../../../redux/song/songActions';
+import {
+  deleteUploadSongAction,
+  getUploadedSong,
+} from '../../../../redux/song/songActions';
 import { getUsersUploadedSongs } from '../../../../redux/song/songSelectors';
 import Progress from '../../../../components/LinearProgress';
 import { useUploadContext } from '../../../../context/UploadContext';
@@ -12,18 +15,29 @@ import { Container, NoSongContainer } from './style';
 import Modal from '../../../../components/Modal';
 import EditSongForm from '../../../../components/EditSongForm';
 import { Song } from '../../../../services/song';
+import ConfirmDialog from '../../../../components/ConfirmDialog';
 
 const UploadedSong = () => {
   const { openUploadForm } = useUploadContext();
   const dispatch = useAppDispatch();
 
-  const [editedSong, setEditedSong] = useState<Song | null>(null);
+  const [selectedSong, setSelectedSong] = useState<Song | null>(null);
   const [openEditSongForm, setOpenEditSongForm] = useState<boolean>(false);
   // const firstRenderRef = useRef<boolean>(true);
   const songs = useAppSelector(getUsersUploadedSongs);
   const { authUser } = useAuthContext();
+  const [openConfirmDeleteSongModal, setOpenDeleteSongConfirmModal] =
+    useState<boolean>(false);
 
   const total_songs_uploaded = songs.length;
+
+  const handleOpenDeleteConfirmModal = () => {
+    setOpenDeleteSongConfirmModal(true);
+  };
+
+  const handleCloseDeleteConfirmModal = () => {
+    setOpenDeleteSongConfirmModal(false);
+  };
 
   const handleOpenEditSongForm = () => {
     setOpenEditSongForm(true);
@@ -33,8 +47,15 @@ const UploadedSong = () => {
     setOpenEditSongForm(false);
   };
 
-  const changeEditedSong = (song: Song) => {
-    setEditedSong(song);
+  const changeSelectedSong = (song: Song) => {
+    setSelectedSong(song);
+  };
+
+  const handleDeleteUploadSong = async () => {
+    if (selectedSong) {
+      dispatch(deleteUploadSongAction(selectedSong.id));
+      handleCloseDeleteConfirmModal();
+    }
   };
 
   useEffect(() => {
@@ -55,9 +76,21 @@ const UploadedSong = () => {
       >
         <EditSongForm
           closeEditSongModal={handleCloseEditSongForm}
-          editedSong={editedSong}
+          editedSong={selectedSong}
         />
       </Modal>
+
+      {openConfirmDeleteSongModal && (
+        <ConfirmDialog
+          title='Xóa Bài Hát'
+          desc='Bài hát của bạn sẽ bị xóa khỏi hệ thống, bạn có muốn xóa'
+          onCancel={handleCloseDeleteConfirmModal}
+          onOk={handleDeleteUploadSong}
+          open={openConfirmDeleteSongModal}
+          onClose={handleCloseDeleteConfirmModal}
+        />
+      )}
+
       {!songs.length ? (
         <NoSongContainer>
           <img src={emptyUploadImage} alt='' />
@@ -96,7 +129,9 @@ const UploadedSong = () => {
             can_delete_song
             can_edit_song
             handleOpenEditSongForm={handleOpenEditSongForm}
-            changeEditedSong={changeEditedSong}
+            handleOpenDeleteConfirmModal={handleOpenDeleteConfirmModal}
+            changeSelectedSong={changeSelectedSong}
+            can_remove_out_of_upload
           />
         </Container>
       )}

@@ -107,3 +107,23 @@ export const changeFavourite = createAsyncThunk<
     }
   }
 );
+
+export const deleteUploadSongAction = createAsyncThunk<string, string>(
+  SONG_ACTION_TYPES.DELETE_UPLOAD_SONG,
+  async (params, { rejectWithValue, dispatch }) => {
+    try {
+      await services.deleteUploadSong(params);
+      toast.success('Xóa bài hát thành công');
+      return params;
+    } catch (error: any) {
+      toast.error(error.response?.data.msg || 'Có lỗi xảy ra');
+      if (error.response?.status === 403) {
+        localStorage.removeItem('music_token');
+        dispatch(logout());
+      }
+      return rejectWithValue(
+        error.response?.data?.msg || 'Something went wrong!'
+      );
+    }
+  }
+);

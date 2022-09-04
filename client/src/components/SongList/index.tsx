@@ -1,10 +1,15 @@
 import React, { useMemo, useEffect, useState, useCallback } from 'react';
-import { MdSort, MdPlaylistAdd, MdMoreHoriz } from 'react-icons/md';
+import {
+  MdSort,
+  MdPlaylistAdd,
+  MdMoreHoriz,
+  MdOutlineDeleteOutline,
+} from 'react-icons/md';
 import SongItem from '../SongItem';
-import { Container } from './style';
+import { Container, SongListMenuContainer } from './style';
 import { Checkbox, ClickAwayListener, Menu } from '@mui/material';
 import SongSortMenu from '../SongSortMenu';
-import { Song } from '../../services/song';
+import { changeFavourite, deleteUploadSong, Song } from '../../services/song';
 import AddToPlaylist from '../AddToPlaylist';
 import {
   DragDropContext,
@@ -14,16 +19,24 @@ import {
   ResponderProvided,
 } from 'react-beautiful-dnd';
 import { useAppDispatch } from '../../redux/hooks';
-import { changeSongsPosition } from '../../redux/playlistDetail/playlistDetailSlice';
+import {
+  changeSongsPosition,
+  deleteMultipleSongsOutOfPlaylist,
+} from '../../redux/playlistDetail/playlistDetailSlice';
 import {
   addSongToPlaylist,
   changeSongPositionInPlaylist,
   ChangeSongPositionInPlaylistParams,
+  removeSongOutOfPlaylist,
 } from '../../services/playlist';
 import { logout } from '../../redux/auth/authSlice';
 import { toast } from 'react-toastify';
 import FullscreenLoading from '../Loading/FullScreenLoading';
 import _ from 'lodash';
+import {
+  removeSongOutOfFavourite,
+  removeUploadSongs,
+} from '../../redux/song/songSlice';
 
 interface Props {
   songs: Song[];
@@ -33,9 +46,12 @@ interface Props {
   can_edit_song?: boolean;
   can_delete_song?: boolean;
   can_remove_out_of_list?: boolean;
+  can_change_favourite_songs?: boolean;
+  can_remove_out_of_upload?: boolean;
   handleOpenEditSongForm?: () => void;
-  changeEditedSong?: (song: Song) => void;
+  changeSelectedSong?: (song: Song) => void;
   handleRemoveSongOutOfPlaylist?: (song_id: string) => void;
+  handleOpenDeleteConfirmModal: () => void;
 }
 
 export type SortType = 'default' | 'name_az' | 'name_za';
@@ -49,8 +65,11 @@ const SongList: React.FC<Props> = ({
   can_change_privacy,
   can_remove_out_of_list,
   handleOpenEditSongForm,
-  changeEditedSong,
+  changeSelectedSong,
   handleRemoveSongOutOfPlaylist,
+  can_change_favourite_songs,
+  can_remove_out_of_upload,
+  handleOpenDeleteConfirmModal,
 }) => {
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
   const [moreAnchorEl, setMoreAnchorEl] = useState<HTMLElement | null>(null);
@@ -210,6 +229,70 @@ const SongList: React.FC<Props> = ({
     }
   };
 
+  const handleDeleteSelectedSongsOutOfPlaylist = async () => {
+    if (!playlist_id) return;
+    try {
+      for (const song_id of selectedSongs) {
+        await removeSongOutOfPlaylist({ playlist_id, song_id });
+      }
+
+      toast.success('Đã xóa bài hát khỏi playlist thành công');
+      dispatch(deleteMultipleSongsOutOfPlaylist(selectedSongs));
+
+      handleCloseMoreMenu();
+      clearSelectedSongs();
+      setFocusSong(null);
+    } catch (error: any) {
+      toast.error(error.response?.data.msg || 'Có lỗi xảy ra');
+      if (error.response?.status === 403) {
+        localStorage.removeItem('music_token');
+        dispatch(logout());
+      }
+    }
+  };
+
+  const handleDeleteUploadsSong = async () => {
+    try {
+      for (const song_id of selectedSongs) {
+        await deleteUploadSong(song_id);
+      }
+
+      dispatch(removeUploadSongs(selectedSongs));
+      toast.success('Xóa bài hát thành công');
+
+      handleCloseMoreMenu();
+      clearSelectedSongs();
+      setFocusSong(null);
+    } catch (error: any) {
+      toast.error(error.response?.data.msg || 'Có lỗi xảy ra');
+      if (error.response?.status === 403) {
+        localStorage.removeItem('music_token');
+        dispatch(logout());
+      }
+    }
+  };
+
+  const handleToggleSelectedSongsFavourite = async () => {
+    try {
+      for (const song_id of selectedSongs) {
+        await changeFavourite(song_id);
+      }
+
+      dispatch(removeSongOutOfFavourite(selectedSongs));
+      toast.success('Đã xóa bài hát khỏi thư viện');
+
+      handleCloseMoreMenu();
+      clearSelectedSongs();
+      setFocusSong(null);
+    } catch (error: any) {
+      toast.error(error.response?.data.msg || 'Có lỗi xảy ra');
+      if (error.response?.status === 403) {
+        localStorage.removeItem('music_token');
+        dispatch(logout());
+      }
+    }
+  };
+
   const handleReset = () => {
     clearSelectedSongs();
     setFocusSong(null);
@@ -271,7 +354,33 @@ const SongList: React.FC<Props> = ({
           },
         }}
       >
-        <AddToPlaylist onAddToPlaylist={handleAddAllSongsToPlaylist} />
+        <SongListMenuContainer>
+          <AddToPlaylist onAddToPlaylist={handleAddAllSongsToPlaylist} />
+          {can_remove_out_of_list && (
+            <div
+              onClick={handleDeleteSelectedSongsOutOfPlaylist}
+              className='menu-item'
+            >
+              <MdOutlineDeleteOutline />
+              <span>Xóa khỏi playlist này</span>
+            </div>
+          )}
+          {can_change_favourite_songs && (
+            <div
+              onClick={handleToggleSelectedSongsFavourite}
+              className='menu-item'
+            >
+              <MdOutlineDeleteOutline />
+              <span>Xóa khỏi danh sách yêu thích</span>
+            </div>
+          )}
+          {can_remove_out_of_upload && (
+            <div onClick={handleDeleteUploadsSong} className='menu-item'>
+              <MdOutlineDeleteOutline />
+              <span>Xóa khỏi danh sách tải lên</span>
+            </div>
+          )}
+        </SongListMenuContainer>
       </Menu>
       <div className='list-header'>
         {selectedSongs.length > 0 ? (
@@ -370,9 +479,12 @@ const SongList: React.FC<Props> = ({
                             can_delete_song={can_delete_song}
                             handleOpenEditSongForm={handleOpenEditSongForm}
                             can_remove_out_of_list={can_remove_out_of_list}
-                            changeEditedSong={changeEditedSong}
+                            changeSelectedSong={changeSelectedSong}
                             handleRemoveSongOutOfPlaylist={
                               handleRemoveSongOutOfPlaylist
+                            }
+                            handleOpenDeleteConfirmModal={
+                              handleOpenDeleteConfirmModal
                             }
                           />
                         </div>

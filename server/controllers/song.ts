@@ -98,6 +98,17 @@ const songController = {
         user_id: user.id,
         song: {
           is_deleted: false,
+          OR: [
+            {
+              user_id: user.id,
+            },
+            {
+              NOT: {
+                user_id: user.id,
+              },
+              privacy: 'public',
+            },
+          ],
         },
       },
       select: {
@@ -263,6 +274,41 @@ const songController = {
       });
 
       return res.json({ msg: 'Chỉnh sửa bài hát thành công' });
+    } catch (error) {
+      console.log(error);
+      return res.status(500).json({
+        msg: 'Có lỗi xảy ra',
+      });
+    }
+  },
+
+  // xóa bài hát đã upload
+  async deleteSong(req: any, res: Response) {
+    try {
+      const { song_id } = req.params;
+      const user = req.user;
+
+      const song = await prisma.song.findFirst({
+        where: { id: song_id, is_deleted: false },
+      });
+
+      if (!song) return res.status(404).json({ msg: 'Bài hát không tồn tại' });
+
+      if (song.user_id !== user.id)
+        return res
+          .status(400)
+          .json({ msg: 'Không có quyền chỉnh sửa bài hát này' });
+
+      await prisma.song.update({
+        where: {
+          id: song_id,
+        },
+        data: {
+          is_deleted: true,
+        },
+      });
+
+      return res.json({ msg: 'Xóa bài hát thành công' });
     } catch (error) {
       console.log(error);
       return res.status(500).json({

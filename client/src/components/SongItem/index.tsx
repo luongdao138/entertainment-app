@@ -26,8 +26,9 @@ interface Props {
   can_delete_song?: boolean;
   can_drag?: boolean;
   handleOpenEditSongForm?: () => void;
-  changeEditedSong?: (song: Song) => void;
+  changeSelectedSong?: (song: Song) => void;
   can_remove_out_of_list?: boolean;
+  handleOpenDeleteConfirmModal: () => void;
   handleRemoveSongOutOfPlaylist?: (song_id: string) => void;
 }
 
@@ -43,9 +44,10 @@ const SongItem: React.FC<Props> = ({
   can_change_privacy,
   can_delete_song,
   can_edit_song,
-  changeEditedSong,
+  changeSelectedSong,
   handleRemoveSongOutOfPlaylist,
   handleOpenEditSongForm,
+  handleOpenDeleteConfirmModal,
   can_remove_out_of_list,
 }) => {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
@@ -133,10 +135,11 @@ const SongItem: React.FC<Props> = ({
           handleOpenEditSongForm={handleOpenEditSongForm}
           can_delete_song={can_delete_song}
           can_edit_song={can_edit_song}
-          changeEditedSong={changeEditedSong}
+          changeSelectedSong={changeSelectedSong}
           closeSongItemAction={handleClose}
           handleRemoveSongOutOfPlaylist={handleRemoveSongOutOfPlaylist}
           can_remove_out_of_list={can_remove_out_of_list}
+          handleOpenDeleteConfirmModal={handleOpenDeleteConfirmModal}
         />
       </Menu>
       <Container

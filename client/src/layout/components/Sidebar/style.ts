@@ -11,13 +11,26 @@ export const Container = styled.div`
   flex-direction: column;
 
   & .sidebar-top {
-    flex-grow: 1;
-    overflow-y: auto;
-    padding-bottom: 1rem;
+    height: 100%;
+    padding-bottom: calc(1rem + 54px);
+    padding-top: 1.5rem;
+    display: flex;
+    flex-direction: column;
+
+    & .sidebar-scroll {
+      flex-grow: 1;
+      overflow-y: auto;
+    }
   }
 
   & .sidebar-bottom {
-    padding: 1.4rem 2.5rem;
+    position: fixed;
+    width: 24rem;
+    height: 54px;
+    bottom: 0;
+    left: 0;
+    z-index: 100;
+    padding: 0 2.8rem;
     border-top: 1px solid rgba(255, 255, 255, 0.1);
     font-weight: 700;
     color: #fff;
@@ -96,6 +109,7 @@ export const Divider = styled.div`
 `;
 
 export const Menu = styled.ul`
+  margin-top: 1.8rem;
   h2 {
     font-size: 1.2rem;
     text-transform: uppercase;
@@ -111,7 +125,7 @@ interface MenuItemProps {
   active?: boolean;
 }
 
-export const MenuItem = styled.ul`
+export const MenuItem = styled.li`
   & a {
     display: flex;
     color: #dadada;

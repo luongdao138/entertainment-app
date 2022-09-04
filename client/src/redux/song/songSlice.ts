@@ -1,6 +1,11 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { Song } from '../../services/song';
-import { getFavouriteSong, getUploadedSong, uploadSong } from './songActions';
+import {
+  deleteUploadSongAction,
+  getFavouriteSong,
+  getUploadedSong,
+  uploadSong,
+} from './songActions';
 
 interface SliceState {
   uploaded: {
@@ -49,6 +54,16 @@ const songSlice = createSlice({
         }
       });
     },
+    removeSongOutOfFavourite(state, action: PayloadAction<string[]>) {
+      state.favourite.data = state.favourite.data.filter(
+        (song) => !action.payload.includes(song.id)
+      );
+    },
+    removeUploadSongs(state, action: PayloadAction<string[]>) {
+      state.uploaded.data = state.uploaded.data.filter(
+        (song) => !action.payload.includes(song.id)
+      );
+    },
   },
   extraReducers(builder) {
     builder
@@ -61,10 +76,16 @@ const songSlice = createSlice({
       })
       .addCase(getFavouriteSong.fulfilled, (state, action) => {
         state.favourite.data = action.payload.songs;
+      })
+      .addCase(deleteUploadSongAction.fulfilled, (state, action) => {
+        state.uploaded.data = state.uploaded.data.filter(
+          (song) => song.id !== action.payload
+        );
       });
   },
   initialState,
 });
 
-export const { editSongSucess } = songSlice.actions;
+export const { editSongSucess, removeSongOutOfFavourite, removeUploadSongs } =
+  songSlice.actions;
 export default songSlice.reducer;
