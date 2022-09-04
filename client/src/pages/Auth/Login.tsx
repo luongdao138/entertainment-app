@@ -10,6 +10,7 @@ import { useNavigate } from 'react-router-dom';
 import * as Yup from 'yup';
 import appRoutes from '../../constants/appRoutes';
 import Input from '../../components/Input';
+import { trimData } from '../../utils/formatFormData';
 
 interface FormState {
   email: string;
@@ -46,8 +47,9 @@ const Login = () => {
     formikHelpers: FormikHelpers<FormState>
   ) => {
     try {
+      // console.log(trimData(values));
       setIsLoading(true);
-      const res = await login(values);
+      const res = await login(trimData(values));
       dispatch(loginSuccess(res));
 
       // save the token to localstorage

@@ -1,6 +1,8 @@
+import { raw } from '@prisma/client/runtime';
 import { error } from 'console';
 import { Request, Response } from 'express';
 import prisma from '../config/prisma';
+import { removeAccents } from '../utils/formatText';
 
 const songController = {
   async uploadSong(req: any, res: Response) {
@@ -23,13 +25,9 @@ const songController = {
         singer_name,
         thumbnail,
         url,
+        normalized_name: removeAccents(name),
         duration,
         user_id: user.id,
-        belong_categories: {
-          connect: {
-            id: '1d24c45a-0904-4ec4-a4a4-d67edab38013',
-          },
-        },
       },
       include: {
         belong_categories: {
@@ -316,6 +314,165 @@ const songController = {
       });
 
       return res.json({ msg: 'Xóa bài hát thành công' });
+    } catch (error) {
+      console.log(error);
+      return res.status(500).json({
+        msg: 'Có lỗi xảy ra',
+      });
+    }
+  },
+
+  // lấy thông tin chi tiết của bài hát
+  async getSongDetail(req: any, res: Response) {
+    try {
+      const user = req.user;
+      const { song_id } = req.params;
+
+      const song = await prisma.song.findFirst({
+        where: { id: song_id, is_deleted: false, privacy: 'public' },
+        include: {
+          user: {
+            select: {
+              id: true,
+              profile_photo: true,
+              full_name: true,
+            },
+          },
+          belong_categories: {
+            select: {
+              id: true,
+              name: true,
+            },
+          },
+        },
+      });
+
+      if (!song) return res.status(404).json({ msg: 'Bài hát không tồn tại' });
+
+      if (song.user_id === user.id) {
+        res.sendStatus(404);
+      }
+
+      const is_liked = await prisma.favouriteSong.findUnique({
+        where: {
+          user_id_song_id: {
+            song_id,
+            user_id: user.id,
+          },
+        },
+      });
+
+      let returned_song: any = { ...song };
+      returned_song.is_liked = Boolean(is_liked);
+
+      // tìm những bài hát được recommended liên quan đến bài hát này
+      /**
+       *    Những bài hát được recommend ko có id trùng với id của bài hát, chưa bị xóa, và là public
+       *    Ý định: tìm những bài hát có cùng category với bài hát
+       *    Những bài này ko đc upload lên bởi người đang truy vấn
+       *    Phải cân nhắc về việc sắp xếp các bài hát trả ra
+       *    Lấy 20 bài hát đầu tiên
+       */
+
+      const song_categories = song.belong_categories.map((bc) => bc.id);
+
+      let recommended_songs = await prisma.song.findMany({
+        where: {
+          id: {
+            not: song.id,
+          },
+          is_deleted: false,
+          privacy: 'public',
+          belong_categories: {
+            some: {
+              id: {
+                in: song_categories,
+              },
+            },
+          },
+          user_id: {
+            not: user.id,
+          },
+        },
+        include: {
+          belong_categories: {
+            select: {
+              id: true,
+            },
+          },
+        },
+        take: 20,
+        // cẩn bổ sung orderBy
+      });
+
+      const user_favourite_songs = await prisma.favouriteSong.findMany({
+        where: { user_id: user.id },
+        select: { song_id: true },
+      });
+      recommended_songs = recommended_songs.map((song) => ({
+        ...song,
+        is_liked: user_favourite_songs.some((fs) => fs.song_id === song.id),
+      }));
+
+      // tìm những playlist nổi bật của người đã upload bài hát này lên
+      let feature_playlists = await prisma.playlist.findMany({
+        where: {
+          creator_id: song.user_id,
+          is_deleted: false,
+          privacy: 'public',
+        },
+        include: {
+          creator: {
+            select: {
+              full_name: true,
+              id: true,
+            },
+          },
+          has_songs: {
+            orderBy: {
+              position: 'asc',
+            },
+            select: {
+              song: {
+                select: {
+                  thumbnail: true,
+                },
+              },
+            },
+            where: {
+              song: {
+                is_deleted: false,
+                privacy: 'public',
+              },
+            },
+            take: 4,
+          },
+          liked_by: {
+            where: {
+              user_id: user.id,
+            },
+          },
+        },
+        // cần phải xem xét lại orderBy (nên lấy những playlist nào)
+        orderBy: {
+          created_at: 'desc',
+        },
+        take: 4,
+      });
+
+      feature_playlists = feature_playlists.map((p) => ({
+        ...p,
+        is_owner: p.creator_id === user.id,
+        can_edit: p.creator_id === user.id,
+        can_delete: p.creator_id === user.id,
+        is_liked: p.liked_by?.length > 0,
+      }));
+
+      return res.json({
+        data: returned_song,
+        recommended_songs,
+        feature_playlists,
+      });
     } catch (error) {
       console.log(error);
       return res.status(500).json({

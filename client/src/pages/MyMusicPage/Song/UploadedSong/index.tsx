@@ -141,6 +141,7 @@ const UploadedSong = () => {
             handleOpenDeleteConfirmModal={handleOpenDeleteConfirmModal}
             changeSelectedSong={changeSelectedSong}
             can_remove_out_of_upload
+            enable_select_multiple
           />
         </Container>
       )}

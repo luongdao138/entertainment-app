@@ -8,6 +8,7 @@ import { toast } from 'react-toastify';
 import { useState } from 'react';
 import successIcon from '../../assets/successful-icon.png';
 import Input from '../../components/Input';
+import { trimData } from '../../utils/formatFormData';
 
 const Container = styled.div`
   padding: 3.2rem 1.6rem;
@@ -96,9 +97,10 @@ const ForgotPassword = () => {
   const [isResentEmail, setIsResentEmail] = useState<boolean>(false);
 
   const handleSendRequest = async (values: FormState) => {
+    const trimValues = trimData(values);
     try {
       setIsResentEmail(false);
-      await forgotPassword({ email: values.email });
+      await forgotPassword({ email: trimValues.email });
       setIsResentEmail(true);
     } catch (error: any) {
       if (error.response) {

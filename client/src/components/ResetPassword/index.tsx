@@ -9,6 +9,7 @@ import { createMetaSelector } from '../../redux/metadata/selectors';
 import { resetUserPassword } from '../../redux/auth/authActions';
 import { clearMetaData } from '../../redux/metadata/actions';
 import Input from '../Input';
+import { trimData } from '../../utils/formatFormData';
 
 interface Props {
   closeResetPasswordForm: () => void;
@@ -48,15 +49,16 @@ const ResetPasswordForm: React.FC<Props> = ({ closeResetPasswordForm }) => {
     values: FormState,
     helpers: FormikHelpers<FormState>
   ) => {
-    if (values.new_password === values.password) {
+    const trimValues = trimData(values);
+    if (trimValues.new_password === trimValues.password) {
       toast.error('Mật khẩu mới không được trùng với mật khẩu cũ');
       return;
     }
 
     dispatch(
       resetUserPassword({
-        new_password: values.new_password,
-        password: values.password,
+        new_password: trimValues.new_password,
+        password: trimValues.password,
       })
     );
   };

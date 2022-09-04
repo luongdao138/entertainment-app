@@ -224,7 +224,7 @@ const PlaylistItem: React.FC<Props> = ({
               ) : (
                 <LoginRequired>
                   <button className='favorite' onClick={handleLikePlaylist}>
-                    {playlist.is_liked ? <AiFillHeart /> : <AiOutlineHeart />}
+                    {is_liked ? <AiFillHeart /> : <AiOutlineHeart />}
                   </button>
                 </LoginRequired>
               )}

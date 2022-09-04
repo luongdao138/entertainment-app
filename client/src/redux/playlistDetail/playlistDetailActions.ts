@@ -62,3 +62,23 @@ export const removeSongOutOfPlaylistAction = createAsyncThunk<
     }
   }
 );
+
+export const getRecommendedSongsActions = createAsyncThunk<
+  services.GetRecommendedSongsOfPlaylistResponse,
+  services.GetRecommendedSongsOfPlaylistParams
+>(
+  PLAYLIST_DETAIL_ACTION_TYPES.GET_RECOMMENDED_SONGS,
+  async (params, { dispatch, rejectWithValue }) => {
+    try {
+      const res = await services.getRecommendedSongsOfPlaylist(params);
+      return res;
+    } catch (error: any) {
+      toast.error(error.response?.msg || 'Có lỗi xảy ra');
+      if (error.response?.status === 403) {
+        localStorage.removeItem('music_token');
+        dispatch(logout());
+      }
+      return rejectWithValue(error.response?.data.msg);
+    }
+  }
+);

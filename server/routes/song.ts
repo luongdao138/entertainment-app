@@ -13,6 +13,7 @@ router.route('/favourite').get(songController.getFavouriteSong);
 router.route('/favourite/:songId').put(songController.addOrRemoveFavourite);
 router
   .route('/:song_id')
+  .get(songController.getSongDetail)
   .put(songController.editSong)
   .delete(songController.deleteSong);
 

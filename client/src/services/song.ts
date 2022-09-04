@@ -1,5 +1,6 @@
 import apiEndpoints from '../constants/apiEndpoints';
 import { privateClient } from './client';
+import { Playlist } from './playlist';
 
 export type SongPrivacy = 'private' | 'public';
 export interface Song {
@@ -15,6 +16,16 @@ export interface Song {
   privacy?: SongPrivacy;
   position?: number;
   belong_categories: { id: string }[];
+  user_id?: string;
+}
+
+export interface SongDetail extends Song {
+  user: {
+    id: string;
+    profile_photo: string;
+    full_name: string;
+  };
+  belong_categories: { id: string; name: string }[];
 }
 
 export interface UploadSongParams {
@@ -31,6 +42,14 @@ export interface UploadSongResponse {
 
 export interface GetUploadedSongResponse {
   songs: Song[];
+}
+export interface GetSongDetailParams {
+  song_id: string;
+}
+export interface GetSongDetailResponse {
+  data: SongDetail;
+  recommended_songs: Song[];
+  feature_playlists: Playlist[];
 }
 
 export type EditSongParams = {
@@ -66,6 +85,16 @@ export const getUploadedSong = async (): Promise<GetUploadedSongResponse> => {
 export const getFavouriteSong = async (): Promise<GetUploadedSongResponse> => {
   const res = await privateClient.get<GetUploadedSongResponse>(
     apiEndpoints.GET_FAVOURITE_SONG
+  );
+
+  return res.data;
+};
+
+export const getSongDetail = async (
+  params: GetSongDetailParams
+): Promise<GetSongDetailResponse> => {
+  const res = await privateClient.get<GetSongDetailResponse>(
+    apiEndpoints.GET_SONG_DETAIL.replace(':song_id', params.song_id)
   );
 
   return res.data;

@@ -59,13 +59,14 @@ const Header = () => {
           </div>
         </div>
         <div className='header-right'>
-          <button
-            className='header-right-item header-upload'
-            onClick={handleClickUploadButton}
-          >
-            <FiDownload />
-          </button>
-
+          <LoginRequired>
+            <button
+              className='header-right-item header-upload'
+              onClick={handleClickUploadButton}
+            >
+              <FiDownload />
+            </button>
+          </LoginRequired>
           <button className='header-right-item header-upload'>
             <FiSettings />
           </button>

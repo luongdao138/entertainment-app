@@ -8,6 +8,7 @@ interface Props {
   is_show_checkbox?: boolean;
   is_selected?: boolean;
   is_dragging?: boolean;
+  enable_select_multiple?: boolean;
 }
 
 export const Container = styled.div`
@@ -17,9 +18,9 @@ export const Container = styled.div`
   justify-content: space-between;
   padding: 1rem;
   border-radius: 4px;
-  border-bottom: 1px solid hsla(0, 0%, 100%, 0.05);
   position: relative;
   user-select: none;
+  border-bottom: 1px solid hsla(0, 0%, 100%, 0.05);
 
   & .song-left {
     display: flex;
@@ -181,8 +182,9 @@ export const Container = styled.div`
       props.is_active ? '#3A3344' : '#2f283a'};
 
     & .music-icon {
-      opacity: 0;
-      visibility: hidden;
+      opacity: ${(props: Props) => (props.enable_select_multiple ? 0 : 1)};
+      visibility: ${(props: Props) =>
+        props.enable_select_multiple ? 'hidden' : 'visible'};
     }
     & .song-checkbox {
       opacity: 1;

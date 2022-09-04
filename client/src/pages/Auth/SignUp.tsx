@@ -11,6 +11,7 @@ import {
   passwordRegex,
 } from '../../utils/validationRegex';
 import Input from '../../components/Input';
+import { trimData } from '../../utils/formatFormData';
 
 interface FormState {
   full_name: string;
@@ -58,14 +59,15 @@ const SignUp = () => {
   ) => {
     try {
       setIsLoading(true);
+      const trimValues = trimData(values);
       await signup({
-        email: values.email,
-        full_name: values.full_name,
-        password: values.password,
+        email: trimValues.email,
+        full_name: trimValues.full_name,
+        password: trimValues.password,
       });
 
       toast.success('Đăng ký thành công');
-      setRegistrationEmail(values.email);
+      setRegistrationEmail(trimValues.email);
       changeAuthType(AuthType.SIGNUP_SUCCESS);
     } catch (error: any) {
       if (!error.response) {
@@ -114,7 +116,7 @@ const SignUp = () => {
             />
 
             <div className='nav'>
-              Already have an account?{' '}
+              Already have an account?
               <button onClick={changeToLogin}>Sign in</button>
             </div>
 

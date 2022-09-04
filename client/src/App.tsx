@@ -15,6 +15,7 @@ import RetrievePassword from './pages/Auth/RetrievePassword';
 import appRoutes from './constants/appRoutes';
 import PlaylistDetailPage from './pages/PlaylistDetailPage';
 import LibraryPlaylist from './pages/MyMusicPage/LibraryPlaylist';
+import SongDetailPage from './pages/SongDetailPage';
 
 function App() {
   return (
@@ -41,13 +42,14 @@ function App() {
               element={<LibraryPlaylist />}
             />
             <Route path='profile' element={<UserProfilePage />} />
+            <Route
+              path='playlist/:playlist_id'
+              element={<PlaylistDetailPage />}
+            />
+            <Route path='song/:song_id' element={<SongDetailPage />} />
           </Route>
 
           {/* Những route đăng nhập hay không đều vào được */}
-          <Route
-            path={appRoutes.PLAYLIST_DETAIL}
-            element={<PlaylistDetailPage />}
-          />
 
           {/* Những route mà nếu người dùng đã đăng nhập thì ko đc vào */}
           <Route element={<AlreadyAuth />}>

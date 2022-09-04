@@ -27,7 +27,7 @@ const FavouriteSong = () => {
       <Link to='/'>Khám phá ngay</Link>
     </NoSongsContainer>
   ) : (
-    <SongList songs={songs} can_change_favourite_songs />
+    <SongList songs={songs} enable_select_multiple can_change_favourite_songs />
   );
 };
 

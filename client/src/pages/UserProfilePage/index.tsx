@@ -16,6 +16,7 @@ import Progress from '../../components/LinearProgress';
 import { clearMetaData } from '../../redux/metadata/actions';
 import Modal from '../../components/Modal';
 import ResetPasswordForm from '../../components/ResetPassword';
+import { trimData } from '../../utils/formatFormData';
 
 interface FormState {
   full_name: string;
@@ -65,9 +66,10 @@ const UserProfilePage = () => {
     helpers: FormikHelpers<FormState>
   ) => {
     let params: any = {};
-    for (let key in values) {
-      if (values[key]) {
-        params[key] = values[key];
+    let trimValues = trimData(values);
+    for (let key in trimValues) {
+      if (trimValues[key]) {
+        params[key] = trimValues[key];
       }
     }
 

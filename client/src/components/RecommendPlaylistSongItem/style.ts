@@ -97,15 +97,23 @@ export const Container = styled.div`
     & .duration {
       font-size: 1.2rem;
       color: hsla(0, 0%, 100%, 0.5);
+      display: flex;
+      min-width: 5rem;
+      justify-content: flex-end;
     }
 
     & .more-action {
-      display: none;
+      opacity: 0;
+      visibility: hidden;
       place-items: center;
       width: 3.8rem;
       height: 3.8rem;
       border-radius: 50%;
       background-color: transparent;
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      right: 1rem;
 
       svg {
         color: #fff;
@@ -143,11 +151,14 @@ export const Container = styled.div`
       }
 
       & .duration {
-        display: none;
+        opacity: 0;
+        visibility: hidden;
       }
 
       & .more-action {
         display: grid;
+        opacity: 1;
+        visibility: visible;
 
         &:hover {
           background-color: #ffffff1a;

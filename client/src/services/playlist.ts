@@ -67,6 +67,13 @@ export interface UpdatePlaylistSongsParams {
 export interface GetSongsOfPlaylistParams {
   playlist_id: string;
 }
+export interface GetRecommendedSongsOfPlaylistParams {
+  playlist_id: string;
+}
+export interface GetRecommendedSongsOfPlaylistResponse {
+  songs: Song[];
+  title: string;
+}
 export interface GetSongsOfPlaylistResponse {
   songs: Song[];
 }
@@ -183,6 +190,19 @@ export const getPlaylistDetail = async (
 ): Promise<GetPlaylistDetailResponse> => {
   const res = await privateClient.get<GetPlaylistDetailResponse>(
     apiEndpoints.GET_PLAYLIST_DETAIL.replace(':playlist_id', params.playlist_id)
+  );
+
+  return res.data;
+};
+
+export const getRecommendedSongsOfPlaylist = async (
+  params: GetRecommendedSongsOfPlaylistParams
+): Promise<GetRecommendedSongsOfPlaylistResponse> => {
+  const res = await privateClient.get<GetRecommendedSongsOfPlaylistResponse>(
+    apiEndpoints.GET_RECOMMENDED_PLAYLIST_SONGS.replace(
+      ':playlist_id',
+      params.playlist_id
+    )
   );
 
   return res.data;

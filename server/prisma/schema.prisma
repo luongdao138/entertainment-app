@@ -42,12 +42,13 @@ enum Privacy {
 }
 
 model Song {
-  id          String @id @default(uuid())
-  url         String
-  thumbnail   String
-  name        String
-  singer_name String
-  duration    Int
+  id              String  @id @default(uuid())
+  url             String
+  thumbnail       String
+  name            String
+  normalized_name String?
+  singer_name     String
+  duration        Int
 
   user       User     @relation("uploaded", fields: [user_id], references: [id])
   user_id    String
@@ -66,9 +67,10 @@ model Song {
 }
 
 model Playlist {
-  id        String @id @default(uuid())
-  thumbnail String @default("https://photo-zmp3.zmdcdn.me/album_default.png")
-  title     String
+  id               String  @id @default(uuid())
+  thumbnail        String  @default("https://photo-zmp3.zmdcdn.me/album_default.png")
+  title            String
+  normalized_title String?
 
   creator    User           @relation("created", fields: [creator_id], references: [id])
   creator_id String

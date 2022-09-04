@@ -12,6 +12,7 @@ import playlistRouter from './routes/playlist';
 import categoryRouter from './routes/category';
 import verifyTokenMiddleware from './middlewares/verifyJwt';
 import prisma from './config/prisma';
+import { removeAccents } from './utils/formatText';
 
 dotenv.config();
 
@@ -198,15 +199,39 @@ app.get('/', async (req, res) => {
   //   },
   // });
 
-  const data = await prisma.user.findMany({
+  // const data = await prisma.user.findMany({
+  //   where: {
+  //     full_name: {
+  //       not: {},
+  //     },
+  //   },
+  // });
+
+  // const playlists = await prisma.playlist.findMany({
+  //   where: { is_deleted: false },
+  //   select: {
+  //     title: true,
+  //     normalized_title: true,
+  //   },
+  // });
+  const songs = await prisma.song.findMany({
     where: {
-      full_name: {
-        not: {},
-      },
+      is_deleted: false,
     },
+    select: { id: true, name: true, normalized_name: true },
   });
 
-  return res.json({ msg: 'Success' });
+  // for (const song of songs)
+  //   await prisma.song.update({
+  //     where: {
+  //       id: song.id,
+  //     },
+  //     data: {
+  //       normalized_name: removeAccents(song.name),
+  //     },
+  //   });
+
+  return res.json({ data: songs });
 });
 
 app.use('/auth', authRouter);

@@ -65,8 +65,8 @@ const UploadSongForm: React.FC<Props> = ({ closeUploadModal }) => {
         dispatch(
           uploadSong({
             duration,
-            name,
-            singer_name: singerName,
+            name: name.trim(),
+            singer_name: singerName.trim(),
             thumbnail,
             url: audioUrl,
           })
@@ -77,8 +77,8 @@ const UploadSongForm: React.FC<Props> = ({ closeUploadModal }) => {
         try {
           await uploadNewSong({
             duration,
-            name,
-            singer_name: singerName,
+            name: name.trim(),
+            singer_name: singerName.trim(),
             thumbnail,
             url: audioUrl,
           });

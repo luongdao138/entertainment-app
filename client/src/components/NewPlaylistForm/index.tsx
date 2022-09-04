@@ -47,7 +47,7 @@ const NewPlaylistForm: React.FC<Props> = ({ closeUploadModal }) => {
               data: {
                 is_public: isPublic,
                 play_random: isPlayRandom,
-                title,
+                title: title.trim(),
               },
               id: editedPlaylist?.id,
             },
@@ -61,7 +61,7 @@ const NewPlaylistForm: React.FC<Props> = ({ closeUploadModal }) => {
           data: {
             is_public: isPublic,
             play_random: isPlayRandom,
-            title,
+            title: title.trim(),
           },
           onSuccess(id: string) {
             navigate(appRoutes.PLAYLIST_DETAIL.replace(':playlist_id', id));

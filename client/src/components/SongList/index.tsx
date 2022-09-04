@@ -51,7 +51,8 @@ interface Props {
   handleOpenEditSongForm?: () => void;
   changeSelectedSong?: (song: Song) => void;
   handleRemoveSongOutOfPlaylist?: (song_id: string) => void;
-  handleOpenDeleteConfirmModal: () => void;
+  handleOpenDeleteConfirmModal?: () => void;
+  enable_select_multiple?: boolean;
 }
 
 export type SortType = 'default' | 'name_az' | 'name_za';
@@ -70,6 +71,7 @@ const SongList: React.FC<Props> = ({
   can_change_favourite_songs,
   can_remove_out_of_upload,
   handleOpenDeleteConfirmModal,
+  enable_select_multiple,
 }) => {
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
   const [moreAnchorEl, setMoreAnchorEl] = useState<HTMLElement | null>(null);
@@ -382,60 +384,65 @@ const SongList: React.FC<Props> = ({
           )}
         </SongListMenuContainer>
       </Menu>
-      <div className='list-header'>
-        {selectedSongs.length > 0 ? (
-          <div className='list-header-left'>
-            <Checkbox
-              disableRipple
-              disableTouchRipple
-              disableFocusRipple
-              sx={{
-                padding: 0,
-                color: 'hsla(0,0%,100%,0.2)',
-                '&.Mui-checked .MuiSvgIcon-root': {
-                  color: '#7200a1',
-                },
-              }}
-              onChange={toggleSelectAllSongs}
-              checked={selectedSongs.length === songs.length}
-            />
+      {enable_select_multiple && (
+        <div className='list-header'>
+          {selectedSongs.length > 0 ? (
+            <div className='list-header-left'>
+              <Checkbox
+                disableRipple
+                disableTouchRipple
+                disableFocusRipple
+                sx={{
+                  padding: 0,
+                  color: 'hsla(0,0%,100%,0.2)',
+                  '&.Mui-checked .MuiSvgIcon-root': {
+                    color: '#7200a1',
+                  },
+                }}
+                onChange={toggleSelectAllSongs}
+                checked={selectedSongs.length === songs.length}
+              />
 
-            <button className='add-playlist' disabled={isAddingSongToPlaylist}>
-              <MdPlaylistAdd />
-              <span>Thêm vào danh sách phát</span>
-            </button>
+              <button
+                className='add-playlist'
+                disabled={isAddingSongToPlaylist}
+              >
+                <MdPlaylistAdd />
+                <span>Thêm vào danh sách phát</span>
+              </button>
 
-            <button
-              className='more-icon'
-              aria-label='more'
-              id='more-button'
-              aria-controls={openMoreMenu ? 'more-menu' : undefined}
-              aria-expanded={openMoreMenu ? 'true' : undefined}
-              aria-haspopup='true'
-              onClick={handleOpenMoreMenu}
-            >
-              <MdMoreHoriz />
-            </button>
-          </div>
-        ) : (
-          <div className='list-header-left'>
-            <button
-              aria-label='more'
-              id='sort-button'
-              aria-controls={openSortMenu ? 'sort-menu' : undefined}
-              aria-expanded={openSortMenu ? 'true' : undefined}
-              aria-haspopup='true'
-              onClick={handleOpenSortMenu}
-              className='sort-icon'
-            >
-              <MdSort />
-            </button>
-            <span className='song-label'>Bài hát</span>
-          </div>
-        )}
+              <button
+                className='more-icon'
+                aria-label='more'
+                id='more-button'
+                aria-controls={openMoreMenu ? 'more-menu' : undefined}
+                aria-expanded={openMoreMenu ? 'true' : undefined}
+                aria-haspopup='true'
+                onClick={handleOpenMoreMenu}
+              >
+                <MdMoreHoriz />
+              </button>
+            </div>
+          ) : (
+            <div className='list-header-left'>
+              <button
+                aria-label='more'
+                id='sort-button'
+                aria-controls={openSortMenu ? 'sort-menu' : undefined}
+                aria-expanded={openSortMenu ? 'true' : undefined}
+                aria-haspopup='true'
+                onClick={handleOpenSortMenu}
+                className='sort-icon'
+              >
+                <MdSort />
+              </button>
+              <span className='song-label'>Bài hát</span>
+            </div>
+          )}
 
-        <span className='list-header-right'>Thời gian</span>
-      </div>
+          <span className='list-header-right'>Thời gian</span>
+        </div>
+      )}
 
       <ClickAwayListener onClickAway={handleClickAway}>
         <div className='list-content'>
@@ -486,6 +493,7 @@ const SongList: React.FC<Props> = ({
                             handleOpenDeleteConfirmModal={
                               handleOpenDeleteConfirmModal
                             }
+                            enable_select_multiple={enable_select_multiple}
                           />
                         </div>
                       )}

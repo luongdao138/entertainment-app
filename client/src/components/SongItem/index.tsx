@@ -28,7 +28,8 @@ interface Props {
   handleOpenEditSongForm?: () => void;
   changeSelectedSong?: (song: Song) => void;
   can_remove_out_of_list?: boolean;
-  handleOpenDeleteConfirmModal: () => void;
+  handleOpenDeleteConfirmModal?: () => void;
+  enable_select_multiple?: boolean;
   handleRemoveSongOutOfPlaylist?: (song_id: string) => void;
 }
 
@@ -49,6 +50,7 @@ const SongItem: React.FC<Props> = ({
   handleOpenEditSongForm,
   handleOpenDeleteConfirmModal,
   can_remove_out_of_list,
+  enable_select_multiple,
 }) => {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const openMenu = Boolean(anchorEl);
@@ -69,8 +71,10 @@ const SongItem: React.FC<Props> = ({
   const dispatch = useAppDispatch();
 
   const handleClickSong = () => {
-    clearSelectedSongs();
-    changeFocusSong(song.id);
+    if (enable_select_multiple) {
+      clearSelectedSongs();
+      changeFocusSong(song.id);
+    }
   };
 
   const handleSelectSong = () => {
@@ -149,33 +153,36 @@ const SongItem: React.FC<Props> = ({
         is_show_checkbox={isShowCheckbox}
         is_selected={isSelected}
         is_dragging={is_dragging}
+        enable_select_multiple={enable_select_multiple}
       >
         <div className='song-left'>
           <div className='music-icon'>
-            {can_drag ? (
+            {can_drag && enable_select_multiple ? (
               <MdDragIndicator style={{ fontSize: '2rem' }} />
             ) : (
               <FiMusic />
             )}
           </div>
 
-          <div className='song-checkbox'>
-            <Checkbox
-              disableRipple
-              disableTouchRipple
-              disableFocusRipple
-              sx={{
-                padding: 0,
-                color: isActive ? '#fff' : 'hsla(0,0%,100%,0.2)',
-                '&.Mui-checked .MuiSvgIcon-root': {
-                  color: '#7200a1',
-                },
-              }}
-              onChange={handleSelectSong}
-              checked={isSelected}
-              onClick={handleClickCheckbox}
-            />
-          </div>
+          {enable_select_multiple && (
+            <div className='song-checkbox'>
+              <Checkbox
+                disableRipple
+                disableTouchRipple
+                disableFocusRipple
+                sx={{
+                  padding: 0,
+                  color: isActive ? '#fff' : 'hsla(0,0%,100%,0.2)',
+                  '&.Mui-checked .MuiSvgIcon-root': {
+                    color: '#7200a1',
+                  },
+                }}
+                onChange={handleSelectSong}
+                checked={isSelected}
+                onClick={handleClickCheckbox}
+              />
+            </div>
+          )}
 
           <div className='song-thumbnail'>
             <img src={song.thumbnail} alt='' />

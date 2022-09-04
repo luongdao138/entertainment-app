@@ -33,11 +33,8 @@ const MainLayout = () => {
   const { authType, isOpenAuthModal, closeAuthModal, setIsLoadingUser } =
     useAuthContext();
   const { closeUploadForm, isOpenUploadForm } = useUploadContext();
-  const {
-    closeUploadPlaylistForm,
-    isOpenUploadPlaylistForm,
-    openUploadPlaylistForm,
-  } = useUploadPlaylistContext();
+  const { closeUploadPlaylistForm, isOpenUploadPlaylistForm } =
+    useUploadPlaylistContext();
   const dispatch = useAppDispatch();
   // const isFirstRenderRef = useRef<boolean>(true);
 

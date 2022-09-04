@@ -1,6 +1,7 @@
 import { Response } from 'express';
 import prisma from '../config/prisma';
 import _ from 'lodash';
+import { removeAccents } from '../utils/formatText';
 
 const playlistController = {
   // tạo một playlist mới
@@ -18,6 +19,7 @@ const playlistController = {
       let new_playlist: any = await prisma.playlist.create({
         data: {
           title,
+          normalized_title: removeAccents(title),
           creator_id: user.id,
           play_random,
           privacy: Boolean(is_public) ? 'public' : 'private',
@@ -724,6 +726,11 @@ const playlistController = {
       if (!playlist)
         return res.status(404).json({ msg: 'Playlist không tồn tại' });
 
+      if (!user) {
+        // người dùng này chưa đăng nhập
+        return res.json({ playlist });
+      }
+
       // kiểm tra xem nếu user này ko phải là creator, playlist là private => ko cho lấy thông tin
       if (playlist.privacy === 'private' && playlist.creator_id !== user.id)
         return res.status(404).json({ msg: 'Playlist không tồn tại' });
@@ -801,7 +808,18 @@ const playlistController = {
         },
       });
 
+      // lấy ra những bài hát mà người này yêu thích
+      const user_favourite_songs = await prisma.favouriteSong.findMany({
+        where: {
+          user_id: user.id,
+        },
+        select: {
+          song_id: true,
+        },
+      });
+
       let songs: any[] = [];
+      let title = '';
 
       if (playlist_songs.length === 0) {
         //   hiện tại trong playlist chưa có bài hát nào
@@ -823,8 +841,8 @@ const playlistController = {
             },
             OR: [
               {
-                name: {
-                  contains: playlist.title,
+                normalized_name: {
+                  contains: removeAccents(playlist.title),
                   mode: 'insensitive',
                 },
               },
@@ -844,9 +862,17 @@ const playlistController = {
               },
             ],
           },
+          include: {
+            belong_categories: {
+              select: {
+                id: true,
+              },
+            },
+          },
           take: 20,
           // có thể phải bổ sung cách sắp xếp các bài hát
         });
+        title = 'Dựa trên tiêu đề của playlist này';
       } else {
         // hiện tại trong playlist đã có bài hát
         /*
@@ -883,6 +909,7 @@ const playlistController = {
               not: user.id,
             },
             OR: [
+              // tìm những bài hát có category trùng với 1 trong các category của playlist
               {
                 belong_categories: {
                   some: {
@@ -892,6 +919,8 @@ const playlistController = {
                   },
                 },
               },
+
+              // tìm những bài hát có người upload là 1 trong những người upload bài trong playlist
               {
                 user_id: {
                   in: pl_users,
@@ -899,14 +928,27 @@ const playlistController = {
               },
             ],
           },
+          include: {
+            belong_categories: {
+              select: {
+                id: true,
+              },
+            },
+          },
           take: 200,
         });
+
+        title = 'Dựa trên các bài hát trong playlist này';
       }
 
       // shuffle the songs before retrun, currently using built in shuffle function of lodash
       songs = _.shuffle(songs);
+      songs = songs.map((song) => ({
+        ...song,
+        is_liked: user_favourite_songs.some((fs) => fs.song_id === song.id),
+      }));
 
-      return res.json({ songs });
+      return res.json({ songs, title });
     } catch (error) {
       console.log(error);
       return res.status(500).json({ msg: 'Có lỗi xảy ra' });

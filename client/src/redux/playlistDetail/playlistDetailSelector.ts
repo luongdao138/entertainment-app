@@ -12,3 +12,13 @@ export const getPlaylistSongsSelector = createSelector(
   getRoot,
   (state) => state.songs.data
 );
+
+export const getPlaylistRecommendedSongsSelector = createSelector(
+  getRoot,
+  (state) => state.recommended.data
+);
+
+export const getPlaylistRecommendedTitleSelector = createSelector(
+  getRoot,
+  (state) => state.recommended.title
+);

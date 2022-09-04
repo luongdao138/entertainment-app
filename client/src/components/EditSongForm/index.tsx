@@ -17,6 +17,7 @@ import { ReactComponent as LoadingSpinner } from '../../assets/loading-spinner.s
 import _ from 'lodash';
 import useDeleteFile from '../../hooks/useDeleteFile';
 import * as Yup from 'yup';
+import { trimData } from '../../utils/formatFormData';
 interface Props {
   editedSong: Song | null;
   closeEditSongModal: () => void;
@@ -37,7 +38,6 @@ const initialValues: FormState = {
 const validationSchema = Yup.object({
   name: Yup.string().required('Tên bài hát không được để trống'),
   singer_name: Yup.string().required('Tên nghệ sĩ không được để trống'),
-  category: Yup.string().required('Thể loại không được để trống'),
 });
 
 const EditSongForm: React.FC<Props> = ({ closeEditSongModal, editedSong }) => {
@@ -50,7 +50,8 @@ const EditSongForm: React.FC<Props> = ({ closeEditSongModal, editedSong }) => {
 
   // const isFirstRenderRef = useRef<boolean>(true)
   const handleSubmit = async (values: FormState) => {
-    const { category, ...rest } = values;
+    let trimValues = trimData(values);
+    const { category, ...rest } = trimValues;
     const belong_categories = category.split(',');
     if (editedSong) {
       try {
@@ -75,7 +76,9 @@ const EditSongForm: React.FC<Props> = ({ closeEditSongModal, editedSong }) => {
               ...editedSong,
               ...rest,
               thumbnail: url ?? editedSong.thumbnail,
-              belong_categories: belong_categories.map((x) => ({ id: x })),
+              belong_categories: belong_categories.map((x: string) => ({
+                id: x,
+              })),
             },
           })
         );

@@ -8,6 +8,7 @@ import Input from '../../components/Input';
 import appRoutes from '../../constants/appRoutes';
 import { useAuthContext } from '../../context/AuthContext';
 import { changePassword } from '../../services/auth';
+import { trimData } from '../../utils/formatFormData';
 import { passwordRegex } from '../../utils/validationRegex';
 
 const Container = styled.div`
@@ -119,8 +120,9 @@ const RetrievePassword = () => {
   const { openAuthModal } = useAuthContext();
 
   const handleChangePassword = async (values: FormState) => {
+    const trimValues = trimData(values);
     try {
-      await changePassword({ token, new_password: values.new_password });
+      await changePassword({ token, new_password: trimValues.new_password });
       toast.success('Đổi mật khẩu thành công');
       navigate(appRoutes.HOME);
       openAuthModal();

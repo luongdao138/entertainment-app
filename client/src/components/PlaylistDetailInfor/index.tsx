@@ -19,6 +19,7 @@ import {
 import { Song } from '../../services/song';
 import AudioLoadingIcon from '../AudioPlayingIcon';
 import ConfirmDialog from '../ConfirmDialog';
+import LoginRequired from '../LoginRequired';
 import PlaylistItemMenu from '../PlaylistItemMenu';
 import { Container } from './style';
 
@@ -44,7 +45,9 @@ const PlaylistDetailInfor: React.FC<Props> = ({
     useState<boolean>(false);
   const [is_changed, setIsChanged] = useState<boolean>(false);
   const [is_playing, setIsPlaying] = useState<boolean>(false);
-  const [is_liked, setIsLiked] = useState<boolean>(false);
+  const [is_liked, setIsLiked] = useState<boolean>(
+    Boolean(playlist_detail.is_liked)
+  );
 
   const handleChangePlayState = () => {
     setIsChanged(true);
@@ -239,9 +242,11 @@ const PlaylistDetailInfor: React.FC<Props> = ({
 
         <div className='playlist-actions'>
           {!playlist_detail.is_owner && (
-            <button className='action favorite' onClick={toggleLikePlaylist}>
-              {is_liked ? <AiFillHeart /> : <AiOutlineHeart />}
-            </button>
+            <LoginRequired>
+              <button className='action favorite' onClick={toggleLikePlaylist}>
+                {is_liked ? <AiFillHeart /> : <AiOutlineHeart />}
+              </button>
+            </LoginRequired>
           )}
 
           <button

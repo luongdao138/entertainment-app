@@ -8,6 +8,9 @@ const categoryController = {
         id: true,
         name: true,
       },
+      orderBy: {
+        name: 'asc',
+      },
     });
     return res.json({ categories });
   },

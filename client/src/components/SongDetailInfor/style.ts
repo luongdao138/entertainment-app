@@ -5,7 +5,6 @@ interface Props {
   is_playing: boolean;
   is_changed: boolean;
   is_current_audio?: boolean;
-  is_multiple?: boolean;
 }
 
 export const Container = styled.div`
@@ -33,11 +32,6 @@ export const Container = styled.div`
       }
 
       img {
-        transform: ${(props: Props) =>
-          props.is_multiple ? 'scale(1)' : 'scale(1.1)'};
-      }
-
-      & .imgs {
         transform: scale(1.1);
       }
 
@@ -56,10 +50,10 @@ export const Container = styled.div`
       z-index: 10;
       display: flex;
       align-items: center;
+      justify-content: center;
       opacity: ${(props: Props) => (props.is_playing ? 1 : 0)};
       visibility: ${(props: Props) =>
         props.is_playing ? 'visible' : 'hidden'};
-      justify-content: center;
       button {
         background-color: transparent;
         width: 45px;
@@ -94,12 +88,6 @@ export const Container = styled.div`
           : 'spin-off 0.5s'
         : 'none'};
 
-    & .imgs {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      grid-template-rows: repeat(2, 1fr);
-      transition: all 0.35s ease-in-out;
-    }
     @keyframes spin {
       0% {
         transform: rotate(0deg);

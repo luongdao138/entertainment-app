@@ -5,6 +5,7 @@ import { editPlaylist } from '../playlist/playlistActions';
 import {
   getPlaylistDetailAction,
   getPlaylistSongsAction,
+  getRecommendedSongsActions,
   removeSongOutOfPlaylistAction,
 } from './playlistDetailActions';
 
@@ -13,12 +14,20 @@ interface SliceState {
   songs: {
     data: Song[];
   };
+  recommended: {
+    data: Song[];
+    title: string;
+  };
 }
 
 const initialState: SliceState = {
   data: null,
   songs: {
     data: [],
+  },
+  recommended: {
+    data: [],
+    title: '',
   },
 };
 
@@ -42,6 +51,15 @@ const playlistDetailSlice = createSlice({
       }
 
       state.songs.data = new_songs;
+    },
+    shuffleRecommendedSongs(state, action: PayloadAction<{ songs: Song[] }>) {
+      state.recommended.data = action.payload.songs;
+    },
+    addSongToPlaylistSuccess(state, action: PayloadAction<{ song: Song }>) {
+      state.songs.data.push(action.payload.song);
+      state.recommended.data = state.recommended.data.filter(
+        (song) => song.id !== action.payload.song.id
+      );
     },
   },
   extraReducers(builder) {
@@ -74,6 +92,10 @@ const playlistDetailSlice = createSlice({
         }
 
         state.songs.data = new_songs;
+      })
+      .addCase(getRecommendedSongsActions.fulfilled, (state, action) => {
+        state.recommended.data = action.payload.songs;
+        state.recommended.title = action.payload.title;
       });
   },
 });
@@ -81,6 +103,8 @@ const playlistDetailSlice = createSlice({
 export const {
   likePlaylist,
   changeSongsPosition,
+  shuffleRecommendedSongs,
   deleteMultipleSongsOutOfPlaylist,
+  addSongToPlaylistSuccess,
 } = playlistDetailSlice.actions;
 export default playlistDetailSlice.reducer;

@@ -15,6 +15,7 @@ import {
 import {
   getPlaylistDetailAction,
   getPlaylistSongsAction,
+  getRecommendedSongsActions,
   removeSongOutOfPlaylistAction,
 } from '../../redux/playlistDetail/playlistDetailActions';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -22,6 +23,7 @@ import PlaylistDetailInfor from '../../components/PlaylistDetailInfor';
 import SongList from '../../components/SongList';
 import appRoutes from '../../constants/appRoutes';
 import { calcTotalPlaylistTime } from '../../utils/formatTime';
+import useReloadWhenLogout from '../../hooks/useReloadWhenLogout';
 
 const mockSongs: Song[] = [...new Array(6)].fill({}).map(() => ({
   id: uuid(),
@@ -48,15 +50,18 @@ const PlaylistDetailPage = () => {
   const playlist_detail = useAppSelector(getPlaylistDetailSelector);
   const playlist_songs = useAppSelector(getPlaylistSongsSelector);
 
+  const is_own_playlist = authUser?.id === playlist_detail?.creator.id;
+
+  useReloadWhenLogout();
+
   useEffect(() => {
     // if (isFirstRenderRef.current) {
     //   isFirstRenderRef.current = false;
     //   return;
     // }
 
-    // get playlist detail data
-    if (playlist_id && authUser) {
-      // lấy thông tin chi tiết của playlist
+    // lấy thông tin chi tiết của playlist
+    if (playlist_id) {
       dispatch(getPlaylistDetailAction({ playlist_id }))
         .unwrap()
         .catch((errorCode: any) => {
@@ -64,11 +69,18 @@ const PlaylistDetailPage = () => {
             navigate(appRoutes.HOME, { replace: true });
           }
         });
+    }
 
+    // get playlist detail data
+    if (playlist_id && authUser) {
       // lấy ra tất cả các bài hát của playlist đó
       dispatch(getPlaylistSongsAction({ playlist_id }));
+
+      // lấy ra những bài hát đc recommend cho playlist này (chỉ khi playlist này của chính authUser)
+      if (is_own_playlist)
+        dispatch(getRecommendedSongsActions({ playlist_id }));
     }
-  }, [playlist_id, authUser]);
+  }, [playlist_id, authUser, is_own_playlist]);
 
   if (!playlist_detail) return null;
 
@@ -103,6 +115,7 @@ const PlaylistDetailPage = () => {
                 playlist_id={playlist_detail.id}
                 can_remove_out_of_list={playlist_detail.is_owner}
                 handleRemoveSongOutOfPlaylist={handleRemoveSongOutOfPlaylist}
+                enable_select_multiple
               />
 
               <div className='song-count'>
@@ -116,9 +129,13 @@ const PlaylistDetailPage = () => {
             </div>
           )}
 
-          <div className='playlist-songs-recommend'>
-            <PlaylistRecommendSongs songs={mockSongs} />
-          </div>
+          {is_own_playlist && (
+            <div className='playlist-songs-recommend'>
+              {playlist_id && (
+                <PlaylistRecommendSongs playlist_id={playlist_id} />
+              )}
+            </div>
+          )}
         </div>
       </div>
 

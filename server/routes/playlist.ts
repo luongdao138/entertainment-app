@@ -3,27 +3,46 @@ import playlistController from '../controllers/playlist';
 import verifyTokenMiddleware from '../middlewares/verifyJwt';
 
 const router = Router();
-router.use(verifyTokenMiddleware);
-
-router.post('/', playlistController.createNewPlaylist);
-router.get('/private', playlistController.getUserPrivatePlaylist);
+router.post('/', verifyTokenMiddleware, playlistController.createNewPlaylist);
+router.get(
+  '/private',
+  verifyTokenMiddleware,
+  playlistController.getUserPrivatePlaylist
+);
 router.get(
   '/recommend/:playlist_id',
+  verifyTokenMiddleware,
   playlistController.getRecommendedSongsOfPlaylist
 );
 router.put(
   '/changeSongPosition',
+  verifyTokenMiddleware,
   playlistController.changeSongPositionInPlaylist
 );
-router.post('/addSong', playlistController.addSongToPlaylist);
-router.post('/removeSong', playlistController.deleteSongOutOfPlaylist);
-router.get('/getSong/:playlist_id', playlistController.getAllSongsOfPlaylist);
+router.post(
+  '/addSong',
+  verifyTokenMiddleware,
+  playlistController.addSongToPlaylist
+);
+router.post(
+  '/removeSong',
+  verifyTokenMiddleware,
+  playlistController.deleteSongOutOfPlaylist
+);
+router.get(
+  '/getSong/:playlist_id',
+  verifyTokenMiddleware,
+  playlistController.getAllSongsOfPlaylist
+);
+router.put(
+  '/favourite/:playlist_id',
+  verifyTokenMiddleware,
+  playlistController.likeOrUnlikePlaylist
+);
 router
   .route('/:play_list_id')
-  .get(playlistController.getPlaylistDetail)
-  .put(playlistController.editPlaylist)
-  .delete(playlistController.deletePlaylist);
-
-router.put('/favourite/:playlist_id', playlistController.likeOrUnlikePlaylist);
+  .get(verifyTokenMiddleware, playlistController.getPlaylistDetail)
+  .put(verifyTokenMiddleware, playlistController.editPlaylist)
+  .delete(verifyTokenMiddleware, playlistController.deletePlaylist);
 
 export default router;
