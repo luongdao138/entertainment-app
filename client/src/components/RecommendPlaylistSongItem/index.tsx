@@ -11,13 +11,19 @@ import { useAppDispatch } from '../../redux/hooks';
 import { logout } from '../../redux/auth/authSlice';
 import { addSongToPlaylist } from '../../services/playlist';
 import { addSongToPlaylistSuccess } from '../../redux/playlistDetail/playlistDetailSlice';
+import { AudioSong } from '../../redux/audioPlayer/audioPlayerSlice';
 
 interface Props {
   song: Song;
   playlist_id: string;
+  onClickSongAudio?: (song: AudioSong) => void;
 }
 
-const RecommendPlaylistSongItem: React.FC<Props> = ({ song, playlist_id }) => {
+const RecommendPlaylistSongItem: React.FC<Props> = ({
+  song,
+  playlist_id,
+  onClickSongAudio,
+}) => {
   const [is_liked, setIsLiked] = useState<boolean>(song.is_liked);
   const dispatch = useAppDispatch();
 
@@ -62,7 +68,12 @@ const RecommendPlaylistSongItem: React.FC<Props> = ({ song, playlist_id }) => {
           <FiMusic />
         </div>
 
-        <div className='song-thumbnail'>
+        <div
+          className='song-thumbnail'
+          onClick={() => {
+            onClickSongAudio?.(song);
+          }}
+        >
           <img src={song.thumbnail} alt='' />
           <div className='opacity'></div>
           <BsFillPlayFill className='play-state' />

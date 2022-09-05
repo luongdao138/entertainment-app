@@ -9,7 +9,12 @@ import SongItem from '../SongItem';
 import { Container, SongListMenuContainer } from './style';
 import { Checkbox, ClickAwayListener, Menu } from '@mui/material';
 import SongSortMenu from '../SongSortMenu';
-import { changeFavourite, deleteUploadSong, Song } from '../../services/song';
+import {
+  changeFavourite,
+  deleteUploadSong,
+  Song,
+  SongDetail,
+} from '../../services/song';
 import AddToPlaylist from '../AddToPlaylist';
 import {
   DragDropContext,
@@ -52,6 +57,7 @@ interface Props {
   changeSelectedSong?: (song: Song) => void;
   handleRemoveSongOutOfPlaylist?: (song_id: string) => void;
   handleOpenDeleteConfirmModal?: () => void;
+  onClickSongAudio?: (song_id: Song | SongDetail) => void;
   enable_select_multiple?: boolean;
 }
 
@@ -72,6 +78,7 @@ const SongList: React.FC<Props> = ({
   can_remove_out_of_upload,
   handleOpenDeleteConfirmModal,
   enable_select_multiple,
+  onClickSongAudio,
 }) => {
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
   const [moreAnchorEl, setMoreAnchorEl] = useState<HTMLElement | null>(null);
@@ -494,6 +501,7 @@ const SongList: React.FC<Props> = ({
                               handleOpenDeleteConfirmModal
                             }
                             enable_select_multiple={enable_select_multiple}
+                            onClickSongAudio={onClickSongAudio}
                           />
                         </div>
                       )}

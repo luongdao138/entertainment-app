@@ -17,6 +17,8 @@ import EditSongForm from '../../../../components/EditSongForm';
 import { Song } from '../../../../services/song';
 import ConfirmDialog from '../../../../components/ConfirmDialog';
 import useDeleteFile from '../../../../hooks/useDeleteFile';
+import { useAudioContext } from '../../../../context/AudioContext';
+import { AudioSong } from '../../../../redux/audioPlayer/audioPlayerSlice';
 
 const UploadedSong = () => {
   const { openUploadForm } = useUploadContext();
@@ -30,6 +32,7 @@ const UploadedSong = () => {
   const { authUser } = useAuthContext();
   const [openConfirmDeleteSongModal, setOpenDeleteSongConfirmModal] =
     useState<boolean>(false);
+  const { handleClickSongAudio } = useAudioContext();
 
   const total_songs_uploaded = songs.length;
 
@@ -65,6 +68,14 @@ const UploadedSong = () => {
       );
       handleCloseDeleteConfirmModal();
     }
+  };
+
+  const onClickSongAudio = (song: AudioSong) => {
+    handleClickSongAudio({
+      playlist: null,
+      list_songs: songs,
+      song,
+    });
   };
 
   useEffect(() => {
@@ -142,6 +153,7 @@ const UploadedSong = () => {
             changeSelectedSong={changeSelectedSong}
             can_remove_out_of_upload
             enable_select_multiple
+            onClickSongAudio={onClickSongAudio}
           />
         </Container>
       )}

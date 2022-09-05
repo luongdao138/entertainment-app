@@ -480,6 +480,67 @@ const songController = {
       });
     }
   },
+  async getRecommendedSongs(req: any, res: Response) {
+    const user = req.user;
+    const { song_id } = req.params;
+    const { exclude_song_ids } = req.body;
+
+    const song = await prisma.song.findFirst({
+      where: { id: song_id, is_deleted: false, privacy: 'public' },
+      include: {
+        belong_categories: {
+          select: {
+            id: true,
+          },
+        },
+      },
+    });
+
+    if (!song) return res.status(404).json({ msg: 'Bài hát không tồn tại' });
+
+    const song_categories = song.belong_categories.map((bc) => bc.id);
+    const song_ids = exclude_song_ids ?? [];
+
+    let recommended_songs = await prisma.song.findMany({
+      where: {
+        id: {
+          notIn: [song.id, ...song_ids],
+        },
+        is_deleted: false,
+        privacy: 'public',
+        belong_categories: {
+          some: {
+            id: {
+              in: song_categories,
+            },
+          },
+        },
+        user_id: {
+          not: user.id,
+        },
+      },
+      include: {
+        belong_categories: {
+          select: {
+            id: true,
+          },
+        },
+      },
+      take: 20,
+      // cẩn bổ sung orderBy
+    });
+
+    const user_favourite_songs = await prisma.favouriteSong.findMany({
+      where: { user_id: user.id },
+      select: { song_id: true },
+    });
+    recommended_songs = recommended_songs.map((song) => ({
+      ...song,
+      is_liked: user_favourite_songs.some((fs) => fs.song_id === song.id),
+    }));
+
+    return res.json({ songs: recommended_songs });
+  },
 };
 
 export default songController;

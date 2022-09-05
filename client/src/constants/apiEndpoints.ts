@@ -29,6 +29,7 @@ const apiEndpoints = {
   GET_SONG_DETAIL: '/song/:song_id',
   DELETE_UPLOAD_SONG: '/song/:song_id',
   GET_RECOMMENDED_PLAYLIST_SONGS: '/playlist/recommend/:playlist_id',
+  GET_RECOMMENDED_SONGS: '/song/recommend/:song_id',
 };
 
 export default apiEndpoints;

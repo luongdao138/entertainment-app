@@ -5,7 +5,7 @@ import { BsFillPlayFill } from 'react-icons/bs';
 import { MdMoreHoriz, MdDragIndicator } from 'react-icons/md';
 import { AiOutlineHeart, AiFillHeart } from 'react-icons/ai';
 import { Checkbox, Menu } from '@mui/material';
-import { Song, SongPrivacy } from '../../services/song';
+import { Song, SongDetail, SongPrivacy } from '../../services/song';
 import { formatSongDuration } from '../../utils/formatTime';
 import { useAppDispatch } from '../../redux/hooks';
 import { changeFavourite } from '../../redux/song/songActions';
@@ -31,6 +31,7 @@ interface Props {
   handleOpenDeleteConfirmModal?: () => void;
   enable_select_multiple?: boolean;
   handleRemoveSongOutOfPlaylist?: (song_id: string) => void;
+  onClickSongAudio?: (song_id: Song | SongDetail) => void;
 }
 
 const SongItem: React.FC<Props> = ({
@@ -51,6 +52,7 @@ const SongItem: React.FC<Props> = ({
   handleOpenDeleteConfirmModal,
   can_remove_out_of_list,
   enable_select_multiple,
+  onClickSongAudio,
 }) => {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const openMenu = Boolean(anchorEl);
@@ -187,7 +189,10 @@ const SongItem: React.FC<Props> = ({
           <div className='song-thumbnail'>
             <img src={song.thumbnail} alt='' />
             <div className='opacity'></div>
-            <BsFillPlayFill className='play-state' />
+            <BsFillPlayFill
+              className='play-state'
+              onClick={() => onClickSongAudio?.(song)}
+            />
           </div>
           <div className='song-info'>
             <h4 className='name'>{song.name}</h4>

@@ -63,6 +63,16 @@ export type EditSongParams = {
   };
 };
 
+export interface GetRecommendedSongParams {
+  song_id: string;
+  data: {
+    exclude_song_ids: string[];
+  };
+}
+export interface GetRecommendedSongResponse {
+  songs: Song[];
+}
+
 export const uploadSong = async (
   params: UploadSongParams
 ): Promise<UploadSongResponse> => {
@@ -95,6 +105,17 @@ export const getSongDetail = async (
 ): Promise<GetSongDetailResponse> => {
   const res = await privateClient.get<GetSongDetailResponse>(
     apiEndpoints.GET_SONG_DETAIL.replace(':song_id', params.song_id)
+  );
+
+  return res.data;
+};
+
+export const getRecommendedSongs = async (
+  params: GetRecommendedSongParams
+): Promise<GetRecommendedSongResponse> => {
+  const res = await privateClient.post<GetRecommendedSongResponse>(
+    apiEndpoints.GET_RECOMMENDED_SONGS.replace(':song_id', params.song_id),
+    params.data
   );
 
   return res.data;

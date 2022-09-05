@@ -1,20 +1,21 @@
 import { Menu } from '@mui/material';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { AiFillHeart, AiOutlineHeart } from 'react-icons/ai';
 import { MdMoreHoriz } from 'react-icons/md';
 import { Link } from 'react-router-dom';
-import { Song } from '../../../services/song';
+import { getAudioCurrentSongSelector } from '../../../redux/audioPlayer/audioPlayerSelectors';
+import { useAppSelector } from '../../../redux/hooks';
 import LoginRequired from '../../LoginRequired';
 import SongItemMenu from '../../SongItemMenu';
 import { Container } from './style';
 
-interface Props {
-  song: Song;
-}
+interface Props {}
 
-const AudioSong: React.FC<Props> = ({ song }) => {
-  const [is_liked, setIsLiked] = useState<boolean>(song.is_liked);
-
+const AudioSong: React.FC<Props> = () => {
+  const current_song = useAppSelector(getAudioCurrentSongSelector);
+  const [is_liked, setIsLiked] = useState<boolean>(
+    Boolean(current_song?.is_liked)
+  );
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const openSongMenu = Boolean(anchorEl);
   const handleOpenSongMenu = (event: React.MouseEvent<HTMLElement>) => {
@@ -25,6 +26,16 @@ const AudioSong: React.FC<Props> = ({ song }) => {
   };
 
   const handleClickLikeSong = () => {};
+
+  useEffect(() => {
+    if (current_song) {
+      setIsLiked(current_song.is_liked);
+    }
+  }, [current_song]);
+
+  console.log({ current_song, is_liked });
+
+  if (!current_song) return null;
 
   return (
     <>
@@ -49,18 +60,21 @@ const AudioSong: React.FC<Props> = ({ song }) => {
           },
         }}
       >
-        <SongItemMenu song={song} closeSongItemAction={handleCloseSongMenu} />
+        <SongItemMenu
+          song={current_song}
+          closeSongItemAction={handleCloseSongMenu}
+        />
       </Menu>
-      <Container>
+      <Container is_liked={is_liked}>
         <div className='song-thumbnail'>
-          <img src={song.thumbnail} alt='' />
+          <img src={current_song.thumbnail} alt='' />
         </div>
         <div className='song-info'>
           <Link to='/' className='song-name'>
-            {song.name}
+            {current_song.name}
           </Link>
           <Link className='singer-name' to='/'>
-            {song.singer_name}
+            {current_song.singer_name}
           </Link>
         </div>
 

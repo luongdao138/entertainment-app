@@ -9,7 +9,7 @@ import SignUp from '../pages/Auth/SignUp';
 import Login from '../pages/Auth/Login';
 import { AuthType, useAuthContext } from '../context/AuthContext';
 import { useEffect, useMemo, useRef } from 'react';
-import { useAppDispatch } from '../redux/hooks';
+import { useAppDispatch, useAppSelector } from '../redux/hooks';
 import { getUserInfo } from '../redux/auth/authActions';
 import UploadSongForm from '../components/UploadSongForm';
 import { useUploadContext } from '../context/UploadContext';
@@ -18,6 +18,7 @@ import ForgotPassword from '../pages/Auth/ForgotPassword';
 import { useUploadPlaylistContext } from '../context/UploadPlaylistContext';
 import NewPlaylistForm from '../components/NewPlaylistForm';
 import { useAudioContext } from '../context/AudioContext';
+import { getAudioCurrentSongSelector } from '../redux/audioPlayer/audioPlayerSelectors';
 
 interface StyleProps {
   openPlayer: boolean;
@@ -41,6 +42,7 @@ const MainLayout = () => {
   const { closeUploadForm, isOpenUploadForm } = useUploadContext();
   const { closeUploadPlaylistForm, isOpenUploadPlaylistForm } =
     useUploadPlaylistContext();
+  const current_song = useAppSelector(getAudioCurrentSongSelector);
 
   const { openPlayer } = useAudioContext();
 
@@ -99,7 +101,7 @@ const MainLayout = () => {
         <NewPlaylistForm closeUploadModal={closeUploadPlaylistForm} />
       </Modal>
 
-      <Player />
+      {current_song && <Player />}
       <PlayerQueue />
 
       <div className='content'>

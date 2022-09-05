@@ -1,5 +1,9 @@
 import styled from 'styled-components';
 
+interface Props {
+  is_liked?: boolean;
+}
+
 export const Container = styled.div`
   display: flex;
   width: 100%;
@@ -79,6 +83,10 @@ export const Container = styled.div`
       &.more-action {
         margin-right: 0.25rem;
       }
+    }
+    & .like-btn svg {
+      color: ${(props: Props) =>
+        props.is_liked ? '#7200A1 !important' : '#fff'};
     }
   }
 `;

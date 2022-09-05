@@ -6,11 +6,28 @@ import { getUsersFavouriteSongs } from '../../../../redux/song/songSelectors';
 import { NoSongsContainer } from './style';
 import emptyFavouriteIcon from '../../../../assets/empty-favourite.png';
 import { Link } from 'react-router-dom';
+import { Song, SongDetail } from '../../../../services/song';
+import {
+  getAudioCurrentSongSelector,
+  getAudioStateSelector,
+} from '../../../../redux/audioPlayer/audioPlayerSelectors';
+import {
+  changeAudioArchivedList,
+  changeAudioCurrentSong,
+  changeAudioListSongs,
+  changeAudioNextList,
+} from '../../../../redux/audioPlayer/audioPlayerSlice';
+import _ from 'lodash';
+import { useAudioContext } from '../../../../context/AudioContext';
 
 const FavouriteSong = () => {
   const dispatch = useAppDispatch();
   // const firstRenderRef = useRef<boolean>(true);
   const songs = useAppSelector(getUsersFavouriteSongs);
+  const current_song = useAppSelector(getAudioCurrentSongSelector);
+  const audio_state = useAppSelector(getAudioStateSelector);
+
+  const { handleClickSongAudio } = useAudioContext();
 
   useEffect(() => {
     // if (firstRenderRef.current) {
@@ -20,6 +37,15 @@ const FavouriteSong = () => {
 
     dispatch(getFavouriteSong());
   }, []);
+
+  const handleClickFavouriteSongAudio = (song: Song | SongDetail) => {
+    handleClickSongAudio({
+      song,
+      playlist: null,
+      list_songs: songs,
+    });
+  };
+
   return songs.length === 0 ? (
     <NoSongsContainer>
       <img src={emptyFavouriteIcon} alt='' />
@@ -27,7 +53,12 @@ const FavouriteSong = () => {
       <Link to='/'>Khám phá ngay</Link>
     </NoSongsContainer>
   ) : (
-    <SongList songs={songs} enable_select_multiple can_change_favourite_songs />
+    <SongList
+      onClickSongAudio={handleClickFavouriteSongAudio}
+      songs={songs}
+      enable_select_multiple
+      can_change_favourite_songs
+    />
   );
 };
 

@@ -6,6 +6,7 @@ import playlistDetailReducer from './playlistDetail/playlistDetailSlice';
 import categoryReducer from './category/categorySlice';
 import songReducer from './song/songSlice';
 import songDetaiReducer from './songDetail/songDetailSlice';
+import audioPlayerReducer from './audioPlayer/audioPlayerSlice';
 
 const rootReducer = combineReducers({
   auth: authReducer,
@@ -15,6 +16,7 @@ const rootReducer = combineReducers({
   playlistDetail: playlistDetailReducer,
   category: categoryReducer,
   songDetail: songDetaiReducer,
+  audioPlayer: audioPlayerReducer,
 });
 
 export default rootReducer;

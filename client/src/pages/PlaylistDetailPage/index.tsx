@@ -24,6 +24,8 @@ import SongList from '../../components/SongList';
 import appRoutes from '../../constants/appRoutes';
 import { calcTotalPlaylistTime } from '../../utils/formatTime';
 import useReloadWhenLogout from '../../hooks/useReloadWhenLogout';
+import { useAudioContext } from '../../context/AudioContext';
+import { AudioSong } from '../../redux/audioPlayer/audioPlayerSlice';
 
 const mockSongs: Song[] = [...new Array(6)].fill({}).map(() => ({
   id: uuid(),
@@ -51,6 +53,7 @@ const PlaylistDetailPage = () => {
   const playlist_songs = useAppSelector(getPlaylistSongsSelector);
 
   const is_own_playlist = authUser?.id === playlist_detail?.creator.id;
+  const { handleClickSongAudio } = useAudioContext();
 
   useReloadWhenLogout();
 
@@ -93,6 +96,14 @@ const PlaylistDetailPage = () => {
     );
   };
 
+  const onClickSongAudio = (song: AudioSong) => {
+    handleClickSongAudio({
+      playlist: playlist_detail,
+      list_songs: playlist_songs,
+      song,
+    });
+  };
+
   return (
     <Container>
       <div className='detail-top'>
@@ -116,6 +127,7 @@ const PlaylistDetailPage = () => {
                 can_remove_out_of_list={playlist_detail.is_owner}
                 handleRemoveSongOutOfPlaylist={handleRemoveSongOutOfPlaylist}
                 enable_select_multiple
+                onClickSongAudio={onClickSongAudio}
               />
 
               <div className='song-count'>
