@@ -15,10 +15,12 @@ import PlaylistItem from '../../../components/PlaylistItem';
 import { ReactComponent as SongIcon } from '../../../assets/song-icon.svg';
 import { ReactComponent as PlaylistIcon } from '../../../assets/playlist-icon.svg';
 import { ReactComponent as RecentIcon } from '../../../assets/recent-icon.svg';
+import { useAudioContext } from '../../../context/AudioContext';
 
 const Sidebar = () => {
   const { authUser, openAuthModal } = useAuthContext();
   const location = useLocation();
+  const { openPlayer } = useAudioContext();
   const { openUploadPlaylistForm } = useUploadPlaylistContext();
   const dispatch = useAppDispatch();
   // const isFirstRenderRef = useRef<boolean>(true);
@@ -43,7 +45,7 @@ const Sidebar = () => {
   }, [authUser]);
 
   return (
-    <Container>
+    <Container openPlayer={openPlayer}>
       <div className='sidebar-top'>
         <Logo>
           <Link to='/'>

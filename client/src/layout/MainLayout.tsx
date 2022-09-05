@@ -17,6 +17,11 @@ import SignupSuccess from '../pages/Auth/SignupSuccess';
 import ForgotPassword from '../pages/Auth/ForgotPassword';
 import { useUploadPlaylistContext } from '../context/UploadPlaylistContext';
 import NewPlaylistForm from '../components/NewPlaylistForm';
+import { useAudioContext } from '../context/AudioContext';
+
+interface StyleProps {
+  openPlayer: boolean;
+}
 
 const Container = styled.div`
   & .content {
@@ -26,6 +31,7 @@ const Container = styled.div`
     background-color: #170f23;
     padding-left: var(--padding-section);
     padding-right: var(--padding-section);
+    padding-bottom: ${(props: StyleProps) => (props.openPlayer ? '90px' : 0)};
   }
 `;
 
@@ -35,6 +41,9 @@ const MainLayout = () => {
   const { closeUploadForm, isOpenUploadForm } = useUploadContext();
   const { closeUploadPlaylistForm, isOpenUploadPlaylistForm } =
     useUploadPlaylistContext();
+
+  const { openPlayer } = useAudioContext();
+
   const dispatch = useAppDispatch();
   // const isFirstRenderRef = useRef<boolean>(true);
 
@@ -70,7 +79,7 @@ const MainLayout = () => {
   }, []);
 
   return (
-    <Container>
+    <Container openPlayer={openPlayer}>
       <Sidebar />
       <Header />
 
@@ -90,8 +99,9 @@ const MainLayout = () => {
         <NewPlaylistForm closeUploadModal={closeUploadPlaylistForm} />
       </Modal>
 
-      {/* <Player /> */}
-      {/* <PlayerQueue /> */}
+      <Player />
+      <PlayerQueue />
+
       <div className='content'>
         <Outlet />
       </div>

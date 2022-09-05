@@ -25,7 +25,7 @@ export const Container = styled.div`
 `;
 
 export const PlaylistContainer = styled.div`
-  width: 280px;
+  width: 240px;
   background-color: #432275;
   padding: 10px 0;
   box-shadow: 0 0 5px 0 rgb(0 0 0 / 20%);

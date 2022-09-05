@@ -3,7 +3,7 @@ import React from 'react';
 import { Container } from './style';
 
 interface Props {
-  title: string;
+  title?: string;
   value: boolean;
   setValue: React.Dispatch<React.SetStateAction<boolean>>;
   desc?: string;
@@ -13,7 +13,7 @@ const MySwitch: React.FC<Props> = ({ setValue, title, value, desc }) => {
   return (
     <Container>
       <div className='left'>
-        <p className='title'>{title}</p>
+        {title && <p className='title'>{title}</p>}
         {desc && <p className='desc'>{desc}</p>}
       </div>
       <div className='right'>
