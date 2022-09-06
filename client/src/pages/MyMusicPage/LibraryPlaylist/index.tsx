@@ -3,10 +3,7 @@ import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
 import { Container } from './style';
 import { useAppDispatch, useAppSelector } from '../../../redux/hooks';
-import {
-  changePlaylistFavourite,
-  getPrivatePlaylists,
-} from '../../../redux/playlist/playlistActions';
+import { getPrivatePlaylists } from '../../../redux/playlist/playlistActions';
 import {
   getLibraryPlaylist,
   getPrivatePlaylist,
@@ -66,10 +63,6 @@ export default function LibraryPlaylist() {
     );
   };
 
-  const handleChangeFavouritePlaylist = (id: string) => {
-    dispatch(changePlaylistFavourite({ id }));
-  };
-
   useEffect(() => {
     // if (firstRenderRef.current) {
     //   firstRenderRef.current = false;
@@ -91,9 +84,6 @@ export default function LibraryPlaylist() {
             <PlaylistItem
               playlist={playlist}
               key={playlist.id}
-              onClickLikePlaylist={() =>
-                handleChangeFavouritePlaylist(playlist.id)
-              }
               showChangeFavouriteConfirmModal
             />
           )

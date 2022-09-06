@@ -12,6 +12,7 @@ import {
 import { getLibraryPlaylist } from '../../redux/playlist/playlistSelector';
 import appRoutes from '../../constants/appRoutes';
 import { Container, NavigationItem } from './style';
+import { toast } from 'react-toastify';
 
 const MyMusicPage = () => {
   const location = useLocation();
@@ -21,7 +22,14 @@ const MyMusicPage = () => {
   const library_playlists = useAppSelector(getLibraryPlaylist);
 
   const handleChangeFavouritePlaylist = (id: string) => {
-    dispatch(changePlaylistFavourite({ id }));
+    dispatch(
+      changePlaylistFavourite({
+        data: id,
+        onSuccess() {
+          toast.success('Đã xóa bài hát khỏi thư viện');
+        },
+      })
+    );
   };
 
   useEffect(() => {

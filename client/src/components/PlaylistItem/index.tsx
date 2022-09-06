@@ -9,19 +9,22 @@ import PlaylistItemMenu from '../PlaylistItemMenu';
 import ConfirmDialog from '../ConfirmDialog';
 import { useUploadPlaylistContext } from '../../context/UploadPlaylistContext';
 import appRoutes from '../../constants/appRoutes';
-import { deletePlaylist } from '../../redux/playlist/playlistActions';
+import {
+  changePlaylistFavourite,
+  deletePlaylist,
+} from '../../redux/playlist/playlistActions';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import { createMetaSelector } from '../../redux/metadata/selectors';
 import { clearMetaData } from '../../redux/metadata/actions';
 import { AiFillHeart, AiOutlineHeart } from 'react-icons/ai';
 import LoginRequired from '../LoginRequired';
 import { DEFAULT_PLAYLIST_THUMBNAIL } from '../../constants/images';
+import { toast } from 'react-toastify';
 
 interface Props {
   playlist: Playlist;
   is_from_sidebar?: boolean;
   onDeletePlaylistSuccess?: () => void;
-  onClickLikePlaylist?: () => void;
   showChangeFavouriteConfirmModal?: boolean;
 }
 
@@ -30,7 +33,6 @@ const deletePlaylistMetaSelector = createMetaSelector(deletePlaylist);
 const PlaylistItem: React.FC<Props> = ({
   playlist,
   onDeletePlaylistSuccess,
-  onClickLikePlaylist,
   showChangeFavouriteConfirmModal = false,
   is_from_sidebar = false,
 }) => {
@@ -41,7 +43,7 @@ const PlaylistItem: React.FC<Props> = ({
   const [openDeleteConfirmModal, setOpenDeleteConfirmModal] =
     useState<boolean>(false);
   const dispatch = useAppDispatch();
-  const [is_liked, setIsLiked] = useState<boolean>(Boolean(playlist.is_liked));
+  // const [is_liked, setIsLiked] = useState<boolean>(Boolean(playlist.is_liked));
   const [isShowChangeFavouriteModal, setIsShowChangeFavouriteModal] =
     useState<boolean>(false);
 
@@ -104,8 +106,24 @@ const PlaylistItem: React.FC<Props> = ({
     if (showChangeFavouriteConfirmModal) {
       openChangeFavouriteConfirmModal();
     } else {
-      setIsLiked((prev) => !prev);
-      onClickLikePlaylist?.();
+      const prev = Boolean(playlist.is_liked);
+      // setIsLiked((prev) => !prev);
+      // onClickLikePlaylist?.();
+      dispatch(
+        changePlaylistFavourite({
+          data: playlist.id,
+          onSuccess() {
+            if (prev) {
+              toast.success('Đã xóa playlist khỏi thư viện');
+            } else {
+              toast.success('Đã thêm playlist vào thư viện');
+            }
+          },
+          onError(error) {
+            toast.error(error);
+          },
+        })
+      );
     }
   };
 
@@ -165,8 +183,13 @@ const PlaylistItem: React.FC<Props> = ({
           open={isShowChangeFavouriteModal}
           onCancel={closeChangeFavouriteConfirmModal}
           onOk={() => {
-            setIsLiked((prev) => !prev);
-            onClickLikePlaylist?.();
+            // setIsLiked((prev) => !prev);
+            // onClickLikePlaylist?.();
+            dispatch(
+              changePlaylistFavourite({
+                data: playlist.id,
+              })
+            );
           }}
         />
       )}
@@ -192,7 +215,7 @@ const PlaylistItem: React.FC<Props> = ({
       ) : (
         <Container
           is_multiple={playlist.has_songs.length >= 4}
-          is_liked={is_liked}
+          is_liked={playlist.is_liked}
         >
           <Link
             to={appRoutes.PLAYLIST_DETAIL.replace(':playlist_id', playlist.id)}
@@ -224,7 +247,7 @@ const PlaylistItem: React.FC<Props> = ({
               ) : (
                 <LoginRequired>
                   <button className='favorite' onClick={handleLikePlaylist}>
-                    {is_liked ? <AiFillHeart /> : <AiOutlineHeart />}
+                    {playlist.is_liked ? <AiFillHeart /> : <AiOutlineHeart />}
                   </button>
                 </LoginRequired>
               )}

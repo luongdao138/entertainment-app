@@ -1,6 +1,7 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { Playlist } from '../../services/playlist';
 import { Song, SongDetail } from '../../services/song';
+import { changePlaylistFavourite } from '../playlist/playlistActions';
 import { changeFavourite } from '../song/songActions';
 import { getSongDetailAction } from './songDetailActions';
 
@@ -48,6 +49,11 @@ const songDetailSlice = createSlice({
 
         state.recommended.data = state.recommended.data.map((s) =>
           s.id === action.payload ? { ...s, is_liked: !s.is_liked } : s
+        );
+      })
+      .addCase(changePlaylistFavourite.fulfilled, (state, action) => {
+        state.feature_playlists.data = state.feature_playlists.data.map((fl) =>
+          fl.id === action.payload ? { ...fl, is_liked: !fl.is_liked } : fl
         );
       });
   },

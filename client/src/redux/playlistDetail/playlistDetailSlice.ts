@@ -1,7 +1,10 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { PlaylistDetail } from '../../services/playlist';
 import { Song } from '../../services/song';
-import { editPlaylist } from '../playlist/playlistActions';
+import {
+  editPlaylist,
+  changePlaylistFavourite,
+} from '../playlist/playlistActions';
 import { changeFavourite } from '../song/songActions';
 import {
   getPlaylistDetailAction,
@@ -36,9 +39,6 @@ const playlistDetailSlice = createSlice({
   name: 'playlistDetail',
   initialState,
   reducers: {
-    likePlaylist(state) {
-      if (state.data) state.data.is_liked = !state.data.is_liked;
-    },
     changeSongsPosition(state, action: PayloadAction<Song[]>) {
       state.songs.data = action.payload;
     },
@@ -105,12 +105,16 @@ const playlistDetailSlice = createSlice({
         state.recommended.data = state.recommended.data.map((s) =>
           s.id === action.payload ? { ...s, is_liked: !s.is_liked } : s
         );
+      })
+      .addCase(changePlaylistFavourite.fulfilled, (state, action) => {
+        if (state.data && action.payload === state.data.id) {
+          state.data.is_liked = !state.data.is_liked;
+        }
       });
   },
 });
 
 export const {
-  likePlaylist,
   changeSongsPosition,
   shuffleRecommendedSongs,
   deleteMultipleSongsOutOfPlaylist,

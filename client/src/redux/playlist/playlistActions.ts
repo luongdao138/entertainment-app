@@ -3,6 +3,11 @@ import { toast } from 'react-toastify';
 import * as services from '../../services/playlist';
 import { logout } from '../auth/authSlice';
 import { PLAYLIST_ACTION_TYPES } from './playlistTypes';
+interface ActionParams<T, R> {
+  data: T;
+  onSuccess?: (res: R) => void;
+  onError?: (error: string) => void;
+}
 
 interface CreatePlaylistParams {
   data: services.CreatePlaylistParams;
@@ -120,17 +125,17 @@ export const deletePlaylist = createAsyncThunk<
 );
 
 export const changePlaylistFavourite = createAsyncThunk<
-  services.ChangePlaylistFavouriteParams,
-  services.ChangePlaylistFavouriteParams
+  string,
+  ActionParams<string, string>
 >(
   PLAYLIST_ACTION_TYPES.CHANGE_PLAYLIST_FAVOURITE,
   async (params, { dispatch, rejectWithValue }) => {
     try {
-      const res = await services.changePlaylistFavourite(params);
-      toast.success(res.msg);
-
-      return params;
+      await services.changePlaylistFavourite({ id: params.data });
+      params.onSuccess?.(params.data);
+      return params.data;
     } catch (error: any) {
+      params.onError?.(error.response?.data.msg || 'Có lỗi xảy ra');
       if (error.response?.status === 403) {
         localStorage.removeItem('music_token');
         dispatch(logout());

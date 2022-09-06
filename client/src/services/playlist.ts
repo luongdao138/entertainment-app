@@ -17,7 +17,7 @@ export interface Playlist {
   public_at: Date;
   is_owner: boolean;
   can_edit: boolean;
-  is_liked?: boolean;
+  is_liked: boolean;
   can_delete: boolean;
   has_songs: { song: { thumbnail: string } }[];
 }

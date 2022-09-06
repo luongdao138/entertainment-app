@@ -13,10 +13,6 @@ import {
   getSongDetailSelector,
   getFeaturePlaylists,
 } from '../../redux/songDetail/songDetailSelector';
-import { changePlaylistFavourite, Playlist } from '../../services/playlist';
-import { toast } from 'react-toastify';
-import { logout } from '../../redux/auth/authSlice';
-import { changeFavouritePlaylistSuccess } from '../../redux/songDetail/songDetailSlice';
 
 const SongDetailPage = () => {
   const { authUser } = useAuthContext();
@@ -29,25 +25,6 @@ const SongDetailPage = () => {
   const song_detail = useAppSelector(getSongDetailSelector);
   const recommended_songs = useAppSelector(getRecommendedSongsSelector);
   const feature_playlists = useAppSelector(getFeaturePlaylists);
-
-  const handleChangeFavoritePlaylist = async (playlist: Playlist) => {
-    try {
-      await changePlaylistFavourite({ id: playlist.id });
-
-      if (playlist.is_liked) {
-        toast.success('Đã xóa playlist khỏi thư viện ');
-      } else {
-        toast.success('Đã thêm bài hát vào thư viện');
-      }
-      dispatch(changeFavouritePlaylistSuccess(playlist.id));
-    } catch (error: any) {
-      toast.error(error.response?.data.msg || 'Có lỗi xảy ra');
-      if (error.response?.status === 403) {
-        localStorage.removeItem('music_token');
-        dispatch(logout());
-      }
-    }
-  };
 
   useEffect(() => {
     // if (isFirstRenderRef.current) {
@@ -88,13 +65,7 @@ const SongDetailPage = () => {
           <h2 className='title'>Nhạc Của {song_detail?.user.full_name}</h2>
           <div className='group-list'>
             {feature_playlists.map((playlist) => (
-              <PlaylistItem
-                key={playlist.id}
-                playlist={playlist}
-                onClickLikePlaylist={() =>
-                  handleChangeFavoritePlaylist(playlist)
-                }
-              />
+              <PlaylistItem key={playlist.id} playlist={playlist} />
             ))}
           </div>
         </div>

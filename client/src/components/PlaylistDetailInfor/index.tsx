@@ -10,12 +10,8 @@ import { DEFAULT_PLAYLIST_THUMBNAIL } from '../../constants/images';
 import { useUploadPlaylistContext } from '../../context/UploadPlaylistContext';
 import { logout } from '../../redux/auth/authSlice';
 import { useAppDispatch } from '../../redux/hooks';
-import { likePlaylist } from '../../redux/playlistDetail/playlistDetailSlice';
-import {
-  changePlaylistFavourite,
-  deletePlaylist,
-  PlaylistDetail,
-} from '../../services/playlist';
+import { changePlaylistFavourite } from '../../redux/playlist/playlistActions';
+import { deletePlaylist, PlaylistDetail } from '../../services/playlist';
 import { Song } from '../../services/song';
 import AudioLoadingIcon from '../AudioPlayingIcon';
 import ConfirmDialog from '../ConfirmDialog';
@@ -45,9 +41,9 @@ const PlaylistDetailInfor: React.FC<Props> = ({
     useState<boolean>(false);
   const [is_changed, setIsChanged] = useState<boolean>(false);
   const [is_playing, setIsPlaying] = useState<boolean>(false);
-  const [is_liked, setIsLiked] = useState<boolean>(
-    Boolean(playlist_detail.is_liked)
-  );
+  // const [is_liked, setIsLiked] = useState<boolean>(
+  //   Boolean(playlist_detail.is_liked)
+  // );
 
   const handleChangePlayState = () => {
     setIsChanged(true);
@@ -100,41 +96,38 @@ const PlaylistDetailInfor: React.FC<Props> = ({
   };
 
   const toggleLikePlaylist = async () => {
-    try {
-      const prev = is_liked;
-      startTransition(() => {
-        setIsLiked((prev) => !prev);
-      });
-
-      await changePlaylistFavourite({ id: playlist_detail.id });
-      if (prev) {
-        toast.success('Đã xóa playlist khỏi thư viện');
-      } else {
-        toast.success('Đã thêm playlist vào thư viện');
-      }
-
-      dispatch(likePlaylist());
-    } catch (error: any) {
-      toast.error(error.response?.data.msg);
-      if (error.response?.status === 403) {
-        localStorage.removeItem('music_token');
-        dispatch(logout());
-      }
-    }
+    const prev = playlist_detail.is_liked;
+    // setIsLiked((prev) => !prev);
+    // onClickLikePlaylist?.();
+    dispatch(
+      changePlaylistFavourite({
+        data: playlist_detail.id,
+        onSuccess() {
+          if (prev) {
+            toast.success('Đã xóa playlist khỏi thư viện');
+          } else {
+            toast.success('Đã thêm playlist vào thư viện');
+          }
+        },
+        onError(error) {
+          toast.error(error);
+        },
+      })
+    );
   };
 
-  useEffect(() => {
-    if (playlist_detail) {
-      setIsLiked(Boolean(playlist_detail.is_liked));
-    }
-  }, [playlist_detail]);
+  // useEffect(() => {
+  //   if (playlist_detail) {
+  //     setIsLiked(Boolean(playlist_detail.is_liked));
+  //   }
+  // }, [playlist_detail]);
 
   return (
     <Container
       is_changed={is_changed}
       is_playing={is_playing}
       is_current_audio={is_current_audio}
-      is_liked={is_liked}
+      is_liked={playlist_detail.is_liked}
       is_multiple={songs.length >= 4}
     >
       {playlist_detail.can_delete && (
@@ -244,7 +237,11 @@ const PlaylistDetailInfor: React.FC<Props> = ({
           {!playlist_detail.is_owner && (
             <LoginRequired>
               <button className='action favorite' onClick={toggleLikePlaylist}>
-                {is_liked ? <AiFillHeart /> : <AiOutlineHeart />}
+                {playlist_detail.is_liked ? (
+                  <AiFillHeart />
+                ) : (
+                  <AiOutlineHeart />
+                )}
               </button>
             </LoginRequired>
           )}

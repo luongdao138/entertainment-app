@@ -74,7 +74,7 @@ const playlistSlice = createSlice({
       })
       .addCase(changePlaylistFavourite.fulfilled, (state, action) => {
         state.library.data = state.library.data.filter(
-          (p) => p.id !== action.payload.id
+          (p) => p.id !== action.payload
         );
       })
       .addCase(createNewPlaylist.fulfilled, (state, action) => {
