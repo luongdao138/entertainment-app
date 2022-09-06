@@ -1,6 +1,7 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { Song } from '../../services/song';
 import {
+  changeFavourite,
   deleteUploadSongAction,
   getFavouriteSong,
   getUploadedSong,
@@ -80,6 +81,14 @@ const songSlice = createSlice({
       .addCase(deleteUploadSongAction.fulfilled, (state, action) => {
         state.uploaded.data = state.uploaded.data.filter(
           (song) => song.id !== action.payload
+        );
+      })
+      .addCase(changeFavourite.fulfilled, (state, action) => {
+        state.favourite.data = state.favourite.data.map((s) =>
+          s.id === action.payload ? { ...s, is_liked: !s.is_liked } : s
+        );
+        state.uploaded.data = state.uploaded.data.map((s) =>
+          s.id === action.payload ? { ...s, is_liked: !s.is_liked } : s
         );
       });
   },

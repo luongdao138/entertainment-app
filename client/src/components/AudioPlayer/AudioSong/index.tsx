@@ -3,8 +3,11 @@ import React, { useState, useEffect } from 'react';
 import { AiFillHeart, AiOutlineHeart } from 'react-icons/ai';
 import { MdMoreHoriz } from 'react-icons/md';
 import { Link } from 'react-router-dom';
+import { toast } from 'react-toastify';
 import { getAudioCurrentSongSelector } from '../../../redux/audioPlayer/audioPlayerSelectors';
-import { useAppSelector } from '../../../redux/hooks';
+import { logout } from '../../../redux/auth/authSlice';
+import { useAppDispatch, useAppSelector } from '../../../redux/hooks';
+import { changeFavourite } from '../../../redux/song/songActions';
 import LoginRequired from '../../LoginRequired';
 import SongItemMenu from '../../SongItemMenu';
 import { Container } from './style';
@@ -12,10 +15,11 @@ import { Container } from './style';
 interface Props {}
 
 const AudioSong: React.FC<Props> = () => {
+  const dispatch = useAppDispatch();
   const current_song = useAppSelector(getAudioCurrentSongSelector);
-  const [is_liked, setIsLiked] = useState<boolean>(
-    Boolean(current_song?.is_liked)
-  );
+  // const [is_liked, setIsLiked] = useState<boolean>(
+  //   Boolean(current_song?.is_liked)
+  // );
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const openSongMenu = Boolean(anchorEl);
   const handleOpenSongMenu = (event: React.MouseEvent<HTMLElement>) => {
@@ -25,15 +29,40 @@ const AudioSong: React.FC<Props> = () => {
     setAnchorEl(null);
   };
 
-  const handleClickLikeSong = () => {};
-
-  useEffect(() => {
+  const handleClickLikeSong = async () => {
     if (current_song) {
-      setIsLiked(current_song.is_liked);
+      try {
+        const prev = current_song.is_liked;
+        // setIsLiked((prev) => !prev);
+        dispatch(
+          changeFavourite({
+            data: current_song.id,
+            onSuccess() {
+              if (prev) {
+                toast.success('Đã xóa bài hát khỏi thư viện');
+              } else {
+                toast.success('Đã thêm bài hát vào thư viện');
+              }
+            },
+          })
+        );
+      } catch (error: any) {
+        toast.error(error.response?.data.msg || 'Có lỗi xảy ra');
+        if (error.response?.status === 403) {
+          localStorage.removeItem('music_token');
+          dispatch(logout());
+        }
+      }
     }
-  }, [current_song]);
+  };
 
-  console.log({ current_song, is_liked });
+  // useEffect(() => {
+  //   if (current_song) {
+  //     setIsLiked(current_song.is_liked);
+  //   }
+  // }, [current_song]);
+
+  // console.log({ current_song, is_liked });
 
   if (!current_song) return null;
 
@@ -65,12 +94,12 @@ const AudioSong: React.FC<Props> = () => {
           closeSongItemAction={handleCloseSongMenu}
         />
       </Menu>
-      <Container is_liked={is_liked}>
+      <Container is_liked={current_song.is_liked}>
         <div className='song-thumbnail'>
           <img src={current_song.thumbnail} alt='' />
         </div>
         <div className='song-info'>
-          <Link to='/' className='song-name'>
+          <Link to={`/song/${current_song.id}`} className='song-name'>
             {current_song.name}
           </Link>
           <Link className='singer-name' to='/'>
@@ -81,7 +110,7 @@ const AudioSong: React.FC<Props> = () => {
         <div className='song-actions'>
           <LoginRequired>
             <button onClick={handleClickLikeSong} className='action like-btn'>
-              {is_liked ? <AiFillHeart /> : <AiOutlineHeart />}
+              {current_song.is_liked ? <AiFillHeart /> : <AiOutlineHeart />}
             </button>
           </LoginRequired>
 

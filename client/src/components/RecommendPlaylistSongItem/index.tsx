@@ -4,14 +4,16 @@ import { FiMusic } from 'react-icons/fi';
 import { BsFillPlayFill } from 'react-icons/bs';
 import { MdAdd, MdMoreHoriz } from 'react-icons/md';
 import { AiOutlineHeart, AiFillHeart } from 'react-icons/ai';
-import { changeFavourite, Song } from '../../services/song';
+import { Song } from '../../services/song';
 import { formatSongDuration } from '../../utils/formatTime';
 import { toast } from 'react-toastify';
-import { useAppDispatch } from '../../redux/hooks';
+import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import { logout } from '../../redux/auth/authSlice';
 import { addSongToPlaylist } from '../../services/playlist';
 import { addSongToPlaylistSuccess } from '../../redux/playlistDetail/playlistDetailSlice';
 import { AudioSong } from '../../redux/audioPlayer/audioPlayerSlice';
+import { getAudioCurrentSongSelector } from '../../redux/audioPlayer/audioPlayerSelectors';
+import { changeFavourite } from '../../redux/song/songActions';
 
 interface Props {
   song: Song;
@@ -24,16 +26,25 @@ const RecommendPlaylistSongItem: React.FC<Props> = ({
   playlist_id,
   onClickSongAudio,
 }) => {
-  const [is_liked, setIsLiked] = useState<boolean>(song.is_liked);
+  // console.log({ is_liked: song.is_liked });
+  const current_song = useAppSelector(getAudioCurrentSongSelector);
+  // const [is_liked, setIsLiked] = useState<boolean>(song.is_liked);
   const dispatch = useAppDispatch();
 
   const handleClickFavourite = async () => {
     try {
-      const prev = is_liked;
-      setIsLiked((prev) => !prev);
-      await changeFavourite(song.id);
-      if (!prev) toast.success('Đã thêm bài hát vào thư viện');
-      else toast.success('Đã xóa bài hát khỏi thư viện');
+      const prev = song.is_liked;
+      // setIsLiked((prev) => !prev);
+      // await changeFavourite(song.id);
+      dispatch(
+        changeFavourite({
+          data: song.id,
+          onSuccess() {
+            if (!prev) toast.success('Đã thêm bài hát vào thư viện');
+            else toast.success('Đã xóa bài hát khỏi thư viện');
+          },
+        })
+      );
     } catch (error: any) {
       toast.error(error.response?.data.msg || 'Có lỗi xảy ra');
       if (error.response?.status === 403) {
@@ -57,12 +68,23 @@ const RecommendPlaylistSongItem: React.FC<Props> = ({
     }
   };
 
-  useEffect(() => {
-    setIsLiked(song.is_liked);
-  }, [song.is_liked]);
+  // useEffect(() => {
+  //   setIsLiked(song.is_liked);
+  // }, [song.is_liked]);
+
+  // useEffect(() => {
+  //   if (current_song?.id === song.id) {
+  //     setIsLiked(Boolean(current_song.is_liked));
+  //   }
+  // }, [current_song?.is_liked]);
+
+  // useEffect(() => {
+  //   setIsLiked(song.is_liked);
+  // }, [song.is_liked]);
+  // console.log({ is_liked });
 
   return (
-    <Container is_liked={is_liked}>
+    <Container is_liked={song.is_liked}>
       <div className='song-left'>
         <div className='music-icon'>
           <FiMusic />
@@ -85,7 +107,7 @@ const RecommendPlaylistSongItem: React.FC<Props> = ({
       </div>
       <div className='song-right'>
         <button className='favorite' onClick={handleClickFavourite}>
-          {is_liked ? <AiFillHeart /> : <AiOutlineHeart />}
+          {song.is_liked ? <AiFillHeart /> : <AiOutlineHeart />}
         </button>
         <span className='duration'>{formatSongDuration(song.duration)}</span>
         <div className='song-menu-wrapper' onClick={handleAddSongToPlaylist}>

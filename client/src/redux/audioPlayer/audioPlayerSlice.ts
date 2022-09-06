@@ -1,7 +1,10 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { Playlist, PlaylistDetail } from '../../services/playlist';
 import { Song, SongDetail } from '../../services/song';
-import { getRecommendedSongsAction } from '../song/songActions';
+import {
+  changeFavourite,
+  getRecommendedSongsAction,
+} from '../song/songActions';
 
 export type AudioSong = Song | SongDetail;
 export type AudioPlaylist = Playlist | PlaylistDetail;
@@ -107,9 +110,27 @@ const audioPlayerSlice = createSlice({
     },
   },
   extraReducers(builder) {
-    builder.addCase(getRecommendedSongsAction.fulfilled, (state, action) => {
-      state.recommended_list.data = action.payload.songs;
-    });
+    builder
+      .addCase(getRecommendedSongsAction.fulfilled, (state, action) => {
+        state.recommended_list.data = action.payload.songs;
+      })
+      .addCase(changeFavourite.fulfilled, (state, action) => {
+        if (state.current_song && state.current_song.id === action.payload) {
+          state.current_song.is_liked = !state.current_song.is_liked;
+        }
+
+        state.archived_list.data = state.archived_list.data.map((s) =>
+          s.id === action.payload ? { ...s, is_liked: !s.is_liked } : s
+        );
+
+        state.next_list.data = state.next_list.data.map((s) =>
+          s.id === action.payload ? { ...s, is_liked: !s.is_liked } : s
+        );
+
+        state.recommended_list.data = state.recommended_list.data.map((s) =>
+          s.id === action.payload ? { ...s, is_liked: !s.is_liked } : s
+        );
+      });
   },
   initialState,
 });

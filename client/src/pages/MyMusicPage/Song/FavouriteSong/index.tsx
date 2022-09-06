@@ -7,16 +7,6 @@ import { NoSongsContainer } from './style';
 import emptyFavouriteIcon from '../../../../assets/empty-favourite.png';
 import { Link } from 'react-router-dom';
 import { Song, SongDetail } from '../../../../services/song';
-import {
-  getAudioCurrentSongSelector,
-  getAudioStateSelector,
-} from '../../../../redux/audioPlayer/audioPlayerSelectors';
-import {
-  changeAudioArchivedList,
-  changeAudioCurrentSong,
-  changeAudioListSongs,
-  changeAudioNextList,
-} from '../../../../redux/audioPlayer/audioPlayerSlice';
 import _ from 'lodash';
 import { useAudioContext } from '../../../../context/AudioContext';
 
@@ -24,9 +14,6 @@ const FavouriteSong = () => {
   const dispatch = useAppDispatch();
   // const firstRenderRef = useRef<boolean>(true);
   const songs = useAppSelector(getUsersFavouriteSongs);
-  const current_song = useAppSelector(getAudioCurrentSongSelector);
-  const audio_state = useAppSelector(getAudioStateSelector);
-
   const { handleClickSongAudio } = useAudioContext();
 
   useEffect(() => {

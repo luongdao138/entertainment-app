@@ -329,7 +329,21 @@ const songController = {
       const { song_id } = req.params;
 
       const song = await prisma.song.findFirst({
-        where: { id: song_id, is_deleted: false, privacy: 'public' },
+        where: {
+          id: song_id,
+          is_deleted: false,
+          OR: [
+            {
+              user_id: user.id,
+            },
+            {
+              NOT: {
+                user_id: user.id,
+              },
+              privacy: 'public',
+            },
+          ],
+        },
         include: {
           user: {
             select: {
@@ -349,9 +363,9 @@ const songController = {
 
       if (!song) return res.status(404).json({ msg: 'Bài hát không tồn tại' });
 
-      if (song.user_id === user.id) {
-        res.sendStatus(404);
-      }
+      // if (song.user_id === user.id) {
+      //   res.sendStatus(404);
+      // }
 
       const is_liked = await prisma.favouriteSong.findUnique({
         where: {
@@ -409,10 +423,20 @@ const songController = {
         where: { user_id: user.id },
         select: { song_id: true },
       });
+
       recommended_songs = recommended_songs.map((song) => ({
         ...song,
         is_liked: user_favourite_songs.some((fs) => fs.song_id === song.id),
       }));
+
+      // nếu người đang truy vấn của bài hát chỉ cần trả về thông tin bài hát, ko cần tìm feature_playlists
+      if (user.id === song.user_id) {
+        return res.json({
+          data: returned_song,
+          recommended_songs,
+          feature_playlists: [],
+        });
+      }
 
       // tìm những playlist nổi bật của người đã upload bài hát này lên
       let feature_playlists = await prisma.playlist.findMany({

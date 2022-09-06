@@ -1,13 +1,12 @@
 import { Menu } from '@mui/material';
-import React, { useState, startTransition } from 'react';
+import React, { useState } from 'react';
 import { AiFillHeart, AiOutlineHeart } from 'react-icons/ai';
 import { BsFillPlayFill } from 'react-icons/bs';
 import { MdPause, MdMoreHoriz } from 'react-icons/md';
-import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
-import { logout } from '../../redux/auth/authSlice';
 import { useAppDispatch } from '../../redux/hooks';
-import { changeFavourite, Song, SongDetail } from '../../services/song';
+import { changeFavourite } from '../../redux/song/songActions';
+import { SongDetail } from '../../services/song';
 import AudioLoadingIcon from '../AudioPlayingIcon';
 import LoginRequired from '../LoginRequired';
 import SongItemMenu from '../SongItemMenu';
@@ -22,10 +21,9 @@ const SongDetailInfor: React.FC<Props> = ({ is_current_audio, song }) => {
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
   const openPlaylistMenu = Boolean(anchorEl);
   const dispatch = useAppDispatch();
-  const navigate = useNavigate();
   const [is_changed, setIsChanged] = useState<boolean>(false);
   const [is_playing, setIsPlaying] = useState<boolean>(false);
-  const [is_liked, setIsLiked] = useState<boolean>(song.is_liked);
+  // const [is_liked, setIsLiked] = useState<boolean>(song.is_liked);
 
   const handleChangePlayState = () => {
     setIsChanged(true);
@@ -43,31 +41,26 @@ const SongDetailInfor: React.FC<Props> = ({ is_current_audio, song }) => {
     setAnchorEl(null);
   };
 
-  const toggleLikeSong = async () => {
-    try {
-      const prev = is_liked;
-      startTransition(() => {
-        setIsLiked((prev) => !prev);
-      });
-
-      await changeFavourite(song.id);
-      if (prev) {
-        toast.success('Đã xóa bài hát khỏi thư viện');
-      } else {
-        toast.success('Đã thêm bài hát vào thư viện');
-      }
-    } catch (error: any) {
-      toast.error(error.response?.data.msg);
-      if (error.response?.status === 403) {
-        localStorage.removeItem('music_token');
-        dispatch(logout());
-      }
-    }
+  const handleClickFavourite = async () => {
+    const prevState = song.is_liked;
+    // setIsLiked((prev) => !prev);
+    dispatch(
+      changeFavourite({
+        data: song.id,
+        onSuccess: () => {
+          if (prevState) toast.success('Đã xóa bài hát khỏi thư viện');
+          else toast.success('Đã thêm bài hát vào thư viên');
+        },
+        onError(error) {
+          toast.error(error);
+        },
+      })
+    );
   };
 
   return (
     <Container
-      is_liked={is_liked}
+      is_liked={song.is_liked}
       is_changed={is_changed}
       is_playing={is_playing}
       is_current_audio={is_current_audio}
@@ -136,8 +129,8 @@ const SongDetailInfor: React.FC<Props> = ({ is_current_audio, song }) => {
 
         <div className='playlist-actions'>
           <LoginRequired>
-            <button className='action favorite' onClick={toggleLikeSong}>
-              {is_liked ? <AiFillHeart /> : <AiOutlineHeart />}
+            <button className='action favorite' onClick={handleClickFavourite}>
+              {song.is_liked ? <AiFillHeart /> : <AiOutlineHeart />}
             </button>
           </LoginRequired>
 

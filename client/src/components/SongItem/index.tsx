@@ -7,12 +7,13 @@ import { AiOutlineHeart, AiFillHeart } from 'react-icons/ai';
 import { Checkbox, Menu } from '@mui/material';
 import { Song, SongDetail, SongPrivacy } from '../../services/song';
 import { formatSongDuration } from '../../utils/formatTime';
-import { useAppDispatch } from '../../redux/hooks';
+import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import { changeFavourite } from '../../redux/song/songActions';
 import { toast } from 'react-toastify';
 import SongItemMenu from '../SongItemMenu';
 import SongPrivary from './SongPrivacy';
 import { editSongSucess } from '../../redux/song/songSlice';
+import { getAudioCurrentSongSelector } from '../../redux/audioPlayer/audioPlayerSelectors';
 interface Props {
   song: Song;
   focusSong: string | null;
@@ -54,9 +55,10 @@ const SongItem: React.FC<Props> = ({
   enable_select_multiple,
   onClickSongAudio,
 }) => {
+  const current_song = useAppSelector(getAudioCurrentSongSelector);
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const openMenu = Boolean(anchorEl);
-  const [is_liked, setIsLiked] = useState<boolean>(song.is_liked);
+  // const [is_liked, setIsLiked] = useState<boolean>(song.is_liked);
   const handleClick = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
   };
@@ -89,8 +91,8 @@ const SongItem: React.FC<Props> = ({
   };
 
   const handleClickFavourite = async () => {
-    const prevState = is_liked;
-    setIsLiked((prev) => !prev);
+    const prevState = song.is_liked;
+    // setIsLiked((prev) => !prev);
     dispatch(
       changeFavourite({
         data: song.id,
@@ -109,9 +111,15 @@ const SongItem: React.FC<Props> = ({
     dispatch(editSongSucess({ song: { ...song, privacy: new_privacy } }));
   };
 
-  useEffect(() => {
-    setIsLiked(song.is_liked);
-  }, [song.is_liked]);
+  // useEffect(() => {
+  //   if (current_song?.id === song.id) {
+  //     setIsLiked(Boolean(current_song.is_liked));
+  //   }
+  // }, [current_song?.is_liked]);
+
+  // useEffect(() => {
+  //   setIsLiked(Boolean(song.is_liked));
+  // }, [song?.is_liked]);
 
   return (
     <>
@@ -151,7 +159,7 @@ const SongItem: React.FC<Props> = ({
       <Container
         onClick={handleClickSong}
         is_active={isActive}
-        is_liked={is_liked}
+        is_liked={song.is_liked}
         is_show_checkbox={isShowCheckbox}
         is_selected={isSelected}
         is_dragging={is_dragging}
@@ -210,7 +218,7 @@ const SongItem: React.FC<Props> = ({
 
         <div className='song-right'>
           <button className='favorite' onClick={handleClickFavourite}>
-            {is_liked ? <AiFillHeart /> : <AiOutlineHeart />}
+            {song.is_liked ? <AiFillHeart /> : <AiOutlineHeart />}
           </button>
           <span className='duration'>{formatSongDuration(song.duration)}</span>
           <button

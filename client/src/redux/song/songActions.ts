@@ -87,7 +87,7 @@ export const getFavouriteSong = createAsyncThunk<
 );
 
 export const changeFavourite = createAsyncThunk<
-  void,
+  string,
   ActionParams<string, void>
 >(
   SONG_ACTION_TYPES.CHANGE_FAVOURITE,
@@ -95,6 +95,7 @@ export const changeFavourite = createAsyncThunk<
     try {
       await services.changeFavourite(params.data);
       params.onSuccess?.();
+      return params.data;
     } catch (error: any) {
       params.onError?.(error.response?.data.msg || 'Có lỗi xảy ra');
       if (error.response?.status === 403) {

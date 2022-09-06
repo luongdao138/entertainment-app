@@ -74,25 +74,31 @@ const SongDetailPage = () => {
         <div className='song-list'>
           {song_detail && <SongList songs={[song_detail]} />}
 
-          <div className='recommend-songs'>
-            <h2 className='title'>Có thể bạn quan tâm</h2>
-            <SongList songs={recommended_songs} />
-          </div>
+          {recommended_songs.length > 0 && (
+            <div className='recommend-songs'>
+              <h2 className='title'>Có thể bạn quan tâm</h2>
+              <SongList songs={recommended_songs} />
+            </div>
+          )}
         </div>
       </div>
 
-      <div className='group'>
-        <h2 className='title'>Nhạc Của {song_detail?.user.full_name}</h2>
-        <div className='group-list'>
-          {feature_playlists.map((playlist) => (
-            <PlaylistItem
-              key={playlist.id}
-              playlist={playlist}
-              onClickLikePlaylist={() => handleChangeFavoritePlaylist(playlist)}
-            />
-          ))}
+      {song_detail?.user_id !== authUser?.id && (
+        <div className='group'>
+          <h2 className='title'>Nhạc Của {song_detail?.user.full_name}</h2>
+          <div className='group-list'>
+            {feature_playlists.map((playlist) => (
+              <PlaylistItem
+                key={playlist.id}
+                playlist={playlist}
+                onClickLikePlaylist={() =>
+                  handleChangeFavoritePlaylist(playlist)
+                }
+              />
+            ))}
+          </div>
         </div>
-      </div>
+      )}
     </Container>
   );
 };

@@ -2,6 +2,7 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { PlaylistDetail } from '../../services/playlist';
 import { Song } from '../../services/song';
 import { editPlaylist } from '../playlist/playlistActions';
+import { changeFavourite } from '../song/songActions';
 import {
   getPlaylistDetailAction,
   getPlaylistSongsAction,
@@ -96,6 +97,14 @@ const playlistDetailSlice = createSlice({
       .addCase(getRecommendedSongsActions.fulfilled, (state, action) => {
         state.recommended.data = action.payload.songs;
         state.recommended.title = action.payload.title;
+      })
+      .addCase(changeFavourite.fulfilled, (state, action) => {
+        state.songs.data = state.songs.data.map((s) =>
+          s.id === action.payload ? { ...s, is_liked: !s.is_liked } : s
+        );
+        state.recommended.data = state.recommended.data.map((s) =>
+          s.id === action.payload ? { ...s, is_liked: !s.is_liked } : s
+        );
       });
   },
 });
