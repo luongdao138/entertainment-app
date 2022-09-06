@@ -20,7 +20,12 @@ import SongDetailPage from './pages/SongDetailPage';
 function App() {
   return (
     <>
-      <ToastContainer position='top-right' autoClose={2500} theme='colored' />
+      <ToastContainer
+        position='top-right'
+        hideProgressBar
+        autoClose={1000}
+        theme='colored'
+      />
       <Routes>
         <Route path='/' element={<MainLayout />}>
           <Route index element={<HomePage />} />

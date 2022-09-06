@@ -1,6 +1,7 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { toast } from 'react-toastify';
 import * as services from '../../services/playlist';
+import { Song } from '../../services/song';
 import { logout } from '../auth/authSlice';
 import { PLAYLIST_ACTION_TYPES } from './playlistTypes';
 interface ActionParams<T, R> {
@@ -27,6 +28,11 @@ interface DeletePlaylistParams {
 interface GetUserPlaylistsResponse {
   data: services.GetPrivatePlaylistResponse;
   is_own: boolean;
+}
+
+interface AddSongsToPlaylistParams {
+  songs: Song[];
+  playlist_id: string;
 }
 
 export const createNewPlaylist = createAsyncThunk<
@@ -132,6 +138,34 @@ export const changePlaylistFavourite = createAsyncThunk<
   async (params, { dispatch, rejectWithValue }) => {
     try {
       await services.changePlaylistFavourite({ id: params.data });
+      params.onSuccess?.(params.data);
+      return params.data;
+    } catch (error: any) {
+      params.onError?.(error.response?.data.msg || 'Có lỗi xảy ra');
+      if (error.response?.status === 403) {
+        localStorage.removeItem('music_token');
+        dispatch(logout());
+      }
+      return rejectWithValue(
+        error.response?.data?.msg || 'Something went wrong!'
+      );
+    }
+  }
+);
+
+export const addSongsToPlaylistActions = createAsyncThunk<
+  AddSongsToPlaylistParams,
+  ActionParams<AddSongsToPlaylistParams, AddSongsToPlaylistParams>
+>(
+  PLAYLIST_ACTION_TYPES.ADD_SONGS_TO_PLAYLIST,
+  async (params, { dispatch, rejectWithValue }) => {
+    try {
+      for (const song of params.data.songs) {
+        await services.addSongToPlaylist({
+          playlist_id: params.data.playlist_id,
+          song_id: song.id,
+        });
+      }
       params.onSuccess?.(params.data);
       return params.data;
     } catch (error: any) {

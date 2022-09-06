@@ -15,7 +15,7 @@ const QueueMenu = () => {
         <FiDownload />
         <span>Tải danh sách phát</span>
       </li>
-      <AddToPlaylist onAddToPlaylist={() => {}} />
+      <AddToPlaylist song_item={[]} />
     </Container>
   );
 };

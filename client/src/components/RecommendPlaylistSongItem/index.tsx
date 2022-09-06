@@ -2,18 +2,17 @@ import React, { useEffect, useState } from 'react';
 import { Container } from './style';
 import { FiMusic } from 'react-icons/fi';
 import { BsFillPlayFill } from 'react-icons/bs';
-import { MdAdd, MdMoreHoriz } from 'react-icons/md';
+import { MdAdd } from 'react-icons/md';
 import { AiOutlineHeart, AiFillHeart } from 'react-icons/ai';
 import { Song } from '../../services/song';
 import { formatSongDuration } from '../../utils/formatTime';
 import { toast } from 'react-toastify';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import { logout } from '../../redux/auth/authSlice';
-import { addSongToPlaylist } from '../../services/playlist';
-import { addSongToPlaylistSuccess } from '../../redux/playlistDetail/playlistDetailSlice';
 import { AudioSong } from '../../redux/audioPlayer/audioPlayerSlice';
 import { getAudioCurrentSongSelector } from '../../redux/audioPlayer/audioPlayerSelectors';
 import { changeFavourite } from '../../redux/song/songActions';
+import { addSongsToPlaylistActions } from '../../redux/playlist/playlistActions';
 
 interface Props {
   song: Song;
@@ -54,18 +53,23 @@ const RecommendPlaylistSongItem: React.FC<Props> = ({
     }
   };
 
-  const handleAddSongToPlaylist = async () => {
-    try {
-      await addSongToPlaylist({ song_id: song.id, playlist_id });
-      toast.success(`Đã thêm bài hát "${song.name}" vào playlist thành công`);
-      dispatch(addSongToPlaylistSuccess({ song }));
-    } catch (error: any) {
-      toast.error(error.response?.data.msg || 'Có lỗi xảy ra');
-      if (error.response?.status === 403) {
-        localStorage.removeItem('music_token');
-        dispatch(logout());
-      }
-    }
+  const handleAddSongToPlaylist = () => {
+    dispatch(
+      addSongsToPlaylistActions({
+        data: {
+          playlist_id,
+          songs: [song],
+        },
+        onSuccess() {
+          toast.success(
+            `Đã thêm bài hát "${song.name} vào playlist thành công"`
+          );
+        },
+        onError(error) {
+          toast.error(error);
+        },
+      })
+    );
   };
 
   // useEffect(() => {
@@ -110,8 +114,8 @@ const RecommendPlaylistSongItem: React.FC<Props> = ({
           {song.is_liked ? <AiFillHeart /> : <AiOutlineHeart />}
         </button>
         <span className='duration'>{formatSongDuration(song.duration)}</span>
-        <div className='song-menu-wrapper' onClick={handleAddSongToPlaylist}>
-          <button className='more-action'>
+        <div className='song-menu-wrapper'>
+          <button className='more-action' onClick={handleAddSongToPlaylist}>
             <MdAdd />
           </button>
         </div>

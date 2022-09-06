@@ -29,7 +29,6 @@ import {
   deleteMultipleSongsOutOfPlaylist,
 } from '../../redux/playlistDetail/playlistDetailSlice';
 import {
-  addSongToPlaylist,
   changeSongPositionInPlaylist,
   ChangeSongPositionInPlaylistParams,
   removeSongOutOfPlaylist,
@@ -88,8 +87,6 @@ const SongList: React.FC<Props> = ({
   const [selectedSongs, setSelectedSongs] = useState<string[]>([]);
   const dispatch = useAppDispatch();
   const [sort_type, setSortType] = useState<SortType>('default');
-  const [isAddingSongToPlaylist, setIsAddingSongToPlaylist] =
-    useState<boolean>(false);
 
   const sorted_songs = useMemo(() => {
     let new_songs = [...songs];
@@ -207,35 +204,16 @@ const SongList: React.FC<Props> = ({
     }
   };
 
-  const handleAddAllSongsToPlaylist = async (playlist_id: string) => {
-    try {
-      handleCloseMoreMenu();
-      setIsAddingSongToPlaylist(true);
+  const converSelectedSongs = () => {
+    // sắp xếp các bài hát đã được chọn theo thứ tự tăng dần về position
+    let new_selected_songs: any[] = selectedSongs.map((song_id) =>
+      songs.find((song) => song.id === song_id)
+    );
 
-      // sắp xếp các bài hát đã được chọn theo thứ tự tăng dần về position
-      let new_selected_songs: any[] = selectedSongs.map((song_id) =>
-        songs.find((song) => song.id === song_id)
-      );
+    new_selected_songs = _.clone(new_selected_songs);
+    new_selected_songs.sort((a, b) => (a.position > b.position ? 1 : -1));
 
-      new_selected_songs = _.clone(new_selected_songs);
-      new_selected_songs.sort((a, b) => (a.position > b.position ? 1 : -1));
-
-      new_selected_songs = new_selected_songs.map((song) => song.id);
-
-      for (const song_id of new_selected_songs) {
-        await addSongToPlaylist({ playlist_id, song_id });
-      }
-
-      toast.success('Đã thêm tất cả các bài hát vào playlist');
-    } catch (error: any) {
-      toast.error(error.response?.data.msg || 'Có lỗi xảy ra');
-      if (error.response?.status === 403) {
-        localStorage.removeItem('music_token');
-        dispatch(logout());
-      }
-    } finally {
-      setIsAddingSongToPlaylist(false);
-    }
+    return new_selected_songs;
   };
 
   const handleDeleteSelectedSongsOutOfPlaylist = async () => {
@@ -316,7 +294,9 @@ const SongList: React.FC<Props> = ({
 
   return (
     <Container>
-      <FullscreenLoading open={isAddingSongToPlaylist} />
+      {/* Add loading when making request */}
+      {/* <FullscreenLoading open={isAddingSongToPlaylist} /> */}
+
       <Menu
         id='sort-menu'
         MenuListProps={{
@@ -364,7 +344,7 @@ const SongList: React.FC<Props> = ({
         }}
       >
         <SongListMenuContainer>
-          <AddToPlaylist onAddToPlaylist={handleAddAllSongsToPlaylist} />
+          <AddToPlaylist song_item={converSelectedSongs()} />
           {can_remove_out_of_list && (
             <div
               onClick={handleDeleteSelectedSongsOutOfPlaylist}
@@ -412,7 +392,7 @@ const SongList: React.FC<Props> = ({
 
               <button
                 className='add-playlist'
-                disabled={isAddingSongToPlaylist}
+                // disabled={isAddingSongToPlaylist}
               >
                 <MdPlaylistAdd />
                 <span>Thêm vào danh sách phát</span>

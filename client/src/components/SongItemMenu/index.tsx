@@ -3,10 +3,7 @@ import { BsLink45Deg, BsMusicNoteList } from 'react-icons/bs';
 import { FiDownload } from 'react-icons/fi';
 import { HiOutlineBan } from 'react-icons/hi';
 import { MdOutlineSkipNext, MdPlaylistAdd } from 'react-icons/md';
-import { toast } from 'react-toastify';
-import { logout } from '../../redux/auth/authSlice';
 import { useAppDispatch } from '../../redux/hooks';
-import { addSongToPlaylist } from '../../services/playlist';
 import { Song } from '../../services/song';
 import AddToPlaylist from '../AddToPlaylist';
 import { MdOutlineDeleteOutline, MdOutlineModeEdit } from 'react-icons/md';
@@ -45,19 +42,6 @@ const SongItemMenu: React.FC<Props> = ({
 
   const [_, copy] = useCopyToClipboard('Link đã được sao chép vào clipboard');
   const { authUser } = useAuthContext();
-
-  const handleAddSongToPlaylist = async (playlist_id: string) => {
-    try {
-      await addSongToPlaylist({ playlist_id, song_id: song.id });
-      toast.success(`Đã thêm bài hát "${song.name}" vào playlist thành công`);
-    } catch (error: any) {
-      toast.error(error.response?.data.msg || 'Có lỗi xảy ra');
-      if (error.response?.status === 403) {
-        localStorage.removeItem('music_token');
-        dispatch(logout());
-      }
-    }
-  };
 
   const handleCopyLinkToClipboard = () => {
     copy(`${import.meta.env.VITE_CLIENT_URL}/song/${song.id}`);
@@ -110,7 +94,7 @@ const SongItemMenu: React.FC<Props> = ({
           <MdOutlineSkipNext />
           <span>Phát tiếp theo</span>
         </li>
-        <AddToPlaylist onAddToPlaylist={handleAddSongToPlaylist} />
+        <AddToPlaylist song_item={song} />
 
         <li>
           <FaRegComment />

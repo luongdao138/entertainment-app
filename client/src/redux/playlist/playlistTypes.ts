@@ -4,4 +4,5 @@ export const PLAYLIST_ACTION_TYPES = {
   EDIT_PLAYLIST: 'playlist/edit',
   DELETE_PLAYLIST: 'playlist/delete',
   CHANGE_PLAYLIST_FAVOURITE: 'playlist/changeFavourite',
+  ADD_SONGS_TO_PLAYLIST: '/playlist/addSong',
 };

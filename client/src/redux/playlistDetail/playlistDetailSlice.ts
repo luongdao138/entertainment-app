@@ -4,6 +4,7 @@ import { Song } from '../../services/song';
 import {
   editPlaylist,
   changePlaylistFavourite,
+  addSongsToPlaylistActions,
 } from '../playlist/playlistActions';
 import { changeFavourite } from '../song/songActions';
 import {
@@ -56,12 +57,12 @@ const playlistDetailSlice = createSlice({
     shuffleRecommendedSongs(state, action: PayloadAction<{ songs: Song[] }>) {
       state.recommended.data = action.payload.songs;
     },
-    addSongToPlaylistSuccess(state, action: PayloadAction<{ song: Song }>) {
-      state.songs.data.push(action.payload.song);
-      state.recommended.data = state.recommended.data.filter(
-        (song) => song.id !== action.payload.song.id
-      );
-    },
+    // addSongToPlaylistSuccess(state, action: PayloadAction<{ song: Song }>) {
+    //   state.songs.data.push(action.payload.song);
+    //   state.recommended.data = state.recommended.data.filter(
+    //     (song) => song.id !== action.payload.song.id
+    //   );
+    // },
   },
   extraReducers(builder) {
     builder
@@ -110,6 +111,18 @@ const playlistDetailSlice = createSlice({
         if (state.data && action.payload === state.data.id) {
           state.data.is_liked = !state.data.is_liked;
         }
+      })
+      .addCase(addSongsToPlaylistActions.fulfilled, (state, action) => {
+        if (action.payload.playlist_id === state.data?.id) {
+          const song_ids = state.songs.data.map((s) => s.id);
+          state.songs.data = [
+            ...state.songs.data,
+            ...action.payload.songs.filter((s) => !song_ids.includes(s.id)),
+          ];
+          state.recommended.data = state.recommended.data.filter(
+            (song) => !action.payload.songs.map((s) => s.id).includes(song.id)
+          );
+        }
       });
   },
 });
@@ -118,6 +131,6 @@ export const {
   changeSongsPosition,
   shuffleRecommendedSongs,
   deleteMultipleSongsOutOfPlaylist,
-  addSongToPlaylistSuccess,
+  // addSongToPlaylistSuccess,
 } = playlistDetailSlice.actions;
 export default playlistDetailSlice.reducer;

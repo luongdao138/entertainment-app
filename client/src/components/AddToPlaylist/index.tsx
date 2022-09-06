@@ -7,14 +7,19 @@ import { ReactComponent as NoPlaylistIcon } from '../../assets/no_playlist.svg';
 import { MdPlaylistAdd } from 'react-icons/md';
 import { useUploadPlaylistContext } from '../../context/UploadPlaylistContext';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
-import { getPrivatePlaylists } from '../../redux/playlist/playlistActions';
+import {
+  addSongsToPlaylistActions,
+  getPrivatePlaylists,
+} from '../../redux/playlist/playlistActions';
 import { getPrivatePlaylist } from '../../redux/playlist/playlistSelector';
+import { toast } from 'react-toastify';
+import { Song } from '../../services/song';
 
 interface Props {
-  onAddToPlaylist: (playlist_id: string) => void;
+  song_item: Song | Song[];
 }
 
-const AddToPlaylist: React.FC<Props> = ({ onAddToPlaylist }) => {
+const AddToPlaylist: React.FC<Props> = ({ song_item }) => {
   const { openUploadPlaylistForm } = useUploadPlaylistContext();
   const [title, setTitle] = useState('');
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
@@ -24,6 +29,7 @@ const AddToPlaylist: React.FC<Props> = ({ onAddToPlaylist }) => {
     setAnchorEl(event.currentTarget);
   };
   const private_playlists = useAppSelector(getPrivatePlaylist);
+  const song_items = Array.isArray(song_item) ? song_item : [song_item];
 
   const rendered_playlists = useMemo(
     () =>
@@ -40,6 +46,30 @@ const AddToPlaylist: React.FC<Props> = ({ onAddToPlaylist }) => {
 
   const handleChangeSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
     setTitle(e.target.value);
+  };
+
+  const onAddSongsToPlaylist = (playlist_id: string) => {
+    dispatch(
+      addSongsToPlaylistActions({
+        data: {
+          playlist_id,
+          songs: song_items,
+        },
+        onSuccess() {
+          handleClose();
+          if (Array.isArray(song_item)) {
+            toast.success('Đã thêm tất cả bài hát vào playlist thành công');
+          } else {
+            toast.success(
+              `Đã thêm bài hát "${song_item.name} vào playlist thành công"`
+            );
+          }
+        },
+        onError(error) {
+          toast.error(error);
+        },
+      })
+    );
   };
 
   useEffect(() => {
@@ -98,10 +128,7 @@ const AddToPlaylist: React.FC<Props> = ({ onAddToPlaylist }) => {
                 <button
                   className='add-playlist-item'
                   key={playlist.id}
-                  onClick={() => {
-                    onAddToPlaylist(playlist.id);
-                    handleClose();
-                  }}
+                  onClick={() => onAddSongsToPlaylist(playlist.id)}
                 >
                   <MdPlaylistAdd />
                   <span>{playlist.title}</span>
