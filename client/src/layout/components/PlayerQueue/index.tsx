@@ -11,7 +11,7 @@ const PlayerQueue = () => {
 
   const handleClickAwayPlayerQueue = (e: MouseEvent | TouchEvent) => {
     if (!playerRef.current?.contains(e.target as Node | null)) {
-      handleCloseQueue();
+      // handleCloseQueue();
     }
   };
 

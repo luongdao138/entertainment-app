@@ -27,6 +27,7 @@ const RecommendPlaylistSongItem: React.FC<Props> = ({
 }) => {
   // console.log({ is_liked: song.is_liked });
   const current_song = useAppSelector(getAudioCurrentSongSelector);
+  const is_current_audio = current_song?.id === song.id;
   // const [is_liked, setIsLiked] = useState<boolean>(song.is_liked);
   const dispatch = useAppDispatch();
 
@@ -88,7 +89,7 @@ const RecommendPlaylistSongItem: React.FC<Props> = ({
   // console.log({ is_liked });
 
   return (
-    <Container is_liked={song.is_liked}>
+    <Container is_current_audio={is_current_audio} is_liked={song.is_liked}>
       <div className='song-left'>
         <div className='music-icon'>
           <FiMusic />

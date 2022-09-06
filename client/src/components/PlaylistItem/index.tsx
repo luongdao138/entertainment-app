@@ -2,7 +2,7 @@ import React, { startTransition, useEffect, useState } from 'react';
 import { MdClose, MdMoreHoriz } from 'react-icons/md';
 import { BsFillPlayFill } from 'react-icons/bs';
 import { Container, SidebarItemContainer } from './style';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { Playlist } from '../../services/playlist';
 import { Menu } from '@mui/material';
 import PlaylistItemMenu from '../PlaylistItemMenu';
@@ -20,6 +20,7 @@ import { AiFillHeart, AiOutlineHeart } from 'react-icons/ai';
 import LoginRequired from '../LoginRequired';
 import { DEFAULT_PLAYLIST_THUMBNAIL } from '../../constants/images';
 import { toast } from 'react-toastify';
+import { getAudioCurrentPlaylistSelector } from '../../redux/audioPlayer/audioPlayerSelectors';
 
 interface Props {
   playlist: Playlist;
@@ -42,11 +43,12 @@ const PlaylistItem: React.FC<Props> = ({
   const openPlaylistMenu = Boolean(anchorEl);
   const [openDeleteConfirmModal, setOpenDeleteConfirmModal] =
     useState<boolean>(false);
+  const navigate = useNavigate();
   const dispatch = useAppDispatch();
   // const [is_liked, setIsLiked] = useState<boolean>(Boolean(playlist.is_liked));
   const [isShowChangeFavouriteModal, setIsShowChangeFavouriteModal] =
     useState<boolean>(false);
-
+  const current_playlist = useAppSelector(getAudioCurrentPlaylistSelector);
   const deletePlaylistMeta = useAppSelector(deletePlaylistMetaSelector);
 
   const handleClickMore = (e: React.MouseEvent<HTMLElement>) => {
@@ -124,6 +126,20 @@ const PlaylistItem: React.FC<Props> = ({
           },
         })
       );
+    }
+  };
+
+  const handleClickPlayButton = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+    e.stopPropagation();
+
+    if (current_playlist?.id === playlist.id) {
+      // đây là trường hợp user click vào playlist đang đc chọn, trường hợp này chỉ cần thay đổi trạng thái play/pause là đc
+      // sẽ xử lí sau
+    } else {
+      navigate(`/playlist/${playlist.id}`, {
+        state: { play_audio: true, playlist_id: playlist.id },
+      });
     }
   };
 
@@ -251,7 +267,7 @@ const PlaylistItem: React.FC<Props> = ({
                   </button>
                 </LoginRequired>
               )}
-              <button className='play-state'>
+              <button className='play-state' onClick={handleClickPlayButton}>
                 <BsFillPlayFill />
               </button>
 

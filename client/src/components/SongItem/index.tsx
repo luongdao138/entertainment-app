@@ -69,6 +69,7 @@ const SongItem: React.FC<Props> = ({
   const isFocused = focusSong === song.id;
   const isShowCheckbox = selectedSongs.length > 0;
   const isActive = isFocused || isSelected;
+  const is_current_audio = current_song?.id === song.id;
 
   // const is_owner = song.
 
@@ -110,16 +111,6 @@ const SongItem: React.FC<Props> = ({
   const handleChangePrivacySuccess = (new_privacy: SongPrivacy) => {
     dispatch(editSongSucess({ song: { ...song, privacy: new_privacy } }));
   };
-
-  // useEffect(() => {
-  //   if (current_song?.id === song.id) {
-  //     setIsLiked(Boolean(current_song.is_liked));
-  //   }
-  // }, [current_song?.is_liked]);
-
-  // useEffect(() => {
-  //   setIsLiked(Boolean(song.is_liked));
-  // }, [song?.is_liked]);
 
   return (
     <>
@@ -164,6 +155,7 @@ const SongItem: React.FC<Props> = ({
         is_selected={isSelected}
         is_dragging={is_dragging}
         enable_select_multiple={enable_select_multiple}
+        is_current_audio={is_current_audio}
       >
         <div className='song-left'>
           <div className='music-icon'>

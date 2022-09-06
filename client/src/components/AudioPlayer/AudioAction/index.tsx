@@ -6,13 +6,30 @@ import {
   BsFillSkipStartFill,
 } from 'react-icons/bs';
 import { FiRepeat } from 'react-icons/fi';
+import { getAudioStateSelector } from '../../../redux/audioPlayer/audioPlayerSelectors';
+import { changeAudioCurrentState } from '../../../redux/audioPlayer/audioPlayerSlice';
+import { useAppDispatch, useAppSelector } from '../../../redux/hooks';
 import { Container } from './style';
 
 const AudioAction = () => {
+  const dispatch = useAppDispatch();
+  const audio_state = useAppSelector(getAudioStateSelector);
+  const handleClickShuffle = () => {
+    dispatch(
+      changeAudioCurrentState({
+        new_state: { is_shuffle: !audio_state.is_shuffle },
+      })
+    );
+  };
+
   return (
     <Container>
       {/* Shuffle songs */}
-      <button className='action-item'>
+      <button
+        style={{ color: audio_state.is_shuffle ? '#c662ef' : '#fff' }}
+        className='action-item'
+        onClick={handleClickShuffle}
+      >
         <BsShuffle />
       </button>
 

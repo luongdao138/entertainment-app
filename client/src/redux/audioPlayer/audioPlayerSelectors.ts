@@ -43,7 +43,7 @@ export const getAudioCurrentPlaylistSelector = createSelector(
   (state) => state.current_playlist.data
 );
 
-export const getAudioCurrentPlaylistSongs = createSelector(
+export const getAudioCurrentListSongs = createSelector(
   getRoot,
   (state) => state.audio_list_songs
 );

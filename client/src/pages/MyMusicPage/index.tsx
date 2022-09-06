@@ -5,10 +5,7 @@ import PlaylistItem from '../../components/PlaylistItem';
 import { useUploadPlaylistContext } from '../../context/UploadPlaylistContext';
 import { useEffect, useRef } from 'react';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
-import {
-  changePlaylistFavourite,
-  getPrivatePlaylists,
-} from '../../redux/playlist/playlistActions';
+import { getPrivatePlaylists } from '../../redux/playlist/playlistActions';
 import { getLibraryPlaylist } from '../../redux/playlist/playlistSelector';
 import appRoutes from '../../constants/appRoutes';
 import { Container, NavigationItem } from './style';
@@ -20,18 +17,6 @@ const MyMusicPage = () => {
   // const isFirstRenderRef = useRef<boolean>(false);
   const dispatch = useAppDispatch();
   const library_playlists = useAppSelector(getLibraryPlaylist);
-
-  const handleChangeFavouritePlaylist = (id: string) => {
-    dispatch(
-      changePlaylistFavourite({
-        data: id,
-        onSuccess() {
-          toast.success('Đã xóa bài hát khỏi thư viện');
-        },
-      })
-    );
-  };
-
   useEffect(() => {
     // if (isFirstRenderRef.current) {
     //   isFirstRenderRef.current = false;
@@ -66,9 +51,6 @@ const MyMusicPage = () => {
             <PlaylistItem
               key={playlist.id}
               playlist={playlist}
-              onClickLikePlaylist={() =>
-                handleChangeFavouritePlaylist(playlist.id)
-              }
               showChangeFavouriteConfirmModal
             />
           ))}

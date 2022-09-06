@@ -1,5 +1,9 @@
 import styled from 'styled-components';
 
+interface StyleProps {
+  openQueue?: boolean;
+}
+
 export const Container = styled.div`
   position: fixed;
   bottom: 0;
@@ -39,7 +43,8 @@ export const Container = styled.div`
       }
       & .queue {
         button {
-          background-color: hsla(0, 0%, 100%, 0.1);
+          background-color: ${(props: StyleProps) =>
+            props.openQueue ? '#7200a1' : 'hsla(0, 0%, 100%, 0.1)'};
           border-radius: 4px;
           padding: 0 5px;
           color: #fff;

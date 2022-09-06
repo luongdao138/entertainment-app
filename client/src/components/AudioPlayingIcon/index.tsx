@@ -8,7 +8,7 @@ interface Props {
   color?: string;
 }
 
-const AudioLoadingIcon: React.FC<Props> = ({
+const AudioPlayingIcon: React.FC<Props> = ({
   width = 25,
   height = 25,
   color = '#fff',
@@ -26,4 +26,4 @@ const AudioLoadingIcon: React.FC<Props> = ({
   );
 };
 
-export default AudioLoadingIcon;
+export default AudioPlayingIcon;

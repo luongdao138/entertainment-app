@@ -2,7 +2,10 @@ import _ from 'lodash';
 import React, { useContext, useRef, useEffect } from 'react';
 import useBoolean from '../hooks/useBoolean';
 import {
+  getAudioArchivedListSelector,
+  getAudioCurrentListSongs,
   getAudioCurrentSongSelector,
+  getAudioNextListSelector,
   getAudioStateSelector,
 } from '../redux/audioPlayer/audioPlayerSelectors';
 import {
@@ -25,6 +28,11 @@ interface ClickAudioParams {
   playlist: AudioPlaylist | null;
   list_songs: AudioSong[];
   is_from_recommend?: boolean;
+  playlist_play_random?: boolean;
+
+  // biến này nếu set thành true thì sẽ luôn luôn tính toán lại các yêu tố cho dù hai bài hát có giống nhau
+  // đang dùng trong trường hợp khi click vào một playlist
+  force_replace?: boolean;
 }
 
 interface ContextState {
@@ -53,19 +61,39 @@ const AudioContextProvider = ({ children }: { children: React.ReactNode }) => {
 
   const current_song = useAppSelector(getAudioCurrentSongSelector);
   const audio_state = useAppSelector(getAudioStateSelector);
+  const archived_list = useAppSelector(getAudioArchivedListSelector);
+  const next_list = useAppSelector(getAudioNextListSelector);
+  const audio_list_songs = useAppSelector(getAudioCurrentListSongs);
+
   const playerRef = useRef<HTMLDivElement>(null);
   const dispatch = useAppDispatch();
 
   const openPlayer = Boolean(current_song);
 
   const handleClickSongAudio = (params: ClickAudioParams) => {
-    const { song, list_songs, playlist, is_from_recommend } = params;
-    if (song.id === current_song?.id) {
+    const {
+      song,
+      list_songs,
+      playlist,
+      is_from_recommend,
+      playlist_play_random,
+      force_replace,
+    } = params;
+    if (song.id === current_song?.id && !force_replace) {
       // đây là trường hợp chọn một bài hát đang phát
       // đối với case này chỉ thay đổi trạng thái play/pause của player chứ ko thay đổi current_song
       // sẽ xử lý sau
     } else {
       // trường hợp này user muốn đổi bài hát khác
+      let is_shuffle = playlist_play_random ?? audio_state.is_shuffle;
+      if (!_.isNil(playlist_play_random)) {
+        dispatch(
+          changeAudioCurrentState({
+            new_state: { is_shuffle: playlist_play_random },
+          })
+        );
+      }
+
       dispatch(changeAudioCurrentSong({ new_current_song: song }));
       dispatch(
         changeAudioCurrentState({
@@ -74,11 +102,12 @@ const AudioContextProvider = ({ children }: { children: React.ReactNode }) => {
       );
 
       if (is_from_recommend) {
-        // nếu bài hát được chọn từ danh sách gợi ý thì set new_list = [] và plapylist về null
+        // nếu bài hát được chọn từ danh sách gợi ý
         dispatch(changeAudioNextList({ list: [] }));
         let new_recommended_list = list_songs.filter((s) => s.id !== song.id);
         new_recommended_list = _.shuffle(new_recommended_list).slice(0, 10);
 
+        dispatch(changeAudioArchivedList({ list: [song] }));
         dispatch(changeAudioRecommendedList({ list: new_recommended_list }));
         dispatch(changeAudioCurrentPlaylist({ playlist: null }));
         dispatch(changeAudioListSongs({ list: list_songs }));
@@ -86,7 +115,7 @@ const AudioContextProvider = ({ children }: { children: React.ReactNode }) => {
       }
 
       // khi thay đổi bài hát, chúng ta phải thay đổi luôn các list trong player queue tương ứng với bài hát này
-      if (audio_state.is_shuffle) {
+      if (is_shuffle) {
         // nếu audio đang ở state shuffle
         // list archive chỉ có duy nhất bài hát được chọn
         dispatch(changeAudioArchivedList({ list: [song] }));
@@ -141,6 +170,31 @@ const AudioContextProvider = ({ children }: { children: React.ReactNode }) => {
       }
     }
   };
+
+  useEffect(() => {
+    // mỗi khi mà is_shuffle thay đổi
+    if (!current_song || audio_state.is_from_recommend) {
+      return;
+    }
+
+    if (audio_state.is_shuffle) {
+      dispatch(changeAudioArchivedList({ list: [current_song] }));
+      const new_next_list = _.shuffle([...archived_list, ...next_list]).filter(
+        (s) => s.id !== current_song.id
+      );
+      dispatch(changeAudioNextList({ list: new_next_list }));
+    } else {
+      // trường hợp này, archived_list chính là bài hát được chọn và những bài hát nằm trước nó
+      const index = audio_list_songs.findIndex((s) => s.id === current_song.id);
+      if (index !== -1) {
+        const new_archived_list = audio_list_songs.slice(0, index + 1);
+        const new_next_list = audio_list_songs.slice(index + 1);
+
+        dispatch(changeAudioArchivedList({ list: new_archived_list }));
+        dispatch(changeAudioNextList({ list: new_next_list }));
+      }
+    }
+  }, [audio_state.is_shuffle]);
 
   return (
     <AudioContext.Provider

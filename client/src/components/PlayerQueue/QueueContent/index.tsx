@@ -13,6 +13,7 @@ import {
   getAudioRecommendListSelector,
   getAudioStateSelector,
 } from '../../../redux/audioPlayer/audioPlayerSelectors';
+import { v4 as uuid } from 'uuid';
 
 const QueueContent = () => {
   const current_song = useAppSelector(getAudioCurrentSongSelector);
@@ -26,7 +27,7 @@ const QueueContent = () => {
     <Container>
       <div className='archive-list'>
         {archived_list.map((song) => (
-          <QueueSongItem key={song.id} song={song} />
+          <QueueSongItem key={uuid()} song={song} />
         ))}
       </div>
 
@@ -46,7 +47,7 @@ const QueueContent = () => {
 
           <div className='songs-list'>
             {next_list.map((song) => (
-              <QueueSongItem key={song.id} song={song} />
+              <QueueSongItem key={uuid()} song={song} />
             ))}
           </div>
         </div>
@@ -81,7 +82,7 @@ const QueueContent = () => {
             </div>
           </div>
           {recommended_list.map((song) => (
-            <QueueSongItem key={song.id} song={song} />
+            <QueueSongItem key={uuid()} song={song} />
           ))}
         </div>
       )}

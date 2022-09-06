@@ -1,9 +1,8 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useAuthContext } from '../../context/AuthContext';
 import { Container } from './style';
 import { HiOutlineMusicNote } from 'react-icons/hi';
 import { v4 as uuid } from 'uuid';
-import { Song } from '../../services/song';
 import PlaylistRecommendSongs from '../../components/PlaylistRecommendSongs';
 import ArtistItem from '../../components/ArtistItem';
 import PlaylistItem from '../../components/PlaylistItem';
@@ -18,7 +17,7 @@ import {
   getRecommendedSongsActions,
   removeSongOutOfPlaylistAction,
 } from '../../redux/playlistDetail/playlistDetailActions';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import PlaylistDetailInfor from '../../components/PlaylistDetailInfor';
 import SongList from '../../components/SongList';
 import appRoutes from '../../constants/appRoutes';
@@ -26,20 +25,14 @@ import { calcTotalPlaylistTime } from '../../utils/formatTime';
 import useReloadWhenLogout from '../../hooks/useReloadWhenLogout';
 import { useAudioContext } from '../../context/AudioContext';
 import { AudioSong } from '../../redux/audioPlayer/audioPlayerSlice';
-
-const mockSongs: Song[] = [...new Array(6)].fill({}).map(() => ({
-  id: uuid(),
-  created_at: new Date(),
-  duration: 170,
-  is_liked: false,
-  name: 'Ngân hà và vì sao',
-  singer_name: 'Tiểu lam bối tâm',
-  thumbnail:
-    'https://photo-resize-zmp3.zmdcdn.me/w94_r1x1_webp/cover/3/b/5/9/3b5928ebe6a396a280104733e0e71f5c.jpg',
-  updated_at: new Date(),
-  url: '',
-  belong_categories: [],
-}));
+import {
+  getAudioCurrentPlaylistSelector,
+  getAudioCurrentSongSelector,
+} from '../../redux/audioPlayer/audioPlayerSelectors';
+import _ from 'lodash';
+import { clearData } from '../../redux/playlistDetail/playlistDetailSlice';
+import { createMetaSelector } from '../../redux/metadata/selectors';
+import { clearMetaData } from '../../redux/metadata/actions';
 
 const PlaylistDetailPage = () => {
   const { authUser } = useAuthContext();
@@ -47,12 +40,27 @@ const PlaylistDetailPage = () => {
   const dispatch = useAppDispatch();
   const { playlist_id } = useParams();
   const navigate = useNavigate();
-  const [is_current_audio, setIsCurrentAudio] = useState<boolean>(false);
+  const location: any = useLocation();
 
   const playlist_detail = useAppSelector(getPlaylistDetailSelector);
   const playlist_songs = useAppSelector(getPlaylistSongsSelector);
 
   const is_own_playlist = authUser?.id === playlist_detail?.creator.id;
+  const current_playlist = useAppSelector(getAudioCurrentPlaylistSelector);
+  const current_song = useAppSelector(getAudioCurrentSongSelector);
+
+  const getPlaylistDetailMeta = useAppSelector(
+    createMetaSelector(getPlaylistDetailAction)
+  );
+  const getPlaylistSongsMeta = useAppSelector(
+    createMetaSelector(getPlaylistSongsAction)
+  );
+
+  const is_full_load =
+    getPlaylistDetailMeta.loaded && getPlaylistSongsMeta.loaded;
+
+  const is_current_audio = playlist_detail?.id === current_playlist?.id;
+
   const { handleClickSongAudio } = useAudioContext();
 
   useReloadWhenLogout();
@@ -84,6 +92,43 @@ const PlaylistDetailPage = () => {
         dispatch(getRecommendedSongsActions({ playlist_id }));
     }
   }, [playlist_id, authUser, is_own_playlist]);
+
+  useEffect(() => {
+    return () => {
+      dispatch(clearData());
+    };
+  }, []);
+
+  useEffect(() => {
+    if (
+      location.state?.play_audio &&
+      playlist_detail &&
+      playlist_songs.length > 0 &&
+      is_full_load
+    ) {
+      console.log('Change image audio');
+      const shuffled_playlist_songs = _.shuffle(playlist_songs);
+      handleClickSongAudio({
+        playlist: playlist_detail,
+        list_songs: playlist_songs,
+        song: !playlist_detail.is_owner
+          ? playlist_songs[0]
+          : playlist_detail.play_random
+          ? shuffled_playlist_songs[0]
+          : playlist_songs[0],
+        playlist_play_random: playlist_detail.is_owner
+          ? playlist_detail.play_random
+          : undefined,
+        force_replace: true,
+      });
+    }
+
+    return () => {
+      window.history.replaceState({}, document.title);
+      clearMetaData(getPlaylistDetailAction.typePrefix);
+      clearMetaData(getPlaylistSongsAction.typePrefix);
+    };
+  }, [location.state, playlist_detail, playlist_songs.length, is_full_load]);
 
   if (!playlist_detail) return null;
 

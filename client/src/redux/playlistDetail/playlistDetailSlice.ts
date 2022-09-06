@@ -63,6 +63,11 @@ const playlistDetailSlice = createSlice({
     //     (song) => song.id !== action.payload.song.id
     //   );
     // },
+    clearData(state, action: PayloadAction<void>) {
+      state.data = initialState.data;
+      state.recommended = initialState.recommended;
+      state.songs = initialState.songs;
+    },
   },
   extraReducers(builder) {
     builder
@@ -131,6 +136,7 @@ export const {
   changeSongsPosition,
   shuffleRecommendedSongs,
   deleteMultipleSongsOutOfPlaylist,
+  clearData,
   // addSongToPlaylistSuccess,
 } = playlistDetailSlice.actions;
 export default playlistDetailSlice.reducer;

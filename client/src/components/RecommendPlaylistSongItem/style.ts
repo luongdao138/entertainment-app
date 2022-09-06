@@ -2,6 +2,7 @@ import styled from 'styled-components';
 
 interface Props {
   is_liked?: boolean;
+  is_current_audio?: boolean;
 }
 
 export const Container = styled.div`
@@ -14,6 +15,9 @@ export const Container = styled.div`
   border-bottom: 1px solid hsla(0, 0%, 100%, 0.05);
   position: relative;
   user-select: none;
+
+  background-color: ${(props: Props) =>
+    props.is_current_audio ? '#2f283a' : 'transparent'};
 
   & .song-left {
     display: flex;

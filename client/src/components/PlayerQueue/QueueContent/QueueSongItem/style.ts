@@ -2,6 +2,8 @@ import styled from 'styled-components';
 
 interface Props {
   is_liked?: boolean;
+  is_archive?: boolean;
+  is_current_audio?: boolean;
 }
 
 export const Container = styled.div`
@@ -11,6 +13,12 @@ export const Container = styled.div`
   border-radius: 4px;
   padding: 8px;
   user-select: none;
+
+  background-color: ${(props: Props) =>
+    props.is_current_audio ? '#7200A1' : 'transparent'};
+
+  opacity: ${(props: Props) =>
+    props.is_current_audio ? 1 : props.is_archive ? '.5' : '1'};
 
   .song-left {
     display: flex;
@@ -26,6 +34,19 @@ export const Container = styled.div`
       position: relative;
       cursor: pointer;
 
+      & .opacity {
+        position: absolute;
+        top: 0;
+        left: 0;
+        bottom: 0;
+        right: 0;
+        z-index: 10;
+        background-color: rgba(0, 0, 0, 0.5);
+        opacity: ${(props: Props) => (props.is_current_audio ? 1 : 0)};
+        visibility: ${(props: Props) =>
+          props.is_current_audio ? 'visible' : 'hidden'};
+      }
+
       & img {
         width: 100%;
         height: 100%;
@@ -33,8 +54,10 @@ export const Container = styled.div`
       }
 
       & .play-state {
-        opacity: 0;
-        visibility: hidden;
+        background-color: rgba(0, 0, 0, 0.5);
+        opacity: ${(props: Props) => (props.is_current_audio ? 1 : 0)};
+        visibility: ${(props: Props) =>
+          props.is_current_audio ? 'visible' : 'hidden'};
         position: absolute;
         z-index: 20;
         top: 50%;
@@ -93,7 +116,12 @@ export const Container = styled.div`
     }
 
     & .favourite svg {
-      color: ${(props: Props) => (props.is_liked ? '#7200a1' : '#fff')};
+      color: ${(props: Props) =>
+        props.is_liked
+          ? props.is_current_audio
+            ? '#fff'
+            : '#7200a1'
+          : '#fff'};
     }
 
     & .more-btn svg {
@@ -102,16 +130,14 @@ export const Container = styled.div`
   }
 
   &:hover {
-    background-color: #2f283a;
+    color: #fff;
+    opacity: 1;
+    background-color: ${(props: Props) =>
+      props.is_current_audio ? '#7200A1' : '#2f283a'};
     & .song-thumbnail {
       & .opacity {
-        position: absolute;
-        top: 0;
-        left: 0;
-        bottom: 0;
-        right: 0;
-        z-index: 10;
-        background-color: rgba(0, 0, 0, 0.5);
+        opacity: 1;
+        visibility: visible;
       }
 
       & .play-state {

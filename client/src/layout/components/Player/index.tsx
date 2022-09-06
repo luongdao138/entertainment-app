@@ -10,10 +10,10 @@ import AudioPlayer from '../../../components/AudioPlayer';
 import { useAudioContext } from '../../../context/AudioContext';
 
 const Player = () => {
-  const { handleToggleQueue, playerRef } = useAudioContext();
+  const { handleToggleQueue, openQueue, playerRef } = useAudioContext();
 
   return (
-    <Container ref={playerRef}>
+    <Container openQueue={openQueue} ref={playerRef}>
       <div className='player-content'>
         <div className='player-left'>
           <AudioSong />

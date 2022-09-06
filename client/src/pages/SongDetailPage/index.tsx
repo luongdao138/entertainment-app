@@ -13,6 +13,8 @@ import {
   getSongDetailSelector,
   getFeaturePlaylists,
 } from '../../redux/songDetail/songDetailSelector';
+import { useAudioContext } from '../../context/AudioContext';
+import { AudioSong } from '../../redux/audioPlayer/audioPlayerSlice';
 
 const SongDetailPage = () => {
   const { authUser } = useAuthContext();
@@ -20,11 +22,21 @@ const SongDetailPage = () => {
   const dispatch = useAppDispatch();
   const { song_id } = useParams();
   const navigate = useNavigate();
+  const { handleClickSongAudio } = useAudioContext();
   // const isFirstRenderRef = useRef<boolean>(true);
 
   const song_detail = useAppSelector(getSongDetailSelector);
   const recommended_songs = useAppSelector(getRecommendedSongsSelector);
   const feature_playlists = useAppSelector(getFeaturePlaylists);
+
+  const onClickSongAudio = (song: AudioSong) => {
+    handleClickSongAudio({
+      song,
+      list_songs: recommended_songs,
+      playlist: null,
+      is_from_recommend: true,
+    });
+  };
 
   useEffect(() => {
     // if (isFirstRenderRef.current) {
@@ -47,14 +59,27 @@ const SongDetailPage = () => {
   return (
     <Container>
       <div className='detail-top'>
-        {song_detail && <SongDetailInfor song={song_detail} />}
+        {song_detail && (
+          <SongDetailInfor
+            recommended_songs={recommended_songs}
+            song={song_detail}
+          />
+        )}
         <div className='song-list'>
-          {song_detail && <SongList songs={[song_detail]} />}
+          {song_detail && (
+            <SongList
+              onClickSongAudio={onClickSongAudio}
+              songs={[song_detail]}
+            />
+          )}
 
           {recommended_songs.length > 0 && (
             <div className='recommend-songs'>
               <h2 className='title'>Có thể bạn quan tâm</h2>
-              <SongList songs={recommended_songs} />
+              <SongList
+                songs={recommended_songs}
+                onClickSongAudio={onClickSongAudio}
+              />
             </div>
           )}
         </div>

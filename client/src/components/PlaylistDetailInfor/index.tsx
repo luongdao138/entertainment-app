@@ -1,4 +1,5 @@
 import { Menu } from '@mui/material';
+import _ from 'lodash';
 import React, { startTransition, useEffect, useState } from 'react';
 import { AiFillHeart, AiOutlineHeart } from 'react-icons/ai';
 import { BsFillPlayFill } from 'react-icons/bs';
@@ -7,13 +8,15 @@ import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import appRoutes from '../../constants/appRoutes';
 import { DEFAULT_PLAYLIST_THUMBNAIL } from '../../constants/images';
+import { useAudioContext } from '../../context/AudioContext';
 import { useUploadPlaylistContext } from '../../context/UploadPlaylistContext';
+import { getAudioCurrentPlaylistSelector } from '../../redux/audioPlayer/audioPlayerSelectors';
 import { logout } from '../../redux/auth/authSlice';
-import { useAppDispatch } from '../../redux/hooks';
+import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import { changePlaylistFavourite } from '../../redux/playlist/playlistActions';
 import { deletePlaylist, PlaylistDetail } from '../../services/playlist';
 import { Song } from '../../services/song';
-import AudioLoadingIcon from '../AudioPlayingIcon';
+import AudioPlayingIcon from '../AudioPlayingIcon';
 import ConfirmDialog from '../ConfirmDialog';
 import LoginRequired from '../LoginRequired';
 import PlaylistItemMenu from '../PlaylistItemMenu';
@@ -35,8 +38,10 @@ const PlaylistDetailInfor: React.FC<Props> = ({
   const openPlaylistMenu = Boolean(anchorEl);
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
+  const current_playlist = useAppSelector(getAudioCurrentPlaylistSelector);
   const { changeToEditMode, setEditedPlaylist, openUploadPlaylistForm } =
     useUploadPlaylistContext();
+  const { handleClickSongAudio } = useAudioContext();
   const [openDeleteConfirmModal, setOpenDeleteConfirmModal] =
     useState<boolean>(false);
   const [is_changed, setIsChanged] = useState<boolean>(false);
@@ -45,9 +50,33 @@ const PlaylistDetailInfor: React.FC<Props> = ({
   //   Boolean(playlist_detail.is_liked)
   // );
 
-  const handleChangePlayState = () => {
-    setIsChanged(true);
-    setIsPlaying((prev) => !prev);
+  const onClickSongAudio = () => {
+    if (playlist_detail.id !== current_playlist?.id) {
+      const shuffled_list = _.shuffle(songs);
+      // nếu bài hát đang đc chọn không thuộc playlist này => chọn playlist và phát bài hát của playlist này
+      handleClickSongAudio({
+        // playlist: playlist_detail,
+        // list_songs: songs,
+        // song: playlist_detail.play_random ? shuffled_list[0] : songs[0],
+        // playlist_play_random: playlist_detail.play_random,
+
+        playlist: playlist_detail,
+        list_songs: songs,
+        song: !playlist_detail.is_owner
+          ? songs[0]
+          : playlist_detail.play_random
+          ? shuffled_list[0]
+          : songs[0],
+        playlist_play_random: playlist_detail.is_owner
+          ? playlist_detail.play_random
+          : undefined,
+        force_replace: true,
+      });
+    } else {
+      // ngược lại, thay đổi trạng thái play/pause của bài hát đang được phát
+      setIsChanged(true);
+      setIsPlaying((prev) => !prev);
+    }
   };
 
   const handleClickMore = (e: React.MouseEvent<HTMLElement>) => {
@@ -169,13 +198,10 @@ const PlaylistDetailInfor: React.FC<Props> = ({
           closePlaylistItemMenu={handleClose}
         />
       </Menu>
-      <div
-        className='playlist-thumbnail-container'
-        onClick={handleChangePlayState}
-      >
+      <div className='playlist-thumbnail-container' onClick={onClickSongAudio}>
         <div className='thumbnail-icon'>
           <button className='play-state'>
-            {is_playing ? <AudioLoadingIcon /> : <BsFillPlayFill />}
+            {is_playing ? <AudioPlayingIcon /> : <BsFillPlayFill />}
           </button>
         </div>
         {songs.length >= 4 ? (
@@ -222,14 +248,16 @@ const PlaylistDetailInfor: React.FC<Props> = ({
         </p>
         <p className='like-count'>188k người yêu thích</p>
 
-        <button className='play-btn'>
+        <button className='play-btn' onClick={onClickSongAudio}>
           {is_playing ? <MdPause /> : <BsFillPlayFill />}
           <span>
-            {is_current_audio
+            {current_playlist?.id === playlist_detail.id
               ? is_playing
                 ? 'Tạm dừng'
                 : 'Tiếp tục phát'
-              : 'Phát ngẫu nhiên'}
+              : playlist_detail.play_random
+              ? 'Phát ngẫu nhiên'
+              : 'Phát tất cả'}
           </span>
         </button>
 
