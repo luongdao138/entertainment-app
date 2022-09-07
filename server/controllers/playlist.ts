@@ -400,50 +400,81 @@ const playlistController = {
           .status(400)
           .json({ msg: 'Không có quyền thêm bài hát vào playlist này' });
 
-      // kiểm tra xem bài hát này có tồn tại hay không
-      const song = await prisma.song.findFirst({
-        where: { id: song_id, is_deleted: false },
-        select: {
-          privacy: true,
-          user: {
-            select: { id: true },
-          },
+      let song_count = await prisma.playlistSong.count({
+        where: {
+          playlist_id,
         },
       });
-      if (!song) return res.status(404).json({ msg: 'Bài hát không tồn tại' });
 
-      // kiểm tra xem nếu bài hát là private và user này ko phải là creator => ko cho thêm
-      if (song.privacy === 'private' && song.user.id !== user.id)
-        return res.status(404).json({ msg: 'Bài hát không tồn tại' });
+      if (!Array.isArray(song_id)) {
+        // đây là trường hợp người dùng chỉ thêm 1 bài hát vào playlist
 
-      const playlist_song = await prisma.playlistSong.findUnique({
-        where: {
-          playlist_id_song_id: {
+        // kiểm tra xem bài hát này có tồn tại hay không
+        const song = await prisma.song.findFirst({
+          where: { id: song_id, is_deleted: false },
+          select: {
+            privacy: true,
+            user: {
+              select: { id: true },
+            },
+          },
+        });
+        if (!song)
+          return res.status(404).json({ msg: 'Bài hát không tồn tại' });
+
+        // kiểm tra xem nếu bài hát là private và user này ko phải là creator => ko cho thêm
+        if (song.privacy === 'private' && song.user.id !== user.id)
+          return res.status(404).json({ msg: 'Bài hát không tồn tại' });
+
+        const playlist_song = await prisma.playlistSong.findUnique({
+          where: {
+            playlist_id_song_id: {
+              playlist_id,
+              song_id,
+            },
+          },
+        });
+
+        // nếu bài hát đã có sẵn trong playlist => trả về ngay message thành công
+        if (playlist_song) {
+          return res.json({ msg: 'Thêm bài hát vào playlist thành công' });
+        }
+
+        // nếu bài hát chưa có trong playlist, thêm vào playlist và trả về message thành công
+        await prisma.playlistSong.create({
+          data: {
             playlist_id,
             song_id,
+            position: song_count > 0 ? song_count : 0,
           },
-        },
-      });
+        });
+      } else {
+        // đây là trường hợp thêm nhiều bài hát vào playlist 1 lúc
+        for (const id of song_id) {
+          const playlist_song = await prisma.playlistSong.findUnique({
+            where: {
+              playlist_id_song_id: {
+                playlist_id,
+                song_id: id,
+              },
+            },
+          });
 
-      // nếu bài hát đã có sẵn trong playlist => trả về ngay message thành công
-      if (playlist_song) {
-        return res.json({ msg: 'Thêm bài hát vào playlist thành công' });
+          if (playlist_song) {
+            continue;
+          }
+
+          await prisma.playlistSong.create({
+            data: {
+              playlist_id,
+              song_id: id,
+              position: song_count > 0 ? song_count : 0,
+            },
+          });
+
+          song_count++;
+        }
       }
-
-      const song_count = await prisma.playlistSong.count({
-        where: {
-          playlist_id,
-        },
-      });
-
-      // nếu bài hát chưa có trong playlist, thêm vào playlist và trả về message thành công
-      await prisma.playlistSong.create({
-        data: {
-          playlist_id,
-          song_id,
-          position: song_count > 0 ? song_count : 0,
-        },
-      });
 
       return res
         .status(201)

@@ -14,7 +14,9 @@ import { Container } from './style';
 const AudioAction = () => {
   const dispatch = useAppDispatch();
   const audio_state = useAppSelector(getAudioStateSelector);
-  const handleClickShuffle = () => {
+  const handleClickShuffle = (e: React.MouseEvent<HTMLElement>) => {
+    e.preventDefault();
+    e.stopPropagation();
     dispatch(
       changeAudioCurrentState({
         new_state: { is_shuffle: !audio_state.is_shuffle },

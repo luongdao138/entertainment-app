@@ -13,12 +13,14 @@ import { getAudioCurrentSongSelector } from '../../../redux/audioPlayer/audioPla
 
 const Player = () => {
   const { handleToggleQueue, openQueue, playerRef } = useAudioContext();
+  const context = useAudioContext();
   const navigate = useNavigate();
   const current_song = useAppSelector(getAudioCurrentSongSelector);
 
   const toggleQueue = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     e.stopPropagation();
+    console.log({ context });
     handleToggleQueue?.();
   };
 

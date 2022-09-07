@@ -25,7 +25,7 @@ interface SliceState {
     data: AudioSong[];
   };
   recommended_list: {
-    data: Song[];
+    data: AudioSong[];
   };
   volume: number;
   audio_meta: {
@@ -132,6 +132,14 @@ const audioPlayerSlice = createSlice({
       state.audio_list_songs.push(new_song);
       // }
     },
+    resetAudioPlayer(state) {
+      state.archived_list.data = [];
+      state.next_list.data = [];
+      state.recommended_list.data = [];
+      state.current_playlist.data = null;
+      state.current_song = null;
+      state.audio_list_songs = [];
+    },
   },
   extraReducers(builder) {
     builder
@@ -174,5 +182,6 @@ export const {
   changeAudioCurrentState,
   addSongToPlayNext,
   addSongsToPlayerList,
+  resetAudioPlayer,
 } = audioPlayerSlice.actions;
 export default audioPlayerSlice.reducer;

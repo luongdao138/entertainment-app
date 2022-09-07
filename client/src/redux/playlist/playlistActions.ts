@@ -160,12 +160,18 @@ export const addSongsToPlaylistActions = createAsyncThunk<
   PLAYLIST_ACTION_TYPES.ADD_SONGS_TO_PLAYLIST,
   async (params, { dispatch, rejectWithValue }) => {
     try {
-      for (const song of params.data.songs) {
-        await services.addSongToPlaylist({
-          playlist_id: params.data.playlist_id,
-          song_id: song.id,
-        });
-      }
+      // for (const song of params.data.songs) {
+      //   await services.addSongToPlaylist({
+      //     playlist_id: params.data.playlist_id,
+      //     song_id: song.id,
+      //   });
+      // }
+
+      await services.addSongToPlaylist({
+        playlist_id: params.data.playlist_id,
+        song_id: params.data.songs.map((s) => s.id),
+      });
+
       params.onSuccess?.(params.data);
       return params.data;
     } catch (error: any) {

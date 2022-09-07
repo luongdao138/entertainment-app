@@ -61,7 +61,7 @@ export interface ChangePlaylistFavouriteParams {
   id: string;
 }
 export interface UpdatePlaylistSongsParams {
-  song_id: string;
+  song_id: string | string[];
   playlist_id: string;
 }
 export interface GetSongsOfPlaylistParams {

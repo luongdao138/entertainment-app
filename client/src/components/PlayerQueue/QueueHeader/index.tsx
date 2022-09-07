@@ -7,12 +7,14 @@ import { Container, TabButton } from './style';
 const PlayerQueueHeader = () => {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const openMenu = Boolean(anchorEl);
+
   const handleClick = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
   };
   const handleClose = () => {
     setAnchorEl(null);
   };
+
   return (
     <>
       <Menu

@@ -1,6 +1,5 @@
 import _ from 'lodash';
-import React, { useContext, useRef, useEffect } from 'react';
-import useBoolean from '../hooks/useBoolean';
+import React, { useContext, useRef, useState, useEffect } from 'react';
 import {
   getAudioArchivedListSelector,
   getAudioCurrentListSongs,
@@ -59,16 +58,18 @@ interface ContextState {
   handleAddSongToPlayNext: (params: { song: AudioSong }) => void;
   handleRemoveSongsOutOfPlayQueue: (queue_id: string) => void;
   handleChangeAutoPlayRecommend: (value: boolean) => void;
+  handleClickQueueSong: (queue_id: string) => void;
 }
 
 const AudioContext = React.createContext<ContextState>({} as ContextState);
 
 const AudioContextProvider = ({ children }: { children: React.ReactNode }) => {
-  const {
-    value: openQueue,
-    setFalse: handleCloseQueue,
-    toggle: handleToggleQueue,
-  } = useBoolean(false);
+  // const {
+  //   value: openQueue,
+  //   setFalse: handleCloseQueue,
+  //   toggle: handleToggleQueue,
+  // } = useBoolean(false);
+  const [openQueue, setOpenQueue] = useState<boolean>(false);
   const { authUser } = useAuthContext();
 
   const current_song = useAppSelector(getAudioCurrentSongSelector);
@@ -82,6 +83,13 @@ const AudioContextProvider = ({ children }: { children: React.ReactNode }) => {
   const dispatch = useAppDispatch();
 
   const openPlayer = Boolean(current_song);
+
+  const handleToggleQueue = () => {
+    setOpenQueue((prev) => !prev);
+  };
+  const handleCloseQueue = () => {
+    setOpenQueue(false);
+  };
 
   const handleClickSongAudio = (params: ClickAudioParams) => {
     const {
@@ -327,8 +335,6 @@ const AudioContextProvider = ({ children }: { children: React.ReactNode }) => {
       (s) => s.queue_id === queue_id && s.is_current_audio
     );
 
-    console.log({ is_archived_index, is_current_index, is_next_index });
-
     if (is_archived_index !== -1) {
       // xóa bài hát đã phát
       const new_archived_list = archived_list.filter(
@@ -472,6 +478,115 @@ const AudioContextProvider = ({ children }: { children: React.ReactNode }) => {
     );
   };
 
+  const handleClickQueueSong = (queue_id: string) => {
+    const is_archived_index = archived_list.findIndex(
+      (s) => s.queue_id === queue_id && !s.is_current_audio
+    );
+    const is_next_index = next_list.findIndex((s) => s.queue_id === queue_id);
+    const is_current_index = archived_list.findIndex(
+      (s) => s.queue_id === queue_id && s.is_current_audio
+    );
+    const is_recommend_index = recommend_list.findIndex(
+      (s) => s.queue_id === queue_id
+    );
+
+    if (is_current_index !== -1) {
+      // đây là trường hợp click vào bài hát hiện tại đang phát => thay đổi trạng thái play/pause
+      // sẽ bổ sung sau
+      return;
+    }
+
+    if (is_archived_index !== -1) {
+      const top = archived_list.slice(0, is_archived_index);
+      const bottom = archived_list
+        .slice(is_archived_index + 1)
+        .map((s) => ({ ...s, is_current_audio: false }));
+      let new_current_audio = archived_list[is_archived_index];
+
+      new_current_audio = { ...new_current_audio, is_current_audio: true };
+      const new_current_song = _.omit(new_current_audio, [
+        'queue_id',
+        'is_current_audio',
+      ]);
+      const new_next_list = [...bottom, ...next_list];
+
+      dispatch(changeAudioArchivedList({ list: [...top, new_current_audio] }));
+      dispatch(changeAudioCurrentSong({ new_current_song }));
+      dispatch(changeAudioNextList({ list: new_next_list }));
+      dispatch(
+        getRecommendedSongsAction({
+          data: {
+            exclude_song_ids: audio_list_songs.map((s) => s.id),
+          },
+          song_id: new_current_song.id,
+        })
+      );
+      return;
+    }
+
+    if (is_next_index !== -1) {
+      let new_current_audio = next_list[is_next_index];
+      new_current_audio = { ...new_current_audio, is_current_audio: true };
+      const new_current_song = _.omit(new_current_audio, [
+        'queue_id',
+        'is_current_audio',
+      ]);
+
+      const top = next_list.slice(0, is_next_index);
+      const bottom = next_list.slice(is_next_index + 1);
+      const new_archive_list = [
+        ...archived_list.map((s) => ({ ...s, is_current_audio: false })),
+        ...top,
+        new_current_audio,
+      ];
+
+      dispatch(changeAudioArchivedList({ list: new_archive_list }));
+      dispatch(changeAudioCurrentSong({ new_current_song }));
+      dispatch(changeAudioNextList({ list: bottom }));
+      dispatch(
+        getRecommendedSongsAction({
+          data: {
+            exclude_song_ids: audio_list_songs.map((s) => s.id),
+          },
+          song_id: new_current_song.id,
+        })
+      );
+      return;
+    }
+
+    if (is_recommend_index !== -1) {
+      let new_current_audio = recommend_list[is_recommend_index];
+      new_current_audio = { ...new_current_audio, is_current_audio: true };
+      const new_current_song = _.omit(new_current_audio, [
+        'queue_id',
+        'is_current_audio',
+      ]);
+
+      const new_archive_list = [
+        ...[...archived_list, ...next_list].map((s) => ({
+          ...s,
+          is_current_audio: false,
+        })),
+        new_current_audio,
+      ];
+
+      dispatch(changeAudioArchivedList({ list: new_archive_list }));
+      dispatch(changeAudioNextList({ list: [] }));
+      dispatch(changeAudioCurrentSong({ new_current_song }));
+      dispatch(changeAudioListSongs({ list: new_archive_list }));
+      dispatch(
+        getRecommendedSongsAction({
+          data: {
+            exclude_song_ids: new_archive_list.map((s) => s.id),
+          },
+          song_id: new_current_song.id,
+        })
+      );
+
+      return;
+    }
+  };
+
   useEffect(() => {
     // mỗi khi mà is_shuffle thay đổi
     if (!current_song) {
@@ -521,6 +636,7 @@ const AudioContextProvider = ({ children }: { children: React.ReactNode }) => {
         handleChangeAutoPlayRecommend,
         handleAddSongToPlayNext,
         handleRemoveSongsOutOfPlayQueue,
+        handleClickQueueSong,
       }}
     >
       {children}
@@ -528,5 +644,5 @@ const AudioContextProvider = ({ children }: { children: React.ReactNode }) => {
   );
 };
 
-export default AudioContextProvider;
 export const useAudioContext = () => useContext(AudioContext);
+export default AudioContextProvider;

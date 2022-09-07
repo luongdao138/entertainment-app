@@ -3,7 +3,6 @@ import { BsLink45Deg, BsMusicNoteList } from 'react-icons/bs';
 import { FiDownload } from 'react-icons/fi';
 import { HiOutlineBan } from 'react-icons/hi';
 import { MdOutlineSkipNext, MdPlaylistAdd } from 'react-icons/md';
-import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import { Song } from '../../services/song';
 import AddToPlaylist from '../AddToPlaylist';
 import { MdOutlineDeleteOutline, MdOutlineModeEdit } from 'react-icons/md';
@@ -12,9 +11,7 @@ import { FaRegComment } from 'react-icons/fa';
 import { useAuthContext } from '../../context/AuthContext';
 import useCopyToClipboard from '../../hooks/useCopyToClipboard';
 import { AudioSong } from '../../redux/audioPlayer/audioPlayerSlice';
-import { getAudioCurrentSongSelector } from '../../redux/audioPlayer/audioPlayerSelectors';
 import { AddSongToPlayerParams } from '../../context/AudioContext';
-
 interface Props {
   song: Song;
   can_delete_song?: boolean;
@@ -50,8 +47,6 @@ const SongItemMenu: React.FC<Props> = ({
   can_remove_out_of_queue,
   onRemoveSongOutOfQueue,
 }) => {
-  const dispatch = useAppDispatch();
-  const current_song = useAppSelector(getAudioCurrentSongSelector);
   const handleDownloadSong = () => {
     // fileSaver.saveAs(song.url);
   };

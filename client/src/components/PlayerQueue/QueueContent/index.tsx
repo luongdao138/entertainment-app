@@ -46,7 +46,7 @@ const QueueContent = () => {
             <h3>Tiếp theo</h3>
             {current_playlist && (
               <p>
-                Từ playlist
+                Từ playlist{' '}
                 <Link to={`/playlist/${current_playlist.id}`}>
                   {current_playlist.title}
                 </Link>

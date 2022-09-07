@@ -73,8 +73,9 @@ export const Container = styled.div`
     }
 
     & .play-state {
-      opacity: 0;
-      visibility: hidden;
+      opacity: ${(props: Props) => (props.is_current_audio ? 1 : 0)};
+      visibility: ${(props: Props) =>
+        props.is_current_audio ? 'visible' : 'hidden'};
       position: absolute;
       z-index: 20;
       top: 50%;
@@ -82,6 +83,19 @@ export const Container = styled.div`
       transform: translate(-50%, -50%);
       font-size: 2.5rem;
       color: #fff;
+    }
+
+    & .opacity {
+      position: absolute;
+      top: 0;
+      left: 0;
+      bottom: 0;
+      right: 0;
+      z-index: 10;
+      background-color: rgba(0, 0, 0, 0.5);
+      opacity: ${(props: Props) => (props.is_current_audio ? 1 : 0)};
+      visibility: ${(props: Props) =>
+        props.is_current_audio ? 'visible' : 'hidden'};
     }
   }
 
@@ -195,13 +209,8 @@ export const Container = styled.div`
       cursor: pointer;
 
       & .opacity {
-        position: absolute;
-        top: 0;
-        left: 0;
-        bottom: 0;
-        right: 0;
-        z-index: 10;
-        background-color: rgba(0, 0, 0, 0.5);
+        opacity: 1;
+        visibility: visible;
       }
 
       & .play-state {

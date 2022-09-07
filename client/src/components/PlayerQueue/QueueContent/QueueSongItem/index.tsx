@@ -4,6 +4,7 @@ import { AiFillHeart, AiOutlineHeart } from 'react-icons/ai';
 import { BsFillPlayFill } from 'react-icons/bs';
 import { MdMoreHoriz } from 'react-icons/md';
 import { toast } from 'react-toastify';
+import { useAudioContext } from '../../../../context/AudioContext';
 import {
   getAudioArchivedListSelector,
   getAudioCurrentListSongs,
@@ -32,6 +33,8 @@ const QueueSongItem: React.FC<Props> = ({
   const archive_list = useAppSelector(getAudioArchivedListSelector);
   const audio_list_songs = useAppSelector(getAudioCurrentListSongs);
   const current_song = useAppSelector(getAudioCurrentSongSelector);
+
+  const { handleClickQueueSong } = useAudioContext();
 
   const is_current_audio = song.is_current_audio;
   // audio_list_songs[current_audio_index]?.queue_id === song.queue_id;
@@ -69,6 +72,10 @@ const QueueSongItem: React.FC<Props> = ({
         dispatch(logout());
       }
     }
+  };
+
+  const onClickQueueSong = () => {
+    if (song.queue_id) handleClickQueueSong(song.queue_id);
   };
 
   return (
@@ -109,7 +116,7 @@ const QueueSongItem: React.FC<Props> = ({
         is_current_audio={is_current_audio}
       >
         <div className='song-left'>
-          <div className='song-thumbnail'>
+          <div className='song-thumbnail' onClick={onClickQueueSong}>
             <img src={song.thumbnail} alt='' />
             <div className='opacity'></div>
             <BsFillPlayFill className='play-state' />
