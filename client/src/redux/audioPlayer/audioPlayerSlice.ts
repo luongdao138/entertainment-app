@@ -1,6 +1,8 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { Playlist, PlaylistDetail } from '../../services/playlist';
 import { Song, SongDetail } from '../../services/song';
+import { v4 as uuid } from 'uuid';
+
 import {
   changeFavourite,
   getRecommendedSongsAction,
@@ -68,7 +70,7 @@ const audioPlayerSlice = createSlice({
   reducers: {
     changeAudioCurrentSong(
       state,
-      action: PayloadAction<{ new_current_song: AudioSong }>
+      action: PayloadAction<{ new_current_song: AudioSong | null }>
     ) {
       state.current_song = action.payload.new_current_song;
     },
@@ -108,11 +110,37 @@ const audioPlayerSlice = createSlice({
     ) {
       state.audio_meta = { ...state.audio_meta, ...action.payload.new_meta };
     },
+    addSongsToPlayerList(state, action: PayloadAction<{ songs: AudioSong[] }>) {
+      // if (!state.audio_state.is_from_recommend) {
+      const new_songs = action.payload.songs.map((s) => ({
+        ...s,
+        is_current_audio: false,
+        queue_id: uuid(),
+      }));
+      state.next_list.data = state.next_list.data.concat(new_songs);
+      state.audio_list_songs = state.audio_list_songs.concat(new_songs);
+      // }
+    },
+    addSongToPlayNext(state, action: PayloadAction<{ song: AudioSong }>) {
+      // if (!state.audio_state.is_from_recommend) {
+      let new_song: AudioSong = {
+        ...action.payload.song,
+        is_current_audio: false,
+        queue_id: uuid(),
+      };
+      state.next_list.data.unshift(new_song);
+      state.audio_list_songs.push(new_song);
+      // }
+    },
   },
   extraReducers(builder) {
     builder
       .addCase(getRecommendedSongsAction.fulfilled, (state, action) => {
-        state.recommended_list.data = action.payload.songs;
+        state.recommended_list.data = action.payload.songs.map((s) => ({
+          ...s,
+          is_current_audio: false,
+          queue_id: uuid(),
+        }));
       })
       .addCase(changeFavourite.fulfilled, (state, action) => {
         if (state.current_song && state.current_song.id === action.payload) {
@@ -144,5 +172,7 @@ export const {
   changeAudioCurrentPlaylist,
   changeAudioCurrentMeta,
   changeAudioCurrentState,
+  addSongToPlayNext,
+  addSongsToPlayerList,
 } = audioPlayerSlice.actions;
 export default audioPlayerSlice.reducer;

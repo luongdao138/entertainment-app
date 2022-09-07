@@ -6,6 +6,7 @@ import { MdMoreHoriz } from 'react-icons/md';
 import { toast } from 'react-toastify';
 import {
   getAudioArchivedListSelector,
+  getAudioCurrentListSongs,
   getAudioCurrentSongSelector,
 } from '../../../../redux/audioPlayer/audioPlayerSelectors';
 import { logout } from '../../../../redux/auth/authSlice';
@@ -17,17 +18,26 @@ import { Container } from './style';
 
 interface Props {
   song: Song;
+  can_remove_out_of_queue?: boolean;
+  onRemoveSongOutOfQueue?: (queue_id: string) => void;
 }
 
-const QueueSongItem: React.FC<Props> = ({ song }) => {
+const QueueSongItem: React.FC<Props> = ({
+  song,
+  can_remove_out_of_queue,
+  onRemoveSongOutOfQueue,
+}) => {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const openSongMenu = Boolean(anchorEl);
-  const current_song = useAppSelector(getAudioCurrentSongSelector);
   const archive_list = useAppSelector(getAudioArchivedListSelector);
+  const audio_list_songs = useAppSelector(getAudioCurrentListSongs);
+  const current_song = useAppSelector(getAudioCurrentSongSelector);
 
-  const is_current_audio = current_song?.id === song.id;
-  const is_archive =
-    song.id !== current_song?.id && archive_list.some((x) => x.id === song.id);
+  const is_current_audio = song.is_current_audio;
+  // audio_list_songs[current_audio_index]?.queue_id === song.queue_id;
+  const is_archive = archive_list.some(
+    (x) => x.queue_id === song.queue_id && !x.is_current_audio
+  );
 
   const dispatch = useAppDispatch();
   // const [is_liked, setIsLiked] = useState<boolean>(song.is_liked);
@@ -84,7 +94,14 @@ const QueueSongItem: React.FC<Props> = ({ song }) => {
           },
         }}
       >
-        <SongItemMenu song={song} closeSongItemAction={handleCloseSongMenu} />
+        <SongItemMenu
+          song={song}
+          closeSongItemAction={handleCloseSongMenu}
+          disable_add_to_play_next
+          disable_add_to_player_queue
+          can_remove_out_of_queue={can_remove_out_of_queue}
+          onRemoveSongOutOfQueue={onRemoveSongOutOfQueue}
+        />
       </Menu>
       <Container
         is_liked={song.is_liked}

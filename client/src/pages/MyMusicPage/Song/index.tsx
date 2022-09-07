@@ -9,12 +9,16 @@ const Container = styled.div`
   }
 `;
 
+interface Props {
+  active: boolean;
+}
+
 const TagItem = styled(Link)`
   padding: 0.4rem 1rem;
   border-radius: 10rem;
   color: #fff;
   font-size: 1.2rem;
-  border: ${(props: { active?: boolean }) =>
+  border: ${(props: Props) =>
     props.active ? '1px solid transparent' : '1px solid #fff'};
   background-color: ${(props: { active?: boolean }) =>
     props.active ? '#7200a1' : 'transparent'};
@@ -22,8 +26,7 @@ const TagItem = styled(Link)`
 
   &:hover {
     border-color: #7200a1;
-    color: ${(props: { active?: boolean }) =>
-      !props.active ? '#7200a1' : '#fff'};
+    color: ${(props: Props) => (!props.active ? '#7200a1' : '#fff')};
   }
 
   & + & {

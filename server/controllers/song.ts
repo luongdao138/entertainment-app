@@ -510,7 +510,19 @@ const songController = {
     const { exclude_song_ids } = req.body;
 
     const song = await prisma.song.findFirst({
-      where: { id: song_id, is_deleted: false, privacy: 'public' },
+      where: {
+        id: song_id,
+        is_deleted: false,
+        OR: [
+          {
+            privacy: 'public',
+          },
+          {
+            privacy: 'private',
+            user_id: user.id,
+          },
+        ],
+      },
       include: {
         belong_categories: {
           select: {

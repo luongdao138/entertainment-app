@@ -19,6 +19,10 @@ export const Container = styled.div`
     }
   }
 
+  .recommend-list {
+    margin-top: 1.5rem;
+  }
+
   .recommend-list-header {
     display: flex;
     justify-content: space-between;

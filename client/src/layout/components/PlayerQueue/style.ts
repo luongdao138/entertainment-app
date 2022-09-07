@@ -25,5 +25,10 @@ export const Container = styled.div`
   & .queue-content {
     flex-grow: 1;
     overflow: auto;
+
+    &::-webkit-scrollbar {
+      width: 0;
+      height: 0;
+    }
   }
 `;

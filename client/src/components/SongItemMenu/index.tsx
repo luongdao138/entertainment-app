@@ -3,7 +3,7 @@ import { BsLink45Deg, BsMusicNoteList } from 'react-icons/bs';
 import { FiDownload } from 'react-icons/fi';
 import { HiOutlineBan } from 'react-icons/hi';
 import { MdOutlineSkipNext, MdPlaylistAdd } from 'react-icons/md';
-import { useAppDispatch } from '../../redux/hooks';
+import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import { Song } from '../../services/song';
 import AddToPlaylist from '../AddToPlaylist';
 import { MdOutlineDeleteOutline, MdOutlineModeEdit } from 'react-icons/md';
@@ -11,6 +11,9 @@ import { Container } from './style';
 import { FaRegComment } from 'react-icons/fa';
 import { useAuthContext } from '../../context/AuthContext';
 import useCopyToClipboard from '../../hooks/useCopyToClipboard';
+import { AudioSong } from '../../redux/audioPlayer/audioPlayerSlice';
+import { getAudioCurrentSongSelector } from '../../redux/audioPlayer/audioPlayerSelectors';
+import { AddSongToPlayerParams } from '../../context/AudioContext';
 
 interface Props {
   song: Song;
@@ -22,6 +25,12 @@ interface Props {
   changeSelectedSong?: (song: Song) => void;
   handleRemoveSongOutOfPlaylist?: (song_id: string) => void;
   handleOpenDeleteConfirmModal?: () => void;
+  handleAddSongsToPlayerQueue?: (params: AddSongToPlayerParams) => void;
+  handleAddSongToPlayNext?: (params: { song: AudioSong }) => void;
+  disable_add_to_player_queue?: boolean;
+  disable_add_to_play_next?: boolean;
+  can_remove_out_of_queue?: boolean;
+  onRemoveSongOutOfQueue?: (queue_id: string) => void;
 }
 
 const SongItemMenu: React.FC<Props> = ({
@@ -34,8 +43,15 @@ const SongItemMenu: React.FC<Props> = ({
   changeSelectedSong,
   handleRemoveSongOutOfPlaylist,
   handleOpenDeleteConfirmModal,
+  handleAddSongToPlayNext,
+  handleAddSongsToPlayerQueue,
+  disable_add_to_play_next,
+  disable_add_to_player_queue,
+  can_remove_out_of_queue,
+  onRemoveSongOutOfQueue,
 }) => {
   const dispatch = useAppDispatch();
+  const current_song = useAppSelector(getAudioCurrentSongSelector);
   const handleDownloadSong = () => {
     // fileSaver.saveAs(song.url);
   };
@@ -57,6 +73,26 @@ const SongItemMenu: React.FC<Props> = ({
   const handleClickDeleteSong = () => {
     handleOpenDeleteConfirmModal?.();
     changeSelectedSong?.(song);
+    closeSongItemAction();
+  };
+
+  const handleAddToPlayerList = () => {
+    handleAddSongsToPlayerQueue?.({
+      playlist: null,
+      songs: [song],
+    });
+    closeSongItemAction();
+  };
+
+  const onAddSongToPlayNext = () => {
+    handleAddSongToPlayNext?.({ song });
+    closeSongItemAction();
+  };
+
+  const handleRemoveSongOutOfPlayerQueue = () => {
+    if (song.queue_id) {
+      onRemoveSongOutOfQueue?.(song.queue_id);
+    }
     closeSongItemAction();
   };
 
@@ -86,14 +122,18 @@ const SongItemMenu: React.FC<Props> = ({
       </div>
 
       <ul className='menu-list'>
-        <li>
-          <MdPlaylistAdd />
-          <span>Thêm vào danh sách phát</span>
-        </li>
-        <li>
-          <MdOutlineSkipNext />
-          <span>Phát tiếp theo</span>
-        </li>
+        {!disable_add_to_player_queue && (
+          <li onClick={handleAddToPlayerList}>
+            <MdPlaylistAdd />
+            <span>Thêm vào danh sách phát</span>
+          </li>
+        )}
+        {!disable_add_to_play_next && (
+          <li onClick={onAddSongToPlayNext}>
+            <MdOutlineSkipNext />
+            <span>Phát tiếp theo</span>
+          </li>
+        )}
         <AddToPlaylist song_item={song} />
 
         <li>
@@ -124,6 +164,13 @@ const SongItemMenu: React.FC<Props> = ({
           <li onClick={() => handleRemoveSongOutOfPlaylist?.(song.id)}>
             <MdOutlineDeleteOutline />
             <span>Xóa khỏi playlist này</span>
+          </li>
+        )}
+
+        {can_remove_out_of_queue && (
+          <li onClick={handleRemoveSongOutOfPlayerQueue}>
+            <MdOutlineDeleteOutline />
+            <span>Xóa</span>
           </li>
         )}
       </ul>

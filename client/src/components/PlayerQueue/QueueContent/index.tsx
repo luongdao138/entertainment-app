@@ -14,6 +14,7 @@ import {
   getAudioStateSelector,
 } from '../../../redux/audioPlayer/audioPlayerSelectors';
 import { v4 as uuid } from 'uuid';
+import { useAudioContext } from '../../../context/AudioContext';
 
 const QueueContent = () => {
   const current_song = useAppSelector(getAudioCurrentSongSelector);
@@ -23,11 +24,19 @@ const QueueContent = () => {
   const current_playlist = useAppSelector(getAudioCurrentPlaylistSelector);
   const audio_state = useAppSelector(getAudioStateSelector);
 
+  const { handleRemoveSongsOutOfPlayQueue, handleChangeAutoPlayRecommend } =
+    useAudioContext();
+
   return (
     <Container>
       <div className='archive-list'>
         {archived_list.map((song) => (
-          <QueueSongItem key={uuid()} song={song} />
+          <QueueSongItem
+            can_remove_out_of_queue
+            onRemoveSongOutOfQueue={handleRemoveSongsOutOfPlayQueue}
+            key={uuid()}
+            song={song}
+          />
         ))}
       </div>
 
@@ -37,7 +46,7 @@ const QueueContent = () => {
             <h3>Tiếp theo</h3>
             {current_playlist && (
               <p>
-                Từ playlist{' '}
+                Từ playlist
                 <Link to={`/playlist/${current_playlist.id}`}>
                   {current_playlist.title}
                 </Link>
@@ -47,7 +56,12 @@ const QueueContent = () => {
 
           <div className='songs-list'>
             {next_list.map((song) => (
-              <QueueSongItem key={uuid()} song={song} />
+              <QueueSongItem
+                can_remove_out_of_queue
+                onRemoveSongOutOfQueue={handleRemoveSongsOutOfPlayQueue}
+                key={uuid()}
+                song={song}
+              />
             ))}
           </div>
         </div>
@@ -55,9 +69,7 @@ const QueueContent = () => {
       {recommended_list.length > 0 && (
         <div className='recommend-list'>
           <div className='recommend-list-header'>
-            <h3>
-              {audio_state.is_from_recommend ? 'Tiếp theo từ Gợi ý' : 'Gợi ý'}
-            </h3>
+            <h3>{next_list.length === 0 ? 'Tiếp theo từ Gợi ý' : 'Gợi ý'}</h3>
             <div className='right'>
               <span>Tự động phát</span>
               <Switch
@@ -74,6 +86,9 @@ const QueueContent = () => {
                   },
                 }}
                 checked={audio_state.is_autoplay_recommend}
+                onChange={(e) => {
+                  handleChangeAutoPlayRecommend(e.target.checked);
+                }}
               />
 
               <button className='reload-btn'>

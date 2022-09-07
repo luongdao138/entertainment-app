@@ -3,6 +3,7 @@ import { privateClient } from './client';
 import { Playlist } from './playlist';
 
 export type SongPrivacy = 'private' | 'public';
+export type AudioType = 'recommend' | 'next' | 'archive';
 export interface Song {
   id: string;
   created_at: Date | string;
@@ -17,6 +18,9 @@ export interface Song {
   position?: number;
   belong_categories: { id: string }[];
   user_id?: string;
+  // audio_type?: AudioType;
+  is_current_audio?: boolean;
+  queue_id?: string;
 }
 
 export interface SongDetail extends Song {

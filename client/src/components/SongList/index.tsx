@@ -41,6 +41,8 @@ import {
   removeSongOutOfFavourite,
   removeUploadSongs,
 } from '../../redux/song/songSlice';
+import { addSongsToPlayerList } from '../../redux/audioPlayer/audioPlayerSlice';
+import { useAudioContext } from '../../context/AudioContext';
 
 interface Props {
   songs: Song[];
@@ -87,6 +89,7 @@ const SongList: React.FC<Props> = ({
   const [selectedSongs, setSelectedSongs] = useState<string[]>([]);
   const dispatch = useAppDispatch();
   const [sort_type, setSortType] = useState<SortType>('default');
+  const { handleAddSongsToPlayerQueue } = useAudioContext();
 
   const sorted_songs = useMemo(() => {
     let new_songs = [...songs];
@@ -288,6 +291,16 @@ const SongList: React.FC<Props> = ({
     handleCloseMoreMenu();
   };
 
+  const handleAddSongsToPlayer = () => {
+    const new_songs = selectedSongs.map(
+      (s) => songs.find((song) => song.id === s) as Song
+    );
+    handleAddSongsToPlayerQueue({
+      songs: new_songs,
+      playlist: null,
+    });
+  };
+
   useEffect(() => {
     return handleReset;
   }, [playlist_id]);
@@ -392,6 +405,7 @@ const SongList: React.FC<Props> = ({
 
               <button
                 className='add-playlist'
+                onClick={handleAddSongsToPlayer}
                 // disabled={isAddingSongToPlaylist}
               >
                 <MdPlaylistAdd />

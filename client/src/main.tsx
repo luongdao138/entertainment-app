@@ -13,17 +13,17 @@ import AudioContextProvider from './context/AudioContext';
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
   // <React.StrictMode>
   <Provider store={store}>
-    <Router>
-      <AuthProvider>
-        <AudioContextProvider>
+    <AudioContextProvider>
+      <Router>
+        <AuthProvider>
           <UploadProvider>
             <UploadPlaylistProvider>
               <App />
             </UploadPlaylistProvider>
           </UploadProvider>
-        </AudioContextProvider>
-      </AuthProvider>
-    </Router>
+        </AuthProvider>
+      </Router>
+    </AudioContextProvider>
   </Provider>
   // </React.StrictMode>
 );

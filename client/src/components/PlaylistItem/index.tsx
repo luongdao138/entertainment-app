@@ -172,7 +172,7 @@ const PlaylistItem: React.FC<Props> = ({
         }}
       >
         <PlaylistItemMenu
-          playlist_id={playlist.id}
+          playlist={playlist}
           can_delete={playlist.can_delete}
           can_edit={playlist.can_edit}
           onOpenDeleteConfirmModal={handleOpenDeleteConfirmModal}

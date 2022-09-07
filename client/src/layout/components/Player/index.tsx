@@ -5,15 +5,33 @@ import AudioSeekbar from '../../../components/AudioPlayer/AudioSeekbar';
 import AudioSong from '../../../components/AudioPlayer/AudioSong';
 import AudioVolume from '../../../components/AudioPlayer/AudioVolume';
 import { Container } from './style';
-import { v4 as uuid } from 'uuid';
 import AudioPlayer from '../../../components/AudioPlayer';
 import { useAudioContext } from '../../../context/AudioContext';
+import { useNavigate } from 'react-router-dom';
+import { useAppSelector } from '../../../redux/hooks';
+import { getAudioCurrentSongSelector } from '../../../redux/audioPlayer/audioPlayerSelectors';
 
 const Player = () => {
   const { handleToggleQueue, openQueue, playerRef } = useAudioContext();
+  const navigate = useNavigate();
+  const current_song = useAppSelector(getAudioCurrentSongSelector);
+
+  const toggleQueue = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+    e.stopPropagation();
+    handleToggleQueue?.();
+  };
+
+  const handleClickPlayer = () => {
+    if (current_song) navigate(`/song/${current_song.id}`);
+  };
 
   return (
-    <Container openQueue={openQueue} ref={playerRef}>
+    <Container
+      openQueue={openQueue}
+      ref={playerRef}
+      onClick={handleClickPlayer}
+    >
       <div className='player-content'>
         <div className='player-left'>
           <AudioSong />
@@ -27,7 +45,7 @@ const Player = () => {
           <AudioVolume />
           <div className='divider'></div>
           <div className='queue'>
-            <button onClick={handleToggleQueue}>
+            <button onClick={toggleQueue}>
               <MdOutlineQueueMusic />
             </button>
           </div>

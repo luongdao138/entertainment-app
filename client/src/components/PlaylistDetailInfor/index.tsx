@@ -67,10 +67,10 @@ const PlaylistDetailInfor: React.FC<Props> = ({
           : playlist_detail.play_random
           ? shuffled_list[0]
           : songs[0],
-        playlist_play_random: playlist_detail.is_owner
+        force_replace: true,
+        playlist_play_random: playlist_detail?.is_owner
           ? playlist_detail.play_random
           : undefined,
-        force_replace: true,
       });
     } else {
       // ngược lại, thay đổi trạng thái play/pause của bài hát đang được phát
@@ -190,7 +190,7 @@ const PlaylistDetailInfor: React.FC<Props> = ({
         }}
       >
         <PlaylistItemMenu
-          playlist_id={playlist_detail.id}
+          playlist={playlist_detail}
           can_delete={playlist_detail.can_delete}
           can_edit={playlist_detail.can_edit}
           onOpenEditForm={handleOpenEditPlaylistForm}

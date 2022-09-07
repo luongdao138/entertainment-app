@@ -2,7 +2,7 @@ import { Menu } from '@mui/material';
 import React, { useState, useEffect } from 'react';
 import { AiFillHeart, AiOutlineHeart } from 'react-icons/ai';
 import { MdMoreHoriz } from 'react-icons/md';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { getAudioCurrentSongSelector } from '../../../redux/audioPlayer/audioPlayerSelectors';
 import { logout } from '../../../redux/auth/authSlice';
@@ -16,6 +16,7 @@ interface Props {}
 
 const AudioSong: React.FC<Props> = () => {
   const dispatch = useAppDispatch();
+  const navigate = useNavigate();
   const current_song = useAppSelector(getAudioCurrentSongSelector);
   // const [is_liked, setIsLiked] = useState<boolean>(
   //   Boolean(current_song?.is_liked)
@@ -23,13 +24,17 @@ const AudioSong: React.FC<Props> = () => {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const openSongMenu = Boolean(anchorEl);
   const handleOpenSongMenu = (event: React.MouseEvent<HTMLElement>) => {
+    event.stopPropagation();
+    event.preventDefault();
     setAnchorEl(event.currentTarget);
   };
   const handleCloseSongMenu = () => {
     setAnchorEl(null);
   };
 
-  const handleClickLikeSong = async () => {
+  const handleClickLikeSong = async (e: React.MouseEvent<HTMLElement>) => {
+    e.stopPropagation();
+    e.preventDefault();
     if (current_song) {
       try {
         const prev = current_song.is_liked;
@@ -54,6 +59,13 @@ const AudioSong: React.FC<Props> = () => {
         }
       }
     }
+  };
+
+  const handleGoToUserPage = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    e.preventDefault();
+    e.stopPropagation();
+
+    navigate('/');
   };
 
   // useEffect(() => {
@@ -88,10 +100,16 @@ const AudioSong: React.FC<Props> = () => {
             boxShadow: 'none',
           },
         }}
+        onClick={(e) => {
+          e.preventDefault();
+          e.stopPropagation();
+        }}
       >
         <SongItemMenu
           song={current_song}
           closeSongItemAction={handleCloseSongMenu}
+          disable_add_to_play_next
+          disable_add_to_player_queue
         />
       </Menu>
       <Container is_liked={current_song.is_liked}>
@@ -102,7 +120,7 @@ const AudioSong: React.FC<Props> = () => {
           <Link to={`/song/${current_song.id}`} className='song-name'>
             {current_song.name}
           </Link>
-          <Link className='singer-name' to='/'>
+          <Link onClick={handleGoToUserPage} className='singer-name' to='/'>
             {current_song.singer_name}
           </Link>
         </div>

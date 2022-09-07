@@ -14,6 +14,7 @@ import SongItemMenu from '../SongItemMenu';
 import SongPrivary from './SongPrivacy';
 import { editSongSucess } from '../../redux/song/songSlice';
 import { getAudioCurrentSongSelector } from '../../redux/audioPlayer/audioPlayerSelectors';
+import { useAudioContext } from '../../context/AudioContext';
 interface Props {
   song: Song;
   focusSong: string | null;
@@ -70,6 +71,8 @@ const SongItem: React.FC<Props> = ({
   const isShowCheckbox = selectedSongs.length > 0;
   const isActive = isFocused || isSelected;
   const is_current_audio = current_song?.id === song.id;
+  const { handleAddSongsToPlayerQueue, handleAddSongToPlayNext } =
+    useAudioContext();
 
   // const is_owner = song.
 
@@ -145,6 +148,8 @@ const SongItem: React.FC<Props> = ({
           handleRemoveSongOutOfPlaylist={handleRemoveSongOutOfPlaylist}
           can_remove_out_of_list={can_remove_out_of_list}
           handleOpenDeleteConfirmModal={handleOpenDeleteConfirmModal}
+          handleAddSongsToPlayerQueue={handleAddSongsToPlayerQueue}
+          handleAddSongToPlayNext={handleAddSongToPlayNext}
         />
       </Menu>
       <Container
@@ -191,7 +196,9 @@ const SongItem: React.FC<Props> = ({
             <div className='opacity'></div>
             <BsFillPlayFill
               className='play-state'
-              onClick={() => onClickSongAudio?.(song)}
+              onClick={() => {
+                onClickSongAudio?.(song);
+              }}
             />
           </div>
           <div className='song-info'>

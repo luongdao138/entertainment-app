@@ -16,6 +16,8 @@ const FavouriteSong = () => {
   const songs = useAppSelector(getUsersFavouriteSongs);
   const { handleClickSongAudio } = useAudioContext();
 
+  console.log({ handleClickSongAudio });
+
   useEffect(() => {
     // if (firstRenderRef.current) {
     //   firstRenderRef.current = false;

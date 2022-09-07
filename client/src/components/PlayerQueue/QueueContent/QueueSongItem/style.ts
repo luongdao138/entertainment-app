@@ -54,7 +54,6 @@ export const Container = styled.div`
       }
 
       & .play-state {
-        background-color: rgba(0, 0, 0, 0.5);
         opacity: ${(props: Props) => (props.is_current_audio ? 1 : 0)};
         visibility: ${(props: Props) =>
           props.is_current_audio ? 'visible' : 'hidden'};

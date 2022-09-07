@@ -10,6 +10,7 @@ export const Container = styled.div`
   left: 0;
   right: 0;
   z-index: 200;
+  cursor: pointer;
   background-color: #170f23;
 
   & .player-content {

@@ -116,10 +116,10 @@ const PlaylistDetailPage = () => {
           : playlist_detail.play_random
           ? shuffled_playlist_songs[0]
           : playlist_songs[0],
-        playlist_play_random: playlist_detail.is_owner
+        force_replace: true,
+        playlist_play_random: playlist_detail?.is_owner
           ? playlist_detail.play_random
           : undefined,
-        force_replace: true,
       });
     }
 
@@ -128,7 +128,7 @@ const PlaylistDetailPage = () => {
       clearMetaData(getPlaylistDetailAction.typePrefix);
       clearMetaData(getPlaylistSongsAction.typePrefix);
     };
-  }, [location.state, playlist_detail, playlist_songs.length, is_full_load]);
+  }, [location.state, is_full_load]);
 
   if (!playlist_detail) return null;
 

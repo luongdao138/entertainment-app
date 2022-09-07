@@ -17,23 +17,24 @@ import { Container } from './style';
 
 interface Props {
   recommended_songs: AudioSong[];
-  is_current_audio?: boolean;
   song: SongDetail;
 }
 
-const SongDetailInfor: React.FC<Props> = ({
-  is_current_audio,
-  song,
-  recommended_songs,
-}) => {
+const SongDetailInfor: React.FC<Props> = ({ song, recommended_songs }) => {
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
   const openPlaylistMenu = Boolean(anchorEl);
   const dispatch = useAppDispatch();
   const [is_changed, setIsChanged] = useState<boolean>(false);
   const [is_playing, setIsPlaying] = useState<boolean>(false);
-  const { handleClickSongAudio } = useAudioContext();
+  const {
+    handleClickSongAudio,
+    handleAddSongsToPlayerQueue,
+    handleAddSongToPlayNext,
+  } = useAudioContext();
   const current_song = useAppSelector(getAudioCurrentSongSelector);
   // const [is_liked, setIsLiked] = useState<boolean>(song.is_liked);
+
+  const is_current_audio = current_song?.id === song.id;
 
   const handleClickMore = (e: React.MouseEvent<HTMLElement>) => {
     e.stopPropagation();
@@ -64,7 +65,7 @@ const SongDetailInfor: React.FC<Props> = ({
   };
 
   const onClickSongAudio = () => {
-    if (current_song?.id === song.id) {
+    if (is_current_audio) {
       // thay đổi trạng thái play/pause của bài hát
       setIsChanged(true);
       setIsPlaying((prev) => !prev);
@@ -107,7 +108,12 @@ const SongDetailInfor: React.FC<Props> = ({
         }}
       >
         {/* Song menu here */}
-        <SongItemMenu song={song} closeSongItemAction={handleClose} />
+        <SongItemMenu
+          handleAddSongToPlayNext={handleAddSongToPlayNext}
+          handleAddSongsToPlayerQueue={handleAddSongsToPlayerQueue}
+          song={song}
+          closeSongItemAction={handleClose}
+        />
       </Menu>
       <div className='playlist-thumbnail-container' onClick={onClickSongAudio}>
         <div className='thumbnail-icon'>
@@ -133,14 +139,14 @@ const SongDetailInfor: React.FC<Props> = ({
 
         <p className='like-count'>188k người yêu thích</p>
 
-        <button className='play-btn'>
+        <button className='play-btn' onClick={onClickSongAudio}>
           {is_playing ? <MdPause /> : <BsFillPlayFill />}
           <span>
             {is_current_audio
               ? is_playing
                 ? 'Tạm dừng'
                 : 'Tiếp tục phát'
-              : 'Phát ngẫu nhiên'}
+              : 'Phát bài hát'}
           </span>
         </button>
 
