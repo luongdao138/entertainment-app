@@ -300,7 +300,7 @@ const PlaylistItem: React.FC<Props> = ({
             </div>
           </Link>
 
-          <Link to='/' className='name'>
+          <Link to={`/playlist/${playlist.id}`} className='name'>
             {playlist.title}
           </Link>
           <p className='author'>{playlist.creator.full_name}</p>

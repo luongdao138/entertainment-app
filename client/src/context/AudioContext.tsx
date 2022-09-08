@@ -21,6 +21,7 @@ import {
   changeAudioListSongs,
   changeAudioNextList,
   changeAudioRecommendedList,
+  changeAudioVolume,
   resetAudioPlayer,
 } from '../redux/audioPlayer/audioPlayerSlice';
 import { useAppDispatch, useAppSelector } from '../redux/hooks';
@@ -65,6 +66,7 @@ interface ContextState {
   handlePlayAudio: () => void;
   handlePauseAudio: () => void;
   handleToggleAudioPlayState: () => void;
+  handleChangeAudioVolume: (value: number) => void;
 }
 
 const AudioContext = React.createContext<ContextState>({} as ContextState);
@@ -497,6 +499,7 @@ const AudioContextProvider = ({ children }: { children: React.ReactNode }) => {
     if (is_current_index !== -1) {
       // đây là trường hợp click vào bài hát hiện tại đang phát => thay đổi trạng thái play/pause
       // sẽ bổ sung sau
+      handleToggleAudioPlayState();
       return;
     }
 
@@ -625,6 +628,10 @@ const AudioContextProvider = ({ children }: { children: React.ReactNode }) => {
     }
   };
 
+  const handleChangeAudioVolume = (value: number) => {
+    dispatch(changeAudioVolume(value));
+  };
+
   useEffect(() => {
     // mỗi khi mà is_shuffle thay đổi
     if (!current_song) {
@@ -691,6 +698,7 @@ const AudioContextProvider = ({ children }: { children: React.ReactNode }) => {
         handlePlayAudio,
         handlePauseAudio,
         handleToggleAudioPlayState,
+        handleChangeAudioVolume,
       }}
     >
       {children}

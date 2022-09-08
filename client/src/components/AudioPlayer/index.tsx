@@ -1,12 +1,17 @@
 import React, { useEffect } from 'react';
 import { toast } from 'react-toastify';
 import { useAudioContext } from '../../context/AudioContext';
-import { getAudioCurrentSongSelector } from '../../redux/audioPlayer/audioPlayerSelectors';
+import {
+  getAudioCurrentSongSelector,
+  getAudioVolumeSelector,
+} from '../../redux/audioPlayer/audioPlayerSelectors';
 import { changeAudioCurrentMeta } from '../../redux/audioPlayer/audioPlayerSlice';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 
 const AudioPlayer = () => {
   const current_song = useAppSelector(getAudioCurrentSongSelector);
+  const audio_volume = useAppSelector(getAudioVolumeSelector);
+
   const { audioRef, handlePlayAudio } = useAudioContext();
   const dispatch = useAppDispatch();
 
@@ -219,6 +224,10 @@ const AudioPlayer = () => {
       );
     }
   }, [current_song]);
+
+  useEffect(() => {
+    if (audioRef.current) audioRef.current.volume = audio_volume;
+  }, [audio_volume]);
 
   if (!current_song) return null;
 

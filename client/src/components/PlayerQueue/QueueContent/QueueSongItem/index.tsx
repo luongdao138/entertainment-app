@@ -9,12 +9,14 @@ import {
   getAudioArchivedListSelector,
   getAudioCurrentListSongs,
   getAudioCurrentSongSelector,
+  getAudioMetaSelector,
 } from '../../../../redux/audioPlayer/audioPlayerSelectors';
 import { logout } from '../../../../redux/auth/authSlice';
 import { useAppDispatch, useAppSelector } from '../../../../redux/hooks';
 import { changeFavourite } from '../../../../redux/song/songActions';
 import { Song } from '../../../../services/song';
 import { disableClickEvent } from '../../../../utils/common';
+import AudioPlayingIcon from '../../../AudioPlayingIcon';
 import SongItemMenu from '../../../SongItemMenu';
 import { Container } from './style';
 
@@ -36,10 +38,12 @@ const QueueSongItem: React.FC<Props> = ({
   const archive_list = useAppSelector(getAudioArchivedListSelector);
   const audio_list_songs = useAppSelector(getAudioCurrentListSongs);
   const current_song = useAppSelector(getAudioCurrentSongSelector);
+  const { is_audio_playing } = useAppSelector(getAudioMetaSelector);
 
   const { handleClickQueueSong } = useAudioContext();
 
   const is_current_audio = song.is_current_audio;
+  const is_playing = is_current_audio && is_audio_playing;
   // audio_list_songs[current_audio_index]?.queue_id === song.queue_id;
   const is_archive = archive_list.some(
     (x) => x.queue_id === song.queue_id && !x.is_current_audio
@@ -78,7 +82,10 @@ const QueueSongItem: React.FC<Props> = ({
   };
 
   const onClickQueueSong = () => {
-    if (song.queue_id) handleClickQueueSong(song.queue_id);
+    if (song.queue_id) {
+      console.log('click queue song');
+      handleClickQueueSong(song.queue_id);
+    }
   };
 
   return (
@@ -128,7 +135,13 @@ const QueueSongItem: React.FC<Props> = ({
           >
             <img src={song.thumbnail} alt='' />
             <div className='opacity'></div>
-            <BsFillPlayFill className='play-state' />
+            {is_playing ? (
+              <span className='play-state'>
+                <AudioPlayingIcon width={20} />
+              </span>
+            ) : (
+              <BsFillPlayFill className='play-state' />
+            )}
           </div>
           <div className='song-info'>
             <h4 className='name'>{song.name}</h4>

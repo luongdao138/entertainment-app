@@ -146,6 +146,10 @@ export const Container = styled.div`
     display: flex;
     align-items: center;
     color: #fff;
+    /* display: -webkit-box;
+    -webkit-line-clamp: 1;
+    -webkit-box-orient: vertical;
+    overflow: hidden; */
     span {
       font-weight: 2rem;
       line-height: 3rem;

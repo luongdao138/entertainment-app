@@ -114,6 +114,9 @@ const audioPlayerSlice = createSlice({
     ) {
       state.audio_meta = { ...state.audio_meta, ...action.payload.new_meta };
     },
+    changeAudioVolume(state, action: PayloadAction<number>) {
+      state.volume = action.payload;
+    },
     addSongsToPlayerList(state, action: PayloadAction<{ songs: AudioSong[] }>) {
       // if (!state.audio_state.is_from_recommend) {
       const new_songs = action.payload.songs.map((s) => ({
@@ -184,6 +187,7 @@ export const {
   changeAudioCurrentPlaylist,
   changeAudioCurrentMeta,
   changeAudioCurrentState,
+  changeAudioVolume,
   addSongToPlayNext,
   addSongsToPlayerList,
   resetAudioPlayer,

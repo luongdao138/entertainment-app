@@ -46,6 +46,8 @@ const MainLayout = () => {
 
   const { openPlayer } = useAudioContext();
 
+  console.log('Main layout rerender');
+
   const dispatch = useAppDispatch();
   // const isFirstRenderRef = useRef<boolean>(true);
 
