@@ -13,9 +13,14 @@ import { toast } from 'react-toastify';
 import SongItemMenu from '../SongItemMenu';
 import SongPrivary from './SongPrivacy';
 import { editSongSucess } from '../../redux/song/songSlice';
-import { getAudioCurrentSongSelector } from '../../redux/audioPlayer/audioPlayerSelectors';
+import {
+  getAudioCurrentSongSelector,
+  getAudioMetaSelector,
+} from '../../redux/audioPlayer/audioPlayerSelectors';
 import { useAudioContext } from '../../context/AudioContext';
 import { disableClickEvent } from '../../utils/common';
+import { RotatingLines } from 'react-loader-spinner';
+import AudioPlayingIcon from '../AudioPlayingIcon';
 interface Props {
   song: Song;
   focusSong: string | null;
@@ -59,6 +64,7 @@ const SongItem: React.FC<Props> = ({
 }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const current_song = useAppSelector(getAudioCurrentSongSelector);
+  const audio_meta = useAppSelector(getAudioMetaSelector);
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const openMenu = Boolean(anchorEl);
   // const [is_liked, setIsLiked] = useState<boolean>(song.is_liked);
@@ -129,6 +135,55 @@ const SongItem: React.FC<Props> = ({
 
     onClickSongAudio?.(song);
   };
+
+  const renderSongIcon = (() => {
+    if (current_song?.id !== song.id) {
+      return (
+        <BsFillPlayFill
+          className='play-state'
+          onClick={() => {
+            onClickSongAudio?.(song);
+          }}
+        />
+      );
+    } else {
+      if (audio_meta.is_audio_loading) {
+        return (
+          <span className='play-state'>
+            <RotatingLines
+              strokeColor='#ffffff'
+              strokeWidth='5'
+              animationDuration='0.75'
+              width='15'
+              visible={true}
+            />
+          </span>
+        );
+      }
+
+      if (audio_meta.is_audio_playing) {
+        return (
+          <span
+            className='play-state'
+            onClick={() => {
+              onClickSongAudio?.(song);
+            }}
+          >
+            <AudioPlayingIcon width={20} />
+          </span>
+        );
+      } else {
+        return (
+          <BsFillPlayFill
+            className='play-state'
+            onClick={() => {
+              onClickSongAudio?.(song);
+            }}
+          />
+        );
+      }
+    }
+  })();
 
   return (
     <>
@@ -211,12 +266,7 @@ const SongItem: React.FC<Props> = ({
           <div className='song-thumbnail' onDoubleClick={disableClickEvent}>
             <img src={song.thumbnail} alt='' />
             <div className='opacity'></div>
-            <BsFillPlayFill
-              className='play-state'
-              onClick={() => {
-                onClickSongAudio?.(song);
-              }}
-            />
+            {renderSongIcon}
           </div>
           <div className='song-info'>
             <h4 className='name'>{song.name}</h4>

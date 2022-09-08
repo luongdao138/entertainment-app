@@ -82,11 +82,6 @@ export const Container = styled.div`
     aspect-ratio: 1;
     overflow: hidden !important;
     position: relative;
-    /* transition: ${(props: Props) =>
-      props.is_playing
-        ? 'border-radius 2s ease-out'
-        : 'border-radius .5s ease-out .5s'};
-    border-radius: ${(props: Props) => (props.is_playing ? '999px' : '8px')}; */
     animation: ${(props: Props) =>
       props.is_changed
         ? props.is_playing

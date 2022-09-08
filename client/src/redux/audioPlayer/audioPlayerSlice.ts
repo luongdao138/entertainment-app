@@ -31,6 +31,8 @@ interface SliceState {
   audio_meta: {
     is_audio_playing: boolean;
     is_audio_loading: boolean;
+    is_audio_loaded: boolean;
+    is_audio_error: boolean;
   };
   current_playlist: {
     data: AudioPlaylist | null;
@@ -46,6 +48,8 @@ const initialState: SliceState = {
   audio_meta: {
     is_audio_playing: false,
     is_audio_loading: false,
+    is_audio_loaded: false,
+    is_audio_error: false,
   },
   audio_state: {
     is_shuffle: false,

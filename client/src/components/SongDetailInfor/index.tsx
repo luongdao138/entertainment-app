@@ -1,11 +1,14 @@
 import { Menu } from '@mui/material';
-import React, { useState } from 'react';
+import React, { useRef, useEffect, useState } from 'react';
 import { AiFillHeart, AiOutlineHeart } from 'react-icons/ai';
 import { BsFillPlayFill } from 'react-icons/bs';
 import { MdPause, MdMoreHoriz } from 'react-icons/md';
 import { toast } from 'react-toastify';
 import { useAudioContext } from '../../context/AudioContext';
-import { getAudioCurrentSongSelector } from '../../redux/audioPlayer/audioPlayerSelectors';
+import {
+  getAudioCurrentSongSelector,
+  getAudioMetaSelector,
+} from '../../redux/audioPlayer/audioPlayerSelectors';
 import { AudioSong } from '../../redux/audioPlayer/audioPlayerSlice';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import { changeFavourite } from '../../redux/song/songActions';
@@ -25,16 +28,21 @@ const SongDetailInfor: React.FC<Props> = ({ song, recommended_songs }) => {
   const openPlaylistMenu = Boolean(anchorEl);
   const dispatch = useAppDispatch();
   const [is_changed, setIsChanged] = useState<boolean>(false);
-  const [is_playing, setIsPlaying] = useState<boolean>(false);
+  const isFirstRender = useRef<boolean>(true);
+  // const [is_playing, setIsPlaying] = useState<boolean>(false);
   const {
     handleClickSongAudio,
     handleAddSongsToPlayerQueue,
     handleAddSongToPlayNext,
+    handleToggleAudioPlayState,
   } = useAudioContext();
   const current_song = useAppSelector(getAudioCurrentSongSelector);
+  const { is_audio_playing, is_audio_loading } =
+    useAppSelector(getAudioMetaSelector);
   // const [is_liked, setIsLiked] = useState<boolean>(song.is_liked);
 
   const is_current_audio = current_song?.id === song.id;
+  const is_playing = is_audio_playing && song.id === current_song?.id;
 
   const handleClickMore = (e: React.MouseEvent<HTMLElement>) => {
     e.stopPropagation();
@@ -65,10 +73,11 @@ const SongDetailInfor: React.FC<Props> = ({ song, recommended_songs }) => {
   };
 
   const onClickSongAudio = () => {
+    if (is_audio_loading) return;
+
     if (is_current_audio) {
       // thay đổi trạng thái play/pause của bài hát
-      setIsChanged(true);
-      setIsPlaying((prev) => !prev);
+      handleToggleAudioPlayState();
     } else {
       handleClickSongAudio({
         song,
@@ -78,6 +87,10 @@ const SongDetailInfor: React.FC<Props> = ({ song, recommended_songs }) => {
       });
     }
   };
+
+  useEffect(() => {
+    if (is_playing && !is_audio_loading) setIsChanged(true);
+  }, [is_playing, is_audio_loading]);
 
   return (
     <Container

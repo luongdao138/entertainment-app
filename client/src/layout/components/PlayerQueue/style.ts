@@ -19,13 +19,9 @@ export const Container = styled.div`
   flex-direction: column;
   padding: 15px 8px;
   transition: all 0.5s ease-in;
-  /* right: ${(props: Props) => (!props.openQueue ? 'unset' : '0')};
-  transition: transform 0.5s ease-in;
-  left: ${(props: Props) => (!props.openQueue ? '100%' : 'unset')}; */
 
-  // will fix later
-  opacity: ${(props: Props) => (!props.openQueue ? '0' : '1')};
-  visibility: ${(props: Props) => (!props.openQueue ? 'hidden' : 'visible')};
+  // hiện tại đang hack cứng chiều rộng của player queue, có thể phải đặt biến global chỗ này
+  right: ${(props: Props) => (props.openQueue ? '0' : '-330px')};
 
   & .queue-content {
     flex-grow: 1;

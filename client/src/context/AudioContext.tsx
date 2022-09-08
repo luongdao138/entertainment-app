@@ -4,6 +4,7 @@ import {
   getAudioArchivedListSelector,
   getAudioCurrentListSongs,
   getAudioCurrentSongSelector,
+  getAudioMetaSelector,
   getAudioNextListSelector,
   getAudioRecommendListSelector,
   getAudioStateSelector,
@@ -60,21 +61,21 @@ interface ContextState {
   handleRemoveSongsOutOfPlayQueue: (queue_id: string) => void;
   handleChangeAutoPlayRecommend: (value: boolean) => void;
   handleClickQueueSong: (queue_id: string) => void;
+  audioRef: React.RefObject<HTMLAudioElement>;
+  handlePlayAudio: () => void;
+  handlePauseAudio: () => void;
+  handleToggleAudioPlayState: () => void;
 }
 
 const AudioContext = React.createContext<ContextState>({} as ContextState);
 
 const AudioContextProvider = ({ children }: { children: React.ReactNode }) => {
-  // const {
-  //   value: openQueue,
-  //   setFalse: handleCloseQueue,
-  //   toggle: handleToggleQueue,
-  // } = useBoolean(false);
   const [openQueue, setOpenQueue] = useState<boolean>(false);
   const { authUser } = useAuthContext();
 
   const current_song = useAppSelector(getAudioCurrentSongSelector);
   const audio_state = useAppSelector(getAudioStateSelector);
+  const audio_meta = useAppSelector(getAudioMetaSelector);
   const archived_list = useAppSelector(getAudioArchivedListSelector);
   const next_list = useAppSelector(getAudioNextListSelector);
   const recommend_list = useAppSelector(getAudioRecommendListSelector);
@@ -84,6 +85,7 @@ const AudioContextProvider = ({ children }: { children: React.ReactNode }) => {
   const dispatch = useAppDispatch();
 
   const openPlayer = Boolean(current_song);
+  const audioRef = useRef<HTMLAudioElement>(null);
 
   const handleToggleQueue = () => {
     setOpenQueue((prev) => !prev);
@@ -106,6 +108,7 @@ const AudioContextProvider = ({ children }: { children: React.ReactNode }) => {
       // đây là trường hợp chọn một bài hát đang phát
       // đối với case này chỉ thay đổi trạng thái play/pause của player chứ ko thay đổi current_song
       // sẽ xử lý sau
+      handleToggleAudioPlayState();
     } else {
       // const playlist_play_random = playlist?.is_owner
       //   ? playlist.play_random
@@ -600,6 +603,28 @@ const AudioContextProvider = ({ children }: { children: React.ReactNode }) => {
     }
   };
 
+  const handlePlayAudio = () => {
+    if (audioRef.current) {
+      audioRef.current.play();
+    }
+  };
+
+  const handlePauseAudio = () => {
+    if (audioRef.current) {
+      audioRef.current.pause();
+    }
+  };
+
+  const handleToggleAudioPlayState = () => {
+    if (audioRef.current) {
+      if (audioRef.current.paused) {
+        audioRef.current.play();
+      } else {
+        audioRef.current.pause();
+      }
+    }
+  };
+
   useEffect(() => {
     // mỗi khi mà is_shuffle thay đổi
     if (!current_song) {
@@ -662,6 +687,10 @@ const AudioContextProvider = ({ children }: { children: React.ReactNode }) => {
         handleAddSongToPlayNext,
         handleRemoveSongsOutOfPlayQueue,
         handleClickQueueSong,
+        audioRef,
+        handlePlayAudio,
+        handlePauseAudio,
+        handleToggleAudioPlayState,
       }}
     >
       {children}

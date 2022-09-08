@@ -10,10 +10,15 @@ import { toast } from 'react-toastify';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import { logout } from '../../redux/auth/authSlice';
 import { AudioSong } from '../../redux/audioPlayer/audioPlayerSlice';
-import { getAudioCurrentSongSelector } from '../../redux/audioPlayer/audioPlayerSelectors';
+import {
+  getAudioCurrentSongSelector,
+  getAudioMetaSelector,
+} from '../../redux/audioPlayer/audioPlayerSelectors';
 import { changeFavourite } from '../../redux/song/songActions';
 import { addSongsToPlaylistActions } from '../../redux/playlist/playlistActions';
 import { disableClickEvent } from '../../utils/common';
+import { RotatingLines } from 'react-loader-spinner';
+import AudioPlayingIcon from '../AudioPlayingIcon';
 
 interface Props {
   song: Song;
@@ -27,6 +32,7 @@ const RecommendPlaylistSongItem: React.FC<Props> = ({
   onClickSongAudio,
 }) => {
   // console.log({ is_liked: song.is_liked });
+  const audio_meta = useAppSelector(getAudioMetaSelector);
   const current_song = useAppSelector(getAudioCurrentSongSelector);
   const is_current_audio = current_song?.id === song.id;
   // const [is_liked, setIsLiked] = useState<boolean>(song.is_liked);
@@ -78,20 +84,54 @@ const RecommendPlaylistSongItem: React.FC<Props> = ({
     onClickSongAudio?.(song);
   };
 
-  // useEffect(() => {
-  //   setIsLiked(song.is_liked);
-  // }, [song.is_liked]);
+  const renderSongIcon = (() => {
+    if (current_song?.id !== song.id) {
+      return (
+        <BsFillPlayFill
+          className='play-state'
+          onClick={() => {
+            onClickSongAudio?.(song);
+          }}
+        />
+      );
+    } else {
+      if (audio_meta.is_audio_loading) {
+        return (
+          <span className='play-state'>
+            <RotatingLines
+              strokeColor='#ffffff'
+              strokeWidth='5'
+              animationDuration='0.75'
+              width='15'
+              visible={true}
+            />
+          </span>
+        );
+      }
 
-  // useEffect(() => {
-  //   if (current_song?.id === song.id) {
-  //     setIsLiked(Boolean(current_song.is_liked));
-  //   }
-  // }, [current_song?.is_liked]);
-
-  // useEffect(() => {
-  //   setIsLiked(song.is_liked);
-  // }, [song.is_liked]);
-  // console.log({ is_liked });
+      if (audio_meta.is_audio_playing) {
+        return (
+          <span
+            className='play-state'
+            onClick={() => {
+              onClickSongAudio?.(song);
+            }}
+          >
+            <AudioPlayingIcon width={20} />
+          </span>
+        );
+      } else {
+        return (
+          <BsFillPlayFill
+            className='play-state'
+            onClick={() => {
+              onClickSongAudio?.(song);
+            }}
+          />
+        );
+      }
+    }
+  })();
 
   return (
     <Container
@@ -113,7 +153,7 @@ const RecommendPlaylistSongItem: React.FC<Props> = ({
         >
           <img src={song.thumbnail} alt='' />
           <div className='opacity'></div>
-          <BsFillPlayFill className='play-state' />
+          {renderSongIcon}
         </div>
         <div className='song-info'>
           <h4 className='name'>{song.name}</h4>

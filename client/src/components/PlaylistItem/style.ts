@@ -4,6 +4,7 @@ import styled from 'styled-components';
 interface Props {
   is_liked: boolean;
   is_multiple?: boolean;
+  is_playing?: boolean;
 }
 
 export const SidebarItemContainer = styled(Link)`
@@ -113,8 +114,8 @@ export const Container = styled.div`
       justify-content: space-evenly;
       width: 100%;
       transition: all 0.1s;
-      opacity: 0;
-      visibility: hidden;
+      /* opacity: 0;
+      visibility: hidden; */
 
       & .favorite {
         display: grid;
@@ -124,6 +125,8 @@ export const Container = styled.div`
         border-radius: 50%;
         margin-right: 0.75rem;
         background-color: transparent;
+        opacity: 0;
+        visibility: hidden;
 
         & svg {
           color: ${(props: Props) => (props.is_liked ? '#7200a1' : '#fff')};
@@ -143,6 +146,8 @@ export const Container = styled.div`
         color: #fff;
         font-size: 2.5rem;
         background-color: transparent;
+        opacity: 0;
+        visibility: hidden;
 
         &:hover {
           background-color: hsla(0, 0%, 100%, 0.3);
@@ -159,6 +164,9 @@ export const Container = styled.div`
         font-size: 2.5rem;
         background-color: transparent;
         border: 1px solid #fff;
+        opacity: ${(props: Props) => (props.is_playing ? 1 : 0)};
+        visibility: ${(props: Props) =>
+          props.is_playing ? 'visible' : 'hidden'};
 
         &:hover {
           filter: brightness(0.9);
@@ -166,7 +174,9 @@ export const Container = styled.div`
       }
     }
 
-    &:hover .thumbnail-actions {
+    &:hover .action,
+    &:hover .favorite,
+    &:hover .play-state {
       opacity: 1;
       visibility: visible;
     }

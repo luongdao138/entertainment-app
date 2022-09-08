@@ -20,7 +20,12 @@ import { AiFillHeart, AiOutlineHeart } from 'react-icons/ai';
 import LoginRequired from '../LoginRequired';
 import { DEFAULT_PLAYLIST_THUMBNAIL } from '../../constants/images';
 import { toast } from 'react-toastify';
-import { getAudioCurrentPlaylistSelector } from '../../redux/audioPlayer/audioPlayerSelectors';
+import {
+  getAudioCurrentPlaylistSelector,
+  getAudioMetaSelector,
+} from '../../redux/audioPlayer/audioPlayerSelectors';
+import { useAudioContext } from '../../context/AudioContext';
+import AudioPlayingIcon from '../AudioPlayingIcon';
 
 interface Props {
   playlist: Playlist;
@@ -49,7 +54,11 @@ const PlaylistItem: React.FC<Props> = ({
   const [isShowChangeFavouriteModal, setIsShowChangeFavouriteModal] =
     useState<boolean>(false);
   const current_playlist = useAppSelector(getAudioCurrentPlaylistSelector);
+  const { is_audio_playing } = useAppSelector(getAudioMetaSelector);
   const deletePlaylistMeta = useAppSelector(deletePlaylistMetaSelector);
+  const { handleToggleAudioPlayState } = useAudioContext();
+
+  const is_playing = is_audio_playing && current_playlist?.id === playlist.id;
 
   const handleClickMore = (e: React.MouseEvent<HTMLElement>) => {
     e.stopPropagation();
@@ -136,6 +145,7 @@ const PlaylistItem: React.FC<Props> = ({
     if (current_playlist?.id === playlist.id) {
       // đây là trường hợp user click vào playlist đang đc chọn, trường hợp này chỉ cần thay đổi trạng thái play/pause là đc
       // sẽ xử lí sau
+      handleToggleAudioPlayState();
     } else {
       navigate(`/playlist/${playlist.id}`, {
         state: { play_audio: true, playlist_id: playlist.id },
@@ -232,6 +242,7 @@ const PlaylistItem: React.FC<Props> = ({
         <Container
           is_multiple={playlist.has_songs.length >= 4}
           is_liked={playlist.is_liked}
+          is_playing={is_playing}
         >
           <Link
             to={appRoutes.PLAYLIST_DETAIL.replace(':playlist_id', playlist.id)}
@@ -268,7 +279,7 @@ const PlaylistItem: React.FC<Props> = ({
                 </LoginRequired>
               )}
               <button className='play-state' onClick={handleClickPlayButton}>
-                <BsFillPlayFill />
+                {is_playing ? <AudioPlayingIcon /> : <BsFillPlayFill />}
               </button>
 
               <div>

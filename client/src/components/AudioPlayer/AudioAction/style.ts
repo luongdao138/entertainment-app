@@ -40,7 +40,7 @@ export const Container = styled.div`
     background-color: transparent;
     border: 1px solid #fff;
 
-    svg {
+    svg.icon {
       transform: translateX(1px);
     }
 

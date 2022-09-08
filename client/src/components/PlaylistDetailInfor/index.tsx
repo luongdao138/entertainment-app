@@ -1,6 +1,6 @@
 import { Menu } from '@mui/material';
 import _ from 'lodash';
-import React, { startTransition, useEffect, useState } from 'react';
+import React, { useRef, startTransition, useEffect, useState } from 'react';
 import { AiFillHeart, AiOutlineHeart } from 'react-icons/ai';
 import { BsFillPlayFill } from 'react-icons/bs';
 import { MdOutlineModeEdit, MdPause, MdMoreHoriz } from 'react-icons/md';
@@ -10,7 +10,10 @@ import appRoutes from '../../constants/appRoutes';
 import { DEFAULT_PLAYLIST_THUMBNAIL } from '../../constants/images';
 import { useAudioContext } from '../../context/AudioContext';
 import { useUploadPlaylistContext } from '../../context/UploadPlaylistContext';
-import { getAudioCurrentPlaylistSelector } from '../../redux/audioPlayer/audioPlayerSelectors';
+import {
+  getAudioCurrentPlaylistSelector,
+  getAudioMetaSelector,
+} from '../../redux/audioPlayer/audioPlayerSelectors';
 import { logout } from '../../redux/auth/authSlice';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import { changePlaylistFavourite } from '../../redux/playlist/playlistActions';
@@ -39,18 +42,24 @@ const PlaylistDetailInfor: React.FC<Props> = ({
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const current_playlist = useAppSelector(getAudioCurrentPlaylistSelector);
+
   const { changeToEditMode, setEditedPlaylist, openUploadPlaylistForm } =
     useUploadPlaylistContext();
-  const { handleClickSongAudio } = useAudioContext();
+  const { handleClickSongAudio, handleToggleAudioPlayState } =
+    useAudioContext();
   const [openDeleteConfirmModal, setOpenDeleteConfirmModal] =
     useState<boolean>(false);
   const [is_changed, setIsChanged] = useState<boolean>(false);
-  const [is_playing, setIsPlaying] = useState<boolean>(false);
-  // const [is_liked, setIsLiked] = useState<boolean>(
-  //   Boolean(playlist_detail.is_liked)
-  // );
+  const isFirstRender = useRef<boolean>(true);
+  const { is_audio_playing, is_audio_loading } =
+    useAppSelector(getAudioMetaSelector);
+
+  const is_playing =
+    is_audio_playing && current_playlist?.id === playlist_detail.id;
 
   const onClickSongAudio = () => {
+    if (is_audio_loading) return;
+
     if (playlist_detail.id !== current_playlist?.id) {
       const shuffled_list = _.shuffle(songs);
       // nếu bài hát đang đc chọn không thuộc playlist này => chọn playlist và phát bài hát của playlist này
@@ -74,8 +83,7 @@ const PlaylistDetailInfor: React.FC<Props> = ({
       });
     } else {
       // ngược lại, thay đổi trạng thái play/pause của bài hát đang được phát
-      setIsChanged(true);
-      setIsPlaying((prev) => !prev);
+      handleToggleAudioPlayState();
     }
   };
 
@@ -145,11 +153,9 @@ const PlaylistDetailInfor: React.FC<Props> = ({
     );
   };
 
-  // useEffect(() => {
-  //   if (playlist_detail) {
-  //     setIsLiked(Boolean(playlist_detail.is_liked));
-  //   }
-  // }, [playlist_detail]);
+  useEffect(() => {
+    if (is_playing && !is_audio_loading) setIsChanged(true);
+  }, [is_playing, is_audio_loading]);
 
   return (
     <Container
