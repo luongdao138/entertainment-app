@@ -20,6 +20,7 @@ import {
   changeAudioListSongs,
   changeAudioNextList,
   changeAudioRecommendedList,
+  resetAudioPlayer,
 } from '../redux/audioPlayer/audioPlayerSlice';
 import { useAppDispatch, useAppSelector } from '../redux/hooks';
 import { getRecommendedSongsAction } from '../redux/song/songActions';
@@ -381,9 +382,13 @@ const AudioContextProvider = ({ children }: { children: React.ReactNode }) => {
         );
         new_archived_list.push(new_current_audio);
 
-        const new_list_songs = audio_list_songs.filter(
-          (s) => s.queue_id !== queue_id
-        );
+        const new_list_songs = audio_list_songs
+          .filter((s) => s.queue_id !== queue_id)
+          .map((s) =>
+            s.queue_id === new_current_audio.queue_id
+              ? { ...s, is_current_audio: true }
+              : { ...s, is_current_audio: false }
+          );
 
         dispatch(changeAudioArchivedList({ list: new_archived_list }));
         dispatch(changeAudioCurrentSong({ new_current_song }));
@@ -413,9 +418,13 @@ const AudioContextProvider = ({ children }: { children: React.ReactNode }) => {
           'is_current_audio',
           'queue_id',
         ]);
-        const new_list_songs = audio_list_songs.filter(
-          (s) => s.queue_id !== queue_id
-        );
+        const new_list_songs = audio_list_songs
+          .filter((s) => s.queue_id !== queue_id)
+          .map((s) =>
+            s.queue_id === new_current_audio.queue_id
+              ? { ...s, is_current_audio: true }
+              : { ...s, is_current_audio: false }
+          );
 
         dispatch(changeAudioArchivedList({ list: [new_current_audio] }));
         dispatch(changeAudioCurrentSong({ new_current_song }));
@@ -436,19 +445,11 @@ const AudioContextProvider = ({ children }: { children: React.ReactNode }) => {
 
         if (!audio_state.is_autoplay_recommend) {
           // tự động phát đang tắt
-          dispatch(changeAudioCurrentSong({ new_current_song: null }));
-          dispatch(changeAudioArchivedList({ list: [] }));
-          dispatch(changeAudioRecommendedList({ list: [] }));
-          dispatch(changeAudioListSongs({ list: [] }));
-          dispatch(changeAudioCurrentPlaylist({ playlist: null }));
+          dispatch(resetAudioPlayer());
         } else {
           // tự động phát đang bật
           if (recommend_list.length === 0) {
-            dispatch(changeAudioCurrentSong({ new_current_song: null }));
-            dispatch(changeAudioArchivedList({ list: [] }));
-            dispatch(changeAudioRecommendedList({ list: [] }));
-            dispatch(changeAudioListSongs({ list: [] }));
-            dispatch(changeAudioCurrentPlaylist({ playlist: null }));
+            dispatch(resetAudioPlayer());
           } else {
             const first_song = recommend_list[0];
             const new_current_song: AudioSong = _.omit(first_song, [
@@ -509,10 +510,16 @@ const AudioContextProvider = ({ children }: { children: React.ReactNode }) => {
         'is_current_audio',
       ]);
       const new_next_list = [...bottom, ...next_list];
+      const new_list_songs = audio_list_songs.map((s) =>
+        s.queue_id === new_current_audio.queue_id
+          ? { ...s, is_current_audio: true }
+          : { ...s, is_current_audio: false }
+      );
 
       dispatch(changeAudioArchivedList({ list: [...top, new_current_audio] }));
       dispatch(changeAudioCurrentSong({ new_current_song }));
       dispatch(changeAudioNextList({ list: new_next_list }));
+      dispatch(changeAudioListSongs({ list: new_list_songs }));
       dispatch(
         getRecommendedSongsAction({
           data: {
@@ -539,10 +546,16 @@ const AudioContextProvider = ({ children }: { children: React.ReactNode }) => {
         ...top,
         new_current_audio,
       ];
+      const new_list_songs = audio_list_songs.map((s) =>
+        s.queue_id === new_current_audio.queue_id
+          ? { ...s, is_current_audio: true }
+          : { ...s, is_current_audio: false }
+      );
 
       dispatch(changeAudioArchivedList({ list: new_archive_list }));
       dispatch(changeAudioCurrentSong({ new_current_song }));
       dispatch(changeAudioNextList({ list: bottom }));
+      dispatch(changeAudioListSongs({ list: new_list_songs }));
       dispatch(
         getRecommendedSongsAction({
           data: {
@@ -622,6 +635,18 @@ const AudioContextProvider = ({ children }: { children: React.ReactNode }) => {
       }
     }
   }, [audio_state.is_shuffle]);
+
+  // check xem sự thay đổi của các list có đúng ko
+  // useEffect(() => {
+  //   console.log(
+  //     'Audio list songs change hehe',
+  //     audio_list_songs.map((s) => ({
+  //       queue_id: s.queue_id,
+  //       name: s.name,
+  //       is_current_audio: s.is_current_audio,
+  //     }))
+  //   );
+  // }, [audio_list_songs]);
 
   return (
     <AudioContext.Provider

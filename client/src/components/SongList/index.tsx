@@ -471,6 +471,7 @@ const SongList: React.FC<Props> = ({
                           ref={innerRef}
                           {...draggableProps}
                           {...dragHandleProps}
+                          style={{ ...draggableProps.style, zIndex: 800 }}
                         >
                           <SongItem
                             key={song.id}

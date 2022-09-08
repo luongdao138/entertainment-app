@@ -19,6 +19,7 @@ import { Container } from './style';
 
 interface Props {
   song: Song;
+  is_dragging?: boolean;
   can_remove_out_of_queue?: boolean;
   onRemoveSongOutOfQueue?: (queue_id: string) => void;
 }
@@ -27,6 +28,7 @@ const QueueSongItem: React.FC<Props> = ({
   song,
   can_remove_out_of_queue,
   onRemoveSongOutOfQueue,
+  is_dragging,
 }) => {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const openSongMenu = Boolean(anchorEl);
@@ -114,6 +116,7 @@ const QueueSongItem: React.FC<Props> = ({
         is_liked={song.is_liked}
         is_archive={is_archive}
         is_current_audio={is_current_audio}
+        is_dragging={is_dragging}
       >
         <div className='song-left'>
           <div className='song-thumbnail' onClick={onClickQueueSong}>

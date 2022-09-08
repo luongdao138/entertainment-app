@@ -20,7 +20,6 @@ const Player = () => {
   const toggleQueue = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     e.stopPropagation();
-    console.log({ context });
     handleToggleQueue?.();
   };
 

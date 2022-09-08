@@ -4,6 +4,7 @@ interface Props {
   is_liked?: boolean;
   is_archive?: boolean;
   is_current_audio?: boolean;
+  is_dragging?: boolean;
 }
 
 export const Container = styled.div`
@@ -13,12 +14,20 @@ export const Container = styled.div`
   border-radius: 4px;
   padding: 8px;
   user-select: none;
+  box-shadow: ${(props: Props) =>
+    props.is_dragging
+      ? `0 1px 0 rgb(0 0 0 / 30%), 0 1px 6px rgb(0 0 0 / 30%), inset 0 1px 1px rgb(25 255 255 / 5%)`
+      : 'none'};
 
   background-color: ${(props: Props) =>
-    props.is_current_audio ? '#7200A1' : 'transparent'};
-
+    props.is_current_audio ? '#7200A1' : '#120822'};
+  filter: ${(props: Props) => (props.is_dragging ? 'brightness(0.9)' : 'none')};
   opacity: ${(props: Props) =>
-    props.is_current_audio ? 1 : props.is_archive ? '.5' : '1'};
+    props.is_current_audio || props.is_dragging
+      ? 1
+      : !props.is_archive
+      ? '1'
+      : '0.5'};
 
   .song-left {
     display: flex;

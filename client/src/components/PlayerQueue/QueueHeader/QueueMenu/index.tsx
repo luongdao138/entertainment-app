@@ -7,11 +7,20 @@ import { useAppDispatch, useAppSelector } from '../../../../redux/hooks';
 import AddToPlaylist from '../../../AddToPlaylist';
 import { Container } from './style';
 
-const QueueMenu = () => {
+interface Props {
+  closeQueue: () => void;
+  closeMenu: () => void;
+}
+
+const QueueMenu: React.FC<Props> = ({ closeMenu, closeQueue }) => {
   const dispatch = useAppDispatch();
+
   const handleRemovePlayer = () => {
     dispatch(resetAudioPlayer());
+    closeMenu();
+    closeQueue();
   };
+
   const audio_list_songs = useAppSelector(getAudioCurrentListSongs);
 
   return (

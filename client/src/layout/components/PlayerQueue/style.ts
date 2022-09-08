@@ -9,7 +9,7 @@ export const Container = styled.div`
   right: 0;
   top: 0;
   bottom: 90px;
-  z-index: 150;
+  z-index: 1000;
   box-shadow: 0 1px 0 rgba(0, 0, 0, 0.3), 0 1px 6px rgba(0, 0, 0, 0.3),
     inset 0 1px 1px rgba(25, 255, 255, 0.05);
   background-color: #120822;
@@ -18,9 +18,14 @@ export const Container = styled.div`
   display: flex;
   flex-direction: column;
   padding: 15px 8px;
+  transition: all 0.5s ease-in;
+  /* right: ${(props: Props) => (!props.openQueue ? 'unset' : '0')};
   transition: transform 0.5s ease-in;
-  transform: ${(props: Props) =>
-    !props.openQueue ? 'translateX(100%)' : 'translateX(0)'};
+  left: ${(props: Props) => (!props.openQueue ? '100%' : 'unset')}; */
+
+  // will fix later
+  opacity: ${(props: Props) => (!props.openQueue ? '0' : '1')};
+  visibility: ${(props: Props) => (!props.openQueue ? 'hidden' : 'visible')};
 
   & .queue-content {
     flex-grow: 1;

@@ -8,6 +8,7 @@ export const Container = styled.div`
   position: fixed;
   top: 0;
   left: 0;
+  z-index: 10;
   bottom: ${(props: Props) => (props.openPlayer ? '90px' : 0)};
   background-color: #231b2e;
   width: 24rem;

@@ -1,12 +1,15 @@
 import { Menu } from '@mui/material';
 import React from 'react';
 import { MdMoreHoriz, MdOutlineAlarm } from 'react-icons/md';
+import { useAudioContext } from '../../../context/AudioContext';
 import QueueMenu from './QueueMenu';
 import { Container, TabButton } from './style';
 
 const PlayerQueueHeader = () => {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const openMenu = Boolean(anchorEl);
+
+  const { handleCloseQueue } = useAudioContext();
 
   const handleClick = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
@@ -38,7 +41,7 @@ const PlayerQueueHeader = () => {
           },
         }}
       >
-        <QueueMenu />
+        <QueueMenu closeMenu={handleClose} closeQueue={handleCloseQueue} />
       </Menu>
       <Container>
         <div className='queue-header-tabs'>
