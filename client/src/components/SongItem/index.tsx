@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useRef } from 'react';
 import { Container } from './style';
 import { FiMusic } from 'react-icons/fi';
 import { BsFillPlayFill } from 'react-icons/bs';
@@ -15,6 +15,7 @@ import SongPrivary from './SongPrivacy';
 import { editSongSucess } from '../../redux/song/songSlice';
 import { getAudioCurrentSongSelector } from '../../redux/audioPlayer/audioPlayerSelectors';
 import { useAudioContext } from '../../context/AudioContext';
+import { disableClickEvent } from '../../utils/common';
 interface Props {
   song: Song;
   focusSong: string | null;
@@ -56,11 +57,13 @@ const SongItem: React.FC<Props> = ({
   enable_select_multiple,
   onClickSongAudio,
 }) => {
+  const containerRef = useRef<HTMLDivElement>(null);
   const current_song = useAppSelector(getAudioCurrentSongSelector);
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const openMenu = Boolean(anchorEl);
   // const [is_liked, setIsLiked] = useState<boolean>(song.is_liked);
   const handleClick = (event: React.MouseEvent<HTMLElement>) => {
+    disableClickEvent(event);
     setAnchorEl(event.currentTarget);
   };
   const handleClose = () => {
@@ -94,7 +97,8 @@ const SongItem: React.FC<Props> = ({
     changeFocusSong(song.id);
   };
 
-  const handleClickFavourite = async () => {
+  const handleClickFavourite = async (e: React.MouseEvent<HTMLElement>) => {
+    disableClickEvent(e);
     const prevState = song.is_liked;
     // setIsLiked((prev) => !prev);
     dispatch(
@@ -113,6 +117,17 @@ const SongItem: React.FC<Props> = ({
 
   const handleChangePrivacySuccess = (new_privacy: SongPrivacy) => {
     dispatch(editSongSucess({ song: { ...song, privacy: new_privacy } }));
+  };
+
+  const handleDoubleClickSong = function (e: React.MouseEvent<HTMLDivElement>) {
+    console.log({
+      currentTarget: e.currentTarget,
+      target: e.target,
+      ref: containerRef.current,
+      isEqual: e.currentTarget === e.target,
+    });
+
+    onClickSongAudio?.(song);
   };
 
   return (
@@ -161,9 +176,11 @@ const SongItem: React.FC<Props> = ({
         is_dragging={is_dragging}
         enable_select_multiple={enable_select_multiple}
         is_current_audio={is_current_audio}
+        ref={containerRef}
+        onDoubleClick={handleDoubleClickSong}
       >
         <div className='song-left'>
-          <div className='music-icon'>
+          <div className='music-icon' onDoubleClick={disableClickEvent}>
             {can_drag && enable_select_multiple ? (
               <MdDragIndicator style={{ fontSize: '2rem' }} />
             ) : (
@@ -172,7 +189,7 @@ const SongItem: React.FC<Props> = ({
           </div>
 
           {enable_select_multiple && (
-            <div className='song-checkbox'>
+            <div className='song-checkbox' onDoubleClick={disableClickEvent}>
               <Checkbox
                 disableRipple
                 disableTouchRipple
@@ -191,7 +208,7 @@ const SongItem: React.FC<Props> = ({
             </div>
           )}
 
-          <div className='song-thumbnail'>
+          <div className='song-thumbnail' onDoubleClick={disableClickEvent}>
             <img src={song.thumbnail} alt='' />
             <div className='opacity'></div>
             <BsFillPlayFill
@@ -216,11 +233,16 @@ const SongItem: React.FC<Props> = ({
         )}
 
         <div className='song-right'>
-          <button className='favorite' onClick={handleClickFavourite}>
+          <button
+            className='favorite'
+            onDoubleClick={disableClickEvent}
+            onClick={handleClickFavourite}
+          >
             {song.is_liked ? <AiFillHeart /> : <AiOutlineHeart />}
           </button>
           <span className='duration'>{formatSongDuration(song.duration)}</span>
           <button
+            onDoubleClick={disableClickEvent}
             className='more-action'
             aria-label='more'
             id='song-item-button'

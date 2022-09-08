@@ -13,6 +13,7 @@ import { AudioSong } from '../../redux/audioPlayer/audioPlayerSlice';
 import { getAudioCurrentSongSelector } from '../../redux/audioPlayer/audioPlayerSelectors';
 import { changeFavourite } from '../../redux/song/songActions';
 import { addSongsToPlaylistActions } from '../../redux/playlist/playlistActions';
+import { disableClickEvent } from '../../utils/common';
 
 interface Props {
   song: Song;
@@ -73,6 +74,10 @@ const RecommendPlaylistSongItem: React.FC<Props> = ({
     );
   };
 
+  const handleDoubleClickSong = () => {
+    onClickSongAudio?.(song);
+  };
+
   // useEffect(() => {
   //   setIsLiked(song.is_liked);
   // }, [song.is_liked]);
@@ -89,7 +94,11 @@ const RecommendPlaylistSongItem: React.FC<Props> = ({
   // console.log({ is_liked });
 
   return (
-    <Container is_current_audio={is_current_audio} is_liked={song.is_liked}>
+    <Container
+      onDoubleClick={handleDoubleClickSong}
+      is_current_audio={is_current_audio}
+      is_liked={song.is_liked}
+    >
       <div className='song-left'>
         <div className='music-icon'>
           <FiMusic />
@@ -97,6 +106,7 @@ const RecommendPlaylistSongItem: React.FC<Props> = ({
 
         <div
           className='song-thumbnail'
+          onDoubleClick={disableClickEvent}
           onClick={() => {
             onClickSongAudio?.(song);
           }}
@@ -111,12 +121,20 @@ const RecommendPlaylistSongItem: React.FC<Props> = ({
         </div>
       </div>
       <div className='song-right'>
-        <button className='favorite' onClick={handleClickFavourite}>
+        <button
+          className='favorite'
+          onDoubleClick={disableClickEvent}
+          onClick={handleClickFavourite}
+        >
           {song.is_liked ? <AiFillHeart /> : <AiOutlineHeart />}
         </button>
         <span className='duration'>{formatSongDuration(song.duration)}</span>
         <div className='song-menu-wrapper'>
-          <button className='more-action' onClick={handleAddSongToPlaylist}>
+          <button
+            className='more-action'
+            onDoubleClick={disableClickEvent}
+            onClick={handleAddSongToPlaylist}
+          >
             <MdAdd />
           </button>
         </div>

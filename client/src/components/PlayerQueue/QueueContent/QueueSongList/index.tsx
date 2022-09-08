@@ -48,6 +48,7 @@ const QueueSongList: React.FC<Props> = ({ songs, can_drop, droppable_id }) => {
                       ref={innerRef}
                       {...draggableProps}
                       {...dragHandleProps}
+                      style={{ ...draggableProps.style, cursor: 'default' }}
                     >
                       <QueueSongItem
                         can_remove_out_of_queue

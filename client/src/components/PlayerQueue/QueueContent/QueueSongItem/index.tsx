@@ -14,6 +14,7 @@ import { logout } from '../../../../redux/auth/authSlice';
 import { useAppDispatch, useAppSelector } from '../../../../redux/hooks';
 import { changeFavourite } from '../../../../redux/song/songActions';
 import { Song } from '../../../../services/song';
+import { disableClickEvent } from '../../../../utils/common';
 import SongItemMenu from '../../../SongItemMenu';
 import { Container } from './style';
 
@@ -117,9 +118,14 @@ const QueueSongItem: React.FC<Props> = ({
         is_archive={is_archive}
         is_current_audio={is_current_audio}
         is_dragging={is_dragging}
+        onDoubleClick={onClickQueueSong}
       >
         <div className='song-left'>
-          <div className='song-thumbnail' onClick={onClickQueueSong}>
+          <div
+            className='song-thumbnail'
+            onDoubleClick={disableClickEvent}
+            onClick={onClickQueueSong}
+          >
             <img src={song.thumbnail} alt='' />
             <div className='opacity'></div>
             <BsFillPlayFill className='play-state' />
@@ -130,10 +136,15 @@ const QueueSongItem: React.FC<Props> = ({
           </div>
         </div>
         <div className='song-right'>
-          <button className='favourite action' onClick={handleClickFavourite}>
+          <button
+            onDoubleClick={disableClickEvent}
+            className='favourite action'
+            onClick={handleClickFavourite}
+          >
             {song.is_liked ? <AiFillHeart /> : <AiOutlineHeart />}
           </button>
           <button
+            onDoubleClick={disableClickEvent}
             aria-label='more'
             id='song-item-button'
             aria-controls={openSongMenu ? 'song-item-menu' : undefined}
