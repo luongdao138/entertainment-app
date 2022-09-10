@@ -48,7 +48,7 @@ model Song {
   name            String
   normalized_name String?
   singer_name     String
-  duration        Int
+  duration        Float
 
   user       User     @relation("uploaded", fields: [user_id], references: [id])
   user_id    String
@@ -64,6 +64,7 @@ model Song {
   belong_playlists PlaylistSong[]
 
   belong_categories Category[]
+  lyric             Lyric?
 }
 
 model Playlist {
@@ -154,4 +155,26 @@ model Category {
   deleted_at DateTime?
 
   has_songs Song[]
+}
+
+model Lyric {
+  id         String   @id @default(uuid())
+  file       String
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  words Word[]
+
+  song    Song   @relation(fields: [song_id], references: [id])
+  song_id String @unique
+}
+
+model Word {
+  id         String @id @default(uuid())
+  start_time BigInt
+  end_time   BigInt
+  data       String
+
+  lyric    Lyric  @relation(fields: [lyric_id], references: [id])
+  lyric_id String
 }

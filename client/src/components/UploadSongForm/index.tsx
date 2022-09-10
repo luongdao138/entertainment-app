@@ -99,7 +99,7 @@ const UploadSongForm: React.FC<Props> = ({ closeUploadModal }) => {
   useEffect(() => {
     if (audioRef.current) {
       const handleLoadedMetadata = () => {
-        setDuration(Math.floor(audioRef.current?.duration ?? 0));
+        setDuration(audioRef.current?.duration ?? 0);
       };
       audioRef.current.addEventListener('loadedmetadata', handleLoadedMetadata);
       return () => {

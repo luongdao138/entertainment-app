@@ -1,16 +1,11 @@
 import styled from 'styled-components';
 
 export const Container = styled.div`
-  display: flex;
-  align-items: center;
-  /* width: 100%; */
-  justify-content: flex-end;
-
-  & .action-item {
-    margin-right: 0 5px;
+  .karaoke-icon {
+    margin-right: 12px;
     color: #fff;
     background-color: transparent;
-    font-size: 18px;
+    font-size: 2rem;
     border-radius: 999px;
     width: 32px;
     aspect-ratio: 1;
@@ -18,18 +13,14 @@ export const Container = styled.div`
     transition: all 0.25s ease-in-out;
     place-items: center;
 
-    & .big-icon {
-      font-size: 2.4rem;
-    }
-
     &:hover {
       background-color: hsla(0, 0%, 100%, 0.1);
     }
-  }
 
-  & .slider {
-    width: 7rem;
-    display: flex;
-    align-content: center;
+    &:disabled {
+      box-shadow: none;
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
   }
 `;

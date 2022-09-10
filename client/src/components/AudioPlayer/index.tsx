@@ -1,22 +1,36 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useMemo, useRef } from 'react';
 import { toast } from 'react-toastify';
+import { playbackRateOptions } from '../../constants/options';
 import { useAudioContext } from '../../context/AudioContext';
 import {
+  getAudioCurrentPlaylistSelector,
   getAudioCurrentSongSelector,
+  getAudioMetaSelector,
+  getAudioStateSelector,
   getAudioVolumeSelector,
 } from '../../redux/audioPlayer/audioPlayerSelectors';
-import { changeAudioCurrentMeta } from '../../redux/audioPlayer/audioPlayerSlice';
+import {
+  changeAudioCurrentMeta,
+  changeAudioCurrentState,
+} from '../../redux/audioPlayer/audioPlayerSlice';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 
 const AudioPlayer = () => {
   const current_song = useAppSelector(getAudioCurrentSongSelector);
+  const current_playlist = useAppSelector(getAudioCurrentPlaylistSelector);
   const audio_volume = useAppSelector(getAudioVolumeSelector);
+  const { playback_rate } = useAppSelector(getAudioStateSelector);
+  const { is_audio_playing } = useAppSelector(getAudioMetaSelector);
 
-  const { audioRef, handlePlayAudio } = useAudioContext();
+  const { audioRef, handlePlayAudio, handleMoveToNextSong } = useAudioContext();
   const dispatch = useAppDispatch();
 
+  const handleAudioEndRef = useRef<() => void>();
+
+  handleAudioEndRef.current = handleMoveToNextSong;
+
   useEffect(() => {
-    if (current_song?.url && audioRef.current) {
+    if (current_song?.url && audioRef?.current) {
       const handleAudioLoadedMetadata = () => {
         console.log(
           'Audio event fire: loadedmetadata, song name: ',
@@ -29,6 +43,8 @@ const AudioPlayer = () => {
           'Audio event fire: loadeddata, song name: ',
           current_song.name
         );
+
+        // mỗi khi data của 1 bài hát được load thì sẽ tắt trạng thái loading
         dispatch(
           changeAudioCurrentMeta({
             new_meta: {
@@ -39,6 +55,8 @@ const AudioPlayer = () => {
           })
         );
 
+        // tự động phát bài hát mỗi khi data được load thành công
+        // trong một số trường hợp ko đc auto play bài hát => cần xem xét sau, hiện tại luôn bật chức năng autoplay bài hát
         handlePlayAudio();
       };
 
@@ -53,6 +71,17 @@ const AudioPlayer = () => {
         console.log(
           'Audio event fire: canplay, song name: ',
           current_song.name
+        );
+
+        // khi browser xác định bài hát đã có thể phát thì sẽ tắt trạng thái loading
+        dispatch(
+          changeAudioCurrentMeta({
+            new_meta: {
+              is_audio_loaded: true,
+              is_audio_loading: false,
+              is_audio_error: false,
+            },
+          })
         );
       };
 
@@ -98,18 +127,35 @@ const AudioPlayer = () => {
         );
       };
 
-      const handleAudioTimeUpdate = () => {
-        console.log(
-          'Audio event fire: timeupdate, song name: ',
-          current_song.name
-        );
-      };
+      // const handleAudioTimeUpdate = () => {
+      //   console.log(
+      //     'Audio event fire: timeupdate, current time: ',
+      //     audioRef.current?.currentTime
+      //   );
+
+      //   // if (audioRef.current) {
+      //   //   dispatch(
+      //   //     changeAudioCurrentState({
+      //   //       new_state: {
+      //   //         current_time: audioRef.current.currentTime,
+      //   //       },
+      //   //     })
+      //   //   );
+      //   // }
+      // };
 
       const handleAudioDurationChange = () => {
         console.log(
           'Audio event fire: durationchange, song name: ',
           current_song.name
         );
+
+        if (audioRef.current)
+          dispatch(
+            changeAudioCurrentState({
+              new_state: { duration: audioRef.current.duration },
+            })
+          );
       };
 
       const handleAudioVolumeChange = () => {
@@ -124,6 +170,18 @@ const AudioPlayer = () => {
           'Audio event fire: seeking, song name: ',
           current_song.name
         );
+
+        // khi người dùng thay đổi seekbar, thì data sẽ được load => set trạng thái thành loading
+        // đến khi sự kiện canplay đc fire thì có thể phát đc bài hát
+        dispatch(
+          changeAudioCurrentMeta({
+            new_meta: {
+              is_audio_loaded: false,
+              is_audio_loading: true,
+              is_audio_error: true,
+            },
+          })
+        );
       };
 
       const handleAudioSeeked = () => {
@@ -132,6 +190,7 @@ const AudioPlayer = () => {
 
       const handleAudioEnded = () => {
         console.log('Audio event fire: ended, song name: ', current_song.name);
+        handleAudioEndRef.current?.();
       };
 
       const handleRateChange = () => {
@@ -139,6 +198,18 @@ const AudioPlayer = () => {
           'Audio event fire: ratechange, song name: ',
           current_song.name
         );
+
+        if (audioRef.current !== null) {
+          dispatch(
+            changeAudioCurrentState({
+              new_state: {
+                playback_rate: playbackRateOptions.find(
+                  (o) => o.value === audioRef.current?.playbackRate
+                ),
+              },
+            })
+          );
+        }
       };
 
       // load data
@@ -159,7 +230,7 @@ const AudioPlayer = () => {
       audioRef.current.addEventListener('error', handleAudioPlaying);
 
       // video state change
-      audioRef.current.addEventListener('timeupdate', handleAudioTimeUpdate);
+      // audioRef.current.addEventListener('timeupdate', handleAudioTimeUpdate);
       audioRef.current.addEventListener(
         'volumechange',
         handleAudioVolumeChange
@@ -192,10 +263,10 @@ const AudioPlayer = () => {
         audioRef.current?.removeEventListener('play', handleAudioPlay);
         audioRef.current?.removeEventListener('error', handleAudioPlaying);
 
-        audioRef.current?.removeEventListener(
-          'timeupdate',
-          handleAudioTimeUpdate
-        );
+        // audioRef.current?.removeEventListener(
+        //   'timeupdate',
+        //   handleAudioTimeUpdate
+        // );
         audioRef.current?.removeEventListener(
           'volumechange',
           handleAudioVolumeChange
@@ -209,8 +280,9 @@ const AudioPlayer = () => {
         audioRef.current?.removeEventListener('seeking', handleAudioSeeked);
       };
     }
-  }, []);
+  }, [current_song?.id, current_song?.id, current_playlist?.id]);
 
+  // mỗi khi thay đổi bài hát thì sẽ thay đổi trạng thái thành loading
   useEffect(() => {
     if (current_song) {
       dispatch(
@@ -222,32 +294,54 @@ const AudioPlayer = () => {
           },
         })
       );
+
+      dispatch(changeAudioCurrentState({ new_state: { duration: 0 } }));
     }
-  }, [current_song]);
+  }, [current_song?.id, current_playlist?.id]);
+
+  useEffect(() => {
+    if (audioRef.current) {
+      audioRef.current.load();
+    }
+  }, [current_playlist?.id]);
 
   useEffect(() => {
     if (audioRef.current) audioRef.current.volume = audio_volume;
   }, [audio_volume]);
 
+  useEffect(() => {
+    if (audioRef.current) {
+      if (is_audio_playing) {
+        audioRef.current.play();
+      } else {
+        audioRef.current.pause();
+      }
+    }
+  }, [is_audio_playing]);
+
   if (!current_song) return null;
 
-  return (
-    <audio
-      preload='metadata'
-      controls
-      ref={audioRef}
-      src={current_song.url}
-      hidden
-    >
-      <p>
-        Your browser does not support HTML audio, but you can still
-        <a href={current_song.url} target='_blank'>
-          download the music
-        </a>
-        .
-      </p>
-    </audio>
-  );
+  const Audio = useMemo(() => {
+    return (
+      <audio
+        preload='metadata'
+        controls
+        ref={audioRef}
+        src={current_song.url}
+        hidden
+      >
+        <p>
+          Your browser does not support HTML audio, but you can still
+          <a href={current_song.url} target='_blank'>
+            download the music
+          </a>
+          .
+        </p>
+      </audio>
+    );
+  }, [current_song?.id, audio_volume, playback_rate]);
+
+  return Audio;
 };
 
 export default AudioPlayer;

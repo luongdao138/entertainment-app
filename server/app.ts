@@ -112,7 +112,24 @@ app.get('/', async (req, res) => {
   // await prisma.category.createMany({
   //   data: [
   //     {
-  //       name: 'Nhạc Hoa',
+  //       name: 'Nhạc Phim Hoa Ngữ',
+  //     },
+  //     {
+  //       name: 'Nhạc Nhật',
+  //     },
+  //   ],
+  // });
+
+  // await prisma.category.createMany({
+  //   data: [
+  //     {
+  //       name: 'Nhạc trẻ Việt Nam',
+  //     },
+  //     {
+  //       name: 'Nhạc cổ phong Trung Quốc',
+  //     },
+  //     {
+  //       name: 'Nhạc đám cưới',
   //     },
   //     {
   //       name: 'Nhạc Hàn',
@@ -214,12 +231,12 @@ app.get('/', async (req, res) => {
   //     normalized_title: true,
   //   },
   // });
-  const songs = await prisma.song.findMany({
-    where: {
-      is_deleted: false,
-    },
-    select: { id: true, name: true, normalized_name: true },
-  });
+  // const songs = await prisma.song.findMany({
+  //   where: {
+  //     is_deleted: false,
+  //   },
+  //   select: { id: true, name: true, normalized_name: true },
+  // });
 
   // for (const song of songs)
   //   await prisma.song.update({
@@ -231,7 +248,7 @@ app.get('/', async (req, res) => {
   //     },
   //   });
 
-  return res.json({ data: songs });
+  return res.json({ msg: 'Success' });
 });
 
 app.use('/auth', authRouter);

@@ -22,6 +22,7 @@ import { DEFAULT_PLAYLIST_THUMBNAIL } from '../../constants/images';
 import { toast } from 'react-toastify';
 import {
   getAudioCurrentPlaylistSelector,
+  getAudioCurrentSongSelector,
   getAudioMetaSelector,
 } from '../../redux/audioPlayer/audioPlayerSelectors';
 import { useAudioContext } from '../../context/AudioContext';
@@ -56,9 +57,11 @@ const PlaylistItem: React.FC<Props> = ({
   const current_playlist = useAppSelector(getAudioCurrentPlaylistSelector);
   const { is_audio_playing } = useAppSelector(getAudioMetaSelector);
   const deletePlaylistMeta = useAppSelector(deletePlaylistMetaSelector);
+  const current_song = useAppSelector(getAudioCurrentSongSelector);
   const { handleToggleAudioPlayState } = useAudioContext();
 
   const is_playing = is_audio_playing && current_playlist?.id === playlist.id;
+  // && current_playlist_songs.some((s) => s.id === current_song?.id);
 
   const handleClickMore = (e: React.MouseEvent<HTMLElement>) => {
     e.stopPropagation();

@@ -1,54 +1,57 @@
-import { raw } from '@prisma/client/runtime';
-import { error } from 'console';
-import { Request, Response } from 'express';
+import { Response } from 'express';
 import prisma from '../config/prisma';
 import { removeAccents } from '../utils/formatText';
 
 const songController = {
   async uploadSong(req: any, res: Response) {
-    const { duration, name, singer_name, thumbnail, url } = req.body;
-    const user = req.user;
+    try {
+      const { duration, name, singer_name, thumbnail, url } = req.body;
+      const user = req.user;
 
-    const songCount = await prisma.song.count({
-      where: { user_id: user.id, is_deleted: false },
-    });
-    console.log({ songCount });
-    if (songCount >= 20 && !user.is_premium) {
-      return res.status(400).json({
-        msg: 'Tải lên thất bại, trở thành thành viên premium để tải thêm bài hát',
+      const songCount = await prisma.song.count({
+        where: { user_id: user.id, is_deleted: false },
       });
-    }
+      console.log({ songCount });
+      if (songCount >= 20 && !user.is_premium) {
+        return res.status(400).json({
+          msg: 'Tải lên thất bại, trở thành thành viên premium để tải thêm bài hát',
+        });
+      }
 
-    const newSong = await prisma.song.create({
-      data: {
-        name,
-        singer_name,
-        thumbnail,
-        url,
-        normalized_name: removeAccents(name),
-        duration,
-        user_id: user.id,
-      },
-      include: {
-        belong_categories: {
-          select: {
-            id: true,
+      const newSong = await prisma.song.create({
+        data: {
+          name,
+          singer_name,
+          thumbnail,
+          url,
+          normalized_name: removeAccents(name),
+          duration,
+          user_id: user.id,
+        },
+        include: {
+          belong_categories: {
+            select: {
+              id: true,
+            },
           },
         },
-      },
-    });
+      });
 
-    await prisma.favouriteSong.create({
-      data: {
-        song_id: newSong.id,
-        user_id: user.id,
-      },
-    });
+      await prisma.favouriteSong.create({
+        data: {
+          song_id: newSong.id,
+          user_id: user.id,
+        },
+      });
 
-    return res.status(201).json({
-      msg: 'Upload song successfully',
-      song: newSong,
-    });
+      return res.status(201).json({
+        msg: 'Upload song successfully',
+        song: newSong,
+      });
+    } catch (error) {
+      console.log(error);
+      return res.status(500).json({ msg: 'Có lỗi xảy ra' });
+    }
   },
   async getUploadedSong(req: any, res: Response) {
     const user = req.user;
@@ -229,7 +232,9 @@ const songController = {
           .status(400)
           .json({ msg: 'Không có quyền chỉnh sửa bài hát này' });
 
-      if (categories) {
+      console.log({ categories, data });
+
+      if (categories?.length > 0) {
         // tìm ra những category đc thay đổi
         const old_categories = song?.belong_categories.map((c) => c.id);
 

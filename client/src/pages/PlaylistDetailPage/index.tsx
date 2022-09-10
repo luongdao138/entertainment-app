@@ -146,6 +146,7 @@ const PlaylistDetailPage = () => {
       playlist: playlist_detail,
       list_songs: playlist_songs,
       song,
+      playlist_songs,
     });
   };
 

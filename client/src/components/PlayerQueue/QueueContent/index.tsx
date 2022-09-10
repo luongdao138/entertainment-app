@@ -8,6 +8,7 @@ import {
   getAudioArchivedListSelector,
   getAudioCurrentListSongs,
   getAudioCurrentPlaylistSelector,
+  getAudioCurrentSongSelector,
   getAudioNextListSelector,
   getAudioRecommendListSelector,
   getAudioStateSelector,
@@ -23,6 +24,7 @@ import {
   changeAudioArchivedList,
   changeAudioNextList,
 } from '../../../redux/audioPlayer/audioPlayerSlice';
+import _ from 'lodash';
 
 const QueueContent = () => {
   const archived_list = useAppSelector(getAudioArchivedListSelector);
@@ -31,9 +33,13 @@ const QueueContent = () => {
   const current_playlist = useAppSelector(getAudioCurrentPlaylistSelector);
   const audio_state = useAppSelector(getAudioStateSelector);
   const audio_list_songs = useAppSelector(getAudioCurrentListSongs);
+  const current_song = useAppSelector(getAudioCurrentSongSelector);
+
   const dispatch = useAppDispatch();
 
   const { handleChangeAutoPlayRecommend } = useAudioContext();
+  const is_playlist_playing = !_.isNil(current_playlist);
+  // && next_list.some((s) => current_playlist_songs.some((_s) => _s.id === s.id));
 
   const onDragEnd = (result: DropResult, provided: ResponderProvided) => {
     const { draggableId, destination, source } = result;
@@ -139,7 +145,7 @@ const QueueContent = () => {
           <div className='next-list'>
             <div className='next-list-header'>
               <h3>Tiếp theo</h3>
-              {current_playlist && (
+              {is_playlist_playing && (
                 <p>
                   Từ playlist{' '}
                   <Link to={`/playlist/${current_playlist.id}`}>

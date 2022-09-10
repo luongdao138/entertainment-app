@@ -7,15 +7,19 @@ import {
   changeFavourite,
   getRecommendedSongsAction,
 } from '../song/songActions';
+import { AudioPlaybackRateType } from '../../constants/options';
 
 export type AudioSong = Song | SongDetail;
 export type AudioPlaylist = Playlist | PlaylistDetail;
-
 interface SliceState {
   audio_state: {
     is_shuffle: boolean;
     is_from_recommend: boolean;
     is_autoplay_recommend: boolean;
+    volume: number;
+    duration: number;
+    current_time: number;
+    playback_rate: AudioPlaybackRateType;
   };
   current_song: AudioSong | null;
   archived_list: {
@@ -40,6 +44,14 @@ interface SliceState {
   audio_list_songs: AudioSong[];
 }
 
+export interface ChangeSongDataParams {
+  next_list?: AudioSong[];
+  archived_list?: AudioSong[];
+  recommended_list?: AudioSong[];
+  audio_list_songs?: AudioSong[];
+  current_song?: AudioSong | null;
+}
+
 const initialState: SliceState = {
   archived_list: {
     data: [],
@@ -55,6 +67,14 @@ const initialState: SliceState = {
     is_shuffle: false,
     is_from_recommend: false,
     is_autoplay_recommend: true,
+    duration: 0,
+    volume: 1,
+    current_time: 0,
+    playback_rate: {
+      desc: 'Bình thường',
+      value: 1.0,
+      label: '1x',
+    },
   },
   next_list: {
     data: [],
@@ -98,9 +118,39 @@ const audioPlayerSlice = createSlice({
     },
     changeAudioCurrentPlaylist(
       state,
-      action: PayloadAction<{ playlist: AudioPlaylist | null }>
+      action: PayloadAction<{
+        playlist: AudioPlaylist | null;
+        songs?: AudioSong[];
+      }>
     ) {
       state.current_playlist.data = action.payload.playlist;
+    },
+    changeAudioCurrentSongData(
+      state,
+      action: PayloadAction<ChangeSongDataParams>
+    ) {
+      const {
+        archived_list,
+        audio_list_songs,
+        current_song,
+        next_list,
+        recommended_list,
+      } = action.payload;
+      if (archived_list) {
+        state.archived_list.data = archived_list;
+      }
+      if (next_list) {
+        state.next_list.data = next_list;
+      }
+      if (recommended_list) {
+        state.recommended_list.data = recommended_list;
+      }
+      if (audio_list_songs) {
+        state.audio_list_songs = audio_list_songs;
+      }
+      if (current_song !== undefined) {
+        state.current_song = current_song;
+      }
     },
     changeAudioCurrentState(
       state,
@@ -113,9 +163,6 @@ const audioPlayerSlice = createSlice({
       action: PayloadAction<{ new_meta: Partial<SliceState['audio_meta']> }>
     ) {
       state.audio_meta = { ...state.audio_meta, ...action.payload.new_meta };
-    },
-    changeAudioVolume(state, action: PayloadAction<number>) {
-      state.volume = action.payload;
     },
     addSongsToPlayerList(state, action: PayloadAction<{ songs: AudioSong[] }>) {
       // if (!state.audio_state.is_from_recommend) {
@@ -187,9 +234,9 @@ export const {
   changeAudioCurrentPlaylist,
   changeAudioCurrentMeta,
   changeAudioCurrentState,
-  changeAudioVolume,
   addSongToPlayNext,
   addSongsToPlayerList,
   resetAudioPlayer,
+  changeAudioCurrentSongData,
 } = audioPlayerSlice.actions;
 export default audioPlayerSlice.reducer;

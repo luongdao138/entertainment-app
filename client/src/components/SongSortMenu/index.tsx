@@ -1,26 +1,11 @@
 import React from 'react';
-import { SortType } from '../SongList';
+import { sortOptions, SortType } from '../../constants/options';
 import { Container, Item } from './style';
 
 interface Props {
   value: SortType;
   changeValue: (value: SortType) => void;
 }
-
-const sortOptions: { label: string; value: SortType }[] = [
-  {
-    label: 'Mặc định',
-    value: 'default',
-  },
-  {
-    label: 'Tên bài hát (A-Z)',
-    value: 'name_az',
-  },
-  {
-    label: 'Tên bài hát (Z-A)',
-    value: 'name_za',
-  },
-];
 
 const SongSortMenu: React.FC<Props> = ({ value, changeValue }) => {
   return (

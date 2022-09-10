@@ -37,12 +37,11 @@ const validationSchema = Yup.object({
       passwordRegex,
       'Mật khẩu phải từ 8 đến 24 ký tự, bao gồm ít nhất 1 chữ hoa, 1 chữ thường, 1 số và 1 ký tự đặc biệt'
     ),
-  full_name: Yup.string()
-    .required('Họ tên không được để trống')
-    .matches(
-      fullNameRegex,
-      'Họ tên phải từ 3 đến 50 ký tự, chỉ bao gồm chữ hoa, chữ thường và số'
-    ),
+  full_name: Yup.string().required('Họ tên không được để trống'),
+  // .matches(
+  //   fullNameRegex,
+  //   'Họ tên phải từ 3 đến 50 ký tự, chỉ bao gồm chữ hoa, chữ thường và số'
+  // ),
   cf_password: Yup.string()
     .required('Xác nhận mật khẩu không được để trống')
     .oneOf([Yup.ref('password'), null], 'Xác nhận mật khẩu chưa chính xác'),

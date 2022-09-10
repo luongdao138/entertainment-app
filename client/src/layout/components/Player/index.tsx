@@ -10,6 +10,8 @@ import { useAudioContext } from '../../../context/AudioContext';
 import { useNavigate } from 'react-router-dom';
 import { useAppSelector } from '../../../redux/hooks';
 import { getAudioCurrentSongSelector } from '../../../redux/audioPlayer/audioPlayerSelectors';
+import AudioPlaybackRate from '../../../components/AudioPlayer/AudioPlaybackRate';
+import AudioLyric from '../../../components/AudioPlayer/AudioLyric';
 
 const Player = () => {
   const { handleToggleQueue, openQueue, playerRef } = useAudioContext();
@@ -43,6 +45,8 @@ const Player = () => {
           <AudioPlayer />
         </div>
         <div className='player-right'>
+          <AudioLyric />
+          <AudioPlaybackRate />
           <AudioVolume />
           <div className='divider'></div>
           <div className='queue'>

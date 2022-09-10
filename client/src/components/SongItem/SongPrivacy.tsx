@@ -10,28 +10,13 @@ import { PrivacyMenu } from './style';
 import { toast } from 'react-toastify';
 import { logout } from '../../redux/auth/authSlice';
 import { useAppDispatch } from '../../redux/hooks';
+import { privacyOptions } from '../../constants/options';
 
 interface Props {
   song_id: string;
   initial_privacy: SongPrivacy;
   onChangePrivacySuccess: (new_privacy: SongPrivacy) => void;
 }
-
-interface PrivacyOption {
-  label: string;
-  value: SongPrivacy;
-}
-
-const privacyOptions: PrivacyOption[] = [
-  {
-    label: 'Cá nhân',
-    value: 'private',
-  },
-  {
-    label: 'Công khai',
-    value: 'public',
-  },
-];
 
 const SongPrivary: React.FC<Props> = ({
   initial_privacy,

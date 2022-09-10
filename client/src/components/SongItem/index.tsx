@@ -138,14 +138,7 @@ const SongItem: React.FC<Props> = ({
 
   const renderSongIcon = (() => {
     if (current_song?.id !== song.id) {
-      return (
-        <BsFillPlayFill
-          className='play-state'
-          onClick={() => {
-            onClickSongAudio?.(song);
-          }}
-        />
-      );
+      return <BsFillPlayFill className='play-state' />;
     } else {
       if (audio_meta.is_audio_loading) {
         return (
@@ -163,27 +156,17 @@ const SongItem: React.FC<Props> = ({
 
       if (audio_meta.is_audio_playing) {
         return (
-          <span
-            className='play-state'
-            onClick={() => {
-              onClickSongAudio?.(song);
-            }}
-          >
+          <span className='play-state'>
             <AudioPlayingIcon width={20} />
           </span>
         );
       } else {
-        return (
-          <BsFillPlayFill
-            className='play-state'
-            onClick={() => {
-              onClickSongAudio?.(song);
-            }}
-          />
-        );
+        return <BsFillPlayFill className='play-state' />;
       }
     }
   })();
+
+  // return null
 
   return (
     <>
@@ -263,7 +246,15 @@ const SongItem: React.FC<Props> = ({
             </div>
           )}
 
-          <div className='song-thumbnail' onDoubleClick={disableClickEvent}>
+          <div
+            className='song-thumbnail'
+            onClick={() => {
+              if (!audio_meta.is_audio_loading) {
+                onClickSongAudio?.(song);
+              }
+            }}
+            onDoubleClick={disableClickEvent}
+          >
             <img src={song.thumbnail} alt='' />
             <div className='opacity'></div>
             {renderSongIcon}

@@ -25,6 +25,12 @@ export const Container = styled.div`
     &:hover {
       background-color: hsla(0, 0%, 100%, 0.1);
     }
+
+    &:disabled {
+      box-shadow: none;
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
   }
 
   & .play-state {

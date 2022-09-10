@@ -52,7 +52,9 @@ const EditSongForm: React.FC<Props> = ({ closeEditSongModal, editedSong }) => {
   const handleSubmit = async (values: FormState) => {
     let trimValues = trimData(values);
     const { category, ...rest } = trimValues;
-    const belong_categories = category.split(',');
+    const belong_categories = category
+      .split(',')
+      .filter((id: string) => Boolean(id));
     if (editedSong) {
       try {
         await editSong({

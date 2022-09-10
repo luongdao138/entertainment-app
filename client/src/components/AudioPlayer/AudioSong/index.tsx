@@ -8,6 +8,7 @@ import { getAudioCurrentSongSelector } from '../../../redux/audioPlayer/audioPla
 import { logout } from '../../../redux/auth/authSlice';
 import { useAppDispatch, useAppSelector } from '../../../redux/hooks';
 import { changeFavourite } from '../../../redux/song/songActions';
+import { disableClickEvent } from '../../../utils/common';
 import LoginRequired from '../../LoginRequired';
 import SongItemMenu from '../../SongItemMenu';
 import { Container } from './style';
@@ -100,10 +101,7 @@ const AudioSong: React.FC<Props> = () => {
             boxShadow: 'none',
           },
         }}
-        onClick={(e) => {
-          e.preventDefault();
-          e.stopPropagation();
-        }}
+        onClick={disableClickEvent}
       >
         <SongItemMenu
           song={current_song}

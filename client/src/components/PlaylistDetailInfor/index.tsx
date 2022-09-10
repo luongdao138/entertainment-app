@@ -12,6 +12,7 @@ import { useAudioContext } from '../../context/AudioContext';
 import { useUploadPlaylistContext } from '../../context/UploadPlaylistContext';
 import {
   getAudioCurrentPlaylistSelector,
+  getAudioCurrentSongSelector,
   getAudioMetaSelector,
 } from '../../redux/audioPlayer/audioPlayerSelectors';
 import { logout } from '../../redux/auth/authSlice';
@@ -42,6 +43,7 @@ const PlaylistDetailInfor: React.FC<Props> = ({
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const current_playlist = useAppSelector(getAudioCurrentPlaylistSelector);
+  const current_song = useAppSelector(getAudioCurrentSongSelector);
 
   const { changeToEditMode, setEditedPlaylist, openUploadPlaylistForm } =
     useUploadPlaylistContext();
@@ -55,7 +57,9 @@ const PlaylistDetailInfor: React.FC<Props> = ({
     useAppSelector(getAudioMetaSelector);
 
   const is_playing =
-    is_audio_playing && current_playlist?.id === playlist_detail.id;
+    is_audio_playing &&
+    current_playlist?.id === playlist_detail.id &&
+    songs.some((s) => s.id === current_song?.id);
 
   const onClickSongAudio = () => {
     if (is_audio_loading) return;
@@ -80,6 +84,7 @@ const PlaylistDetailInfor: React.FC<Props> = ({
         playlist_play_random: playlist_detail?.is_owner
           ? playlist_detail.play_random
           : undefined,
+        playlist_songs: songs,
       });
     } else {
       // ngược lại, thay đổi trạng thái play/pause của bài hát đang được phát

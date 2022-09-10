@@ -5,7 +5,7 @@ const getRoot = (state: RootState) => state.audioPlayer;
 
 export const getAudioVolumeSelector = createSelector(
   getRoot,
-  (state) => state.volume
+  (state) => state.audio_state.volume
 );
 
 export const getAudioCurrentSongSelector = createSelector(

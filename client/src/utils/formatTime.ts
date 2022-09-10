@@ -6,7 +6,7 @@ export const formatSongDuration = (time: number): string => {
 
   if (time >= 60 * 60) {
     const hours = Math.floor(time / (60 * 60));
-    const leftSeconds = time % (60 * 60);
+    const leftSeconds = Math.floor(time % (60 * 60));
     const minutes = Math.floor(leftSeconds / 60);
     const seconds = leftSeconds % 60;
 
@@ -15,7 +15,7 @@ export const formatSongDuration = (time: number): string => {
     )}:${formatTimeNumber(seconds)}`;
   } else {
     const minutes = Math.floor(time / 60);
-    const seconds = time % 60;
+    const seconds = Math.floor(time % 60);
 
     result = `${formatTimeNumber(minutes)}:${formatTimeNumber(seconds)}`;
   }

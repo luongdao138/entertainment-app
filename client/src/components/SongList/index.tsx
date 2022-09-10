@@ -41,8 +41,8 @@ import {
   removeSongOutOfFavourite,
   removeUploadSongs,
 } from '../../redux/song/songSlice';
-import { addSongsToPlayerList } from '../../redux/audioPlayer/audioPlayerSlice';
 import { useAudioContext } from '../../context/AudioContext';
+import { SortType } from '../../constants/options';
 
 interface Props {
   songs: Song[];
@@ -61,8 +61,6 @@ interface Props {
   onClickSongAudio?: (song_id: Song | SongDetail) => void;
   enable_select_multiple?: boolean;
 }
-
-export type SortType = 'default' | 'name_az' | 'name_za';
 
 const SongList: React.FC<Props> = ({
   songs,

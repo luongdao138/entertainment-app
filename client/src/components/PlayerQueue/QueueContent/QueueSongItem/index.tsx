@@ -38,7 +38,8 @@ const QueueSongItem: React.FC<Props> = ({
   const archive_list = useAppSelector(getAudioArchivedListSelector);
   const audio_list_songs = useAppSelector(getAudioCurrentListSongs);
   const current_song = useAppSelector(getAudioCurrentSongSelector);
-  const { is_audio_playing } = useAppSelector(getAudioMetaSelector);
+  const { is_audio_playing, is_audio_loading } =
+    useAppSelector(getAudioMetaSelector);
 
   const { handleClickQueueSong } = useAudioContext();
 
@@ -82,8 +83,7 @@ const QueueSongItem: React.FC<Props> = ({
   };
 
   const onClickQueueSong = () => {
-    if (song.queue_id) {
-      console.log('click queue song');
+    if (song.queue_id && !is_audio_loading) {
       handleClickQueueSong(song.queue_id);
     }
   };

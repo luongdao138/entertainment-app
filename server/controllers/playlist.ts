@@ -950,13 +950,6 @@ const playlistController = {
                   },
                 },
               },
-
-              // tìm những bài hát có người upload là 1 trong những người upload bài trong playlist
-              {
-                user_id: {
-                  in: pl_users,
-                },
-              },
             ],
           },
           include: {

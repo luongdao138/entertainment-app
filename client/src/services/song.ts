@@ -21,6 +21,7 @@ export interface Song {
   // audio_type?: AudioType;
   is_current_audio?: boolean;
   queue_id?: string;
+  has_lyric?: boolean;
 }
 
 export interface SongDetail extends Song {

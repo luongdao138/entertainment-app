@@ -36,12 +36,11 @@ const initialState: FormState = {
 };
 
 const validationSchema = Yup.object({
-  full_name: Yup.string()
-    .required('Họ tên không được để trống')
-    .matches(
-      fullNameRegex,
-      'Họ tên phải từ 3 đến 50 ký tự, chỉ bao gồm chữ hoa, chữ thường và số'
-    ),
+  full_name: Yup.string().required('Họ tên không được để trống'),
+  // .matches(
+  //   fullNameRegex,
+  //   'Họ tên phải từ 3 đến 50 ký tự, chỉ bao gồm chữ hoa, chữ thường và số'
+  // ),
 });
 
 const updateProfileMetaSelector = createMetaSelector(updateProfile);
