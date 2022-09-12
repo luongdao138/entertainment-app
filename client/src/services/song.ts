@@ -20,6 +20,7 @@ export interface Song {
   user_id?: string;
   // audio_type?: AudioType;
   has_lyric?: boolean;
+  lyric: { id: string } | null;
 
   queue_id?: string;
   is_current_audio?: boolean;
@@ -34,7 +35,17 @@ export interface SongDetail extends Song {
   };
   belong_categories: { id: string; name: string }[];
 }
-
+export interface Word {
+  start_time: number;
+  end_time: number;
+  data: string;
+}
+export interface Lyric {
+  status: number;
+  sentences: {
+    words: Word[];
+  }[];
+}
 export interface UploadSongParams {
   name: string;
   url: string;
@@ -78,6 +89,14 @@ export interface GetRecommendedSongParams {
 }
 export interface GetRecommendedSongResponse {
   songs: Song[];
+}
+
+export interface GetSongLyricParams {
+  song_id: string;
+}
+
+export interface GetSongLyricReponse {
+  data: Lyric;
 }
 
 export const uploadSong = async (
@@ -146,6 +165,16 @@ export const editSong = async (params: EditSongParams) => {
 export const deleteUploadSong = async (params: string) => {
   const res = await privateClient.delete(
     apiEndpoints.DELETE_UPLOAD_SONG.replace(':song_id', params)
+  );
+  return res.data;
+};
+
+export const getSongLyric = async (
+  params: GetSongLyricParams
+): Promise<GetSongLyricReponse> => {
+  const res = await privateClient.get<GetSongLyricReponse>(
+    apiEndpoints.GET_SONG_LYRIC,
+    { params }
   );
   return res.data;
 };

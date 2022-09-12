@@ -14,7 +14,8 @@ const AudioSeekbar = () => {
   const [current_time, setCurrentTime] = useState<number>(0);
 
   const { duration } = useAppSelector(getAudioStateSelector);
-  const { is_audio_loaded } = useAppSelector(getAudioMetaSelector);
+  const { is_audio_loaded, is_audio_error } =
+    useAppSelector(getAudioMetaSelector);
   const { audioRef } = useAudioContext();
   const [isTimePlayed, setIsTimePlayed] = useState<boolean>(true);
   const [temp_current_time, setTempCurrentTime] = useState<number | null>(null);
@@ -87,6 +88,7 @@ const AudioSeekbar = () => {
           value={duration > 0 ? (rendered_current_time * 100) / duration : 0}
           onChangeCommitted={handleOnChangeCommitted}
           onChange={handleOnChange}
+          disabled={is_audio_error}
           // onChangeCapture
         />
       </div>

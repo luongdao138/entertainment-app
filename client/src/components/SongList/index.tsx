@@ -61,6 +61,7 @@ interface Props {
   handleOpenDeleteConfirmModal?: () => void;
   onClickSongAudio?: (song_id: Song | SongDetail) => void;
   enable_select_multiple?: boolean;
+  scrollToCurrentSong?: boolean;
 }
 
 const SongList: React.FC<Props> = ({
@@ -79,6 +80,7 @@ const SongList: React.FC<Props> = ({
   handleOpenDeleteConfirmModal,
   enable_select_multiple,
   onClickSongAudio,
+  scrollToCurrentSong,
 }) => {
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
   const [moreAnchorEl, setMoreAnchorEl] = useState<HTMLElement | null>(null);
@@ -207,18 +209,6 @@ const SongList: React.FC<Props> = ({
         playlist_id,
         new_songs: new_songs.map((ns) => ns.id),
       });
-      // try {
-      //   await changeSongPositionInPlaylist({
-      //     playlist_id,
-      //     new_songs: new_songs.map((ns) => ns.id),
-      //   });
-      // } catch (error: any) {
-      //   toast.error(error.response?.data.msg || 'Có lỗi xảy ra');
-      //   if (error.response?.status === 403) {
-      //     localStorage.removeItem('music_token');
-      //     dispatch(logout());
-      //   }
-      // }
     }
   };
 
@@ -518,6 +508,7 @@ const SongList: React.FC<Props> = ({
                             onClickSongAudio={onClickSongAudio}
                             onAddSongsToPlayNext={onAddSongsToPlayNext}
                             onAddSongsToPlayerQueue={onAddSongsToPlayerQueue}
+                            scrollToCurrentSong={scrollToCurrentSong}
                           />
                         </div>
                       )}

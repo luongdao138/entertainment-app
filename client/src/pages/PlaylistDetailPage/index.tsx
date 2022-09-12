@@ -26,8 +26,8 @@ import useReloadWhenLogout from '../../hooks/useReloadWhenLogout';
 import { useAudioContext } from '../../context/AudioContext';
 import { AudioSong } from '../../redux/audioPlayer/audioPlayerSlice';
 import {
+  getAudioCurrentListSongs,
   getAudioCurrentPlaylistSelector,
-  getAudioCurrentSongSelector,
 } from '../../redux/audioPlayer/audioPlayerSelectors';
 import _ from 'lodash';
 import { clearData } from '../../redux/playlistDetail/playlistDetailSlice';
@@ -44,10 +44,10 @@ const PlaylistDetailPage = () => {
 
   const playlist_detail = useAppSelector(getPlaylistDetailSelector);
   const playlist_songs = useAppSelector(getPlaylistSongsSelector);
+  const audio_list_songs = useAppSelector(getAudioCurrentListSongs);
 
   const is_own_playlist = authUser?.id === playlist_detail?.creator.id;
   const current_playlist = useAppSelector(getAudioCurrentPlaylistSelector);
-  const current_song = useAppSelector(getAudioCurrentSongSelector);
 
   const getPlaylistDetailMeta = useAppSelector(
     createMetaSelector(getPlaylistDetailAction)
@@ -60,6 +60,9 @@ const PlaylistDetailPage = () => {
     getPlaylistDetailMeta.loaded && getPlaylistSongsMeta.loaded;
 
   const is_current_audio = playlist_detail?.id === current_playlist?.id;
+  const is_current_queue_song =
+    audio_list_songs.find((s) => s.is_current_audio)?.queue_playlist_id ===
+    playlist_detail?.id;
 
   const { handleClickSongAudio } = useAudioContext();
 
@@ -146,7 +149,6 @@ const PlaylistDetailPage = () => {
       playlist: playlist_detail,
       list_songs: playlist_songs,
       song,
-      playlist_songs,
     });
   };
 
@@ -174,6 +176,7 @@ const PlaylistDetailPage = () => {
                 handleRemoveSongOutOfPlaylist={handleRemoveSongOutOfPlaylist}
                 enable_select_multiple
                 onClickSongAudio={onClickSongAudio}
+                scrollToCurrentSong={is_current_queue_song}
               />
 
               <div className='song-count'>

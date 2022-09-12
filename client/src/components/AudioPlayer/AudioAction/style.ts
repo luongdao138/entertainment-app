@@ -30,6 +30,12 @@ export const Container = styled.div`
       border-color: #c662ef;
       color: #c662ef;
     }
+
+    &:disabled {
+      box-shadow: none;
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
   }
 `;
 

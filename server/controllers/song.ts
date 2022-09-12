@@ -67,6 +67,11 @@ const songController = {
             id: true,
           },
         },
+        lyric: {
+          select: {
+            id: true,
+          },
+        },
       },
 
       orderBy: {
@@ -124,6 +129,11 @@ const songController = {
         song: {
           include: {
             belong_categories: {
+              select: {
+                id: true,
+              },
+            },
+            lyric: {
               select: {
                 id: true,
               },
@@ -363,6 +373,11 @@ const songController = {
               name: true,
             },
           },
+          lyric: {
+            select: {
+              id: true,
+            },
+          },
         },
       });
 
@@ -509,78 +524,132 @@ const songController = {
       });
     }
   },
+
+  // lấy những bài hát gợi ý của một bài hát nào đó
   async getRecommendedSongs(req: any, res: Response) {
-    const user = req.user;
-    const { song_id } = req.params;
-    const { exclude_song_ids } = req.body;
+    try {
+      const user = req.user;
+      const { song_id } = req.params;
+      const { exclude_song_ids } = req.body;
 
-    const song = await prisma.song.findFirst({
-      where: {
-        id: song_id,
-        is_deleted: false,
-        OR: [
-          {
-            privacy: 'public',
-          },
-          {
-            privacy: 'private',
-            user_id: user.id,
-          },
-        ],
-      },
-      include: {
-        belong_categories: {
-          select: {
-            id: true,
-          },
+      const song = await prisma.song.findFirst({
+        where: {
+          id: song_id,
+          is_deleted: false,
+          OR: [
+            {
+              privacy: 'public',
+            },
+            {
+              privacy: 'private',
+              user_id: user.id,
+            },
+          ],
         },
-      },
-    });
-
-    if (!song) return res.status(404).json({ msg: 'Bài hát không tồn tại' });
-
-    const song_categories = song.belong_categories.map((bc) => bc.id);
-    const song_ids = exclude_song_ids ?? [];
-
-    let recommended_songs = await prisma.song.findMany({
-      where: {
-        id: {
-          notIn: [song.id, ...song_ids],
-        },
-        is_deleted: false,
-        privacy: 'public',
-        belong_categories: {
-          some: {
-            id: {
-              in: song_categories,
+        include: {
+          belong_categories: {
+            select: {
+              id: true,
+            },
+          },
+          lyric: {
+            select: {
+              id: true,
             },
           },
         },
-        user_id: {
-          not: user.id,
-        },
-      },
-      include: {
-        belong_categories: {
-          select: {
-            id: true,
+      });
+
+      if (!song) return res.status(404).json({ msg: 'Bài hát không tồn tại' });
+
+      const song_categories = song.belong_categories.map((bc) => bc.id);
+      const song_ids = exclude_song_ids ?? [];
+
+      let recommended_songs = await prisma.song.findMany({
+        where: {
+          id: {
+            notIn: [song.id, ...song_ids],
+          },
+          is_deleted: false,
+          privacy: 'public',
+          belong_categories: {
+            some: {
+              id: {
+                in: song_categories,
+              },
+            },
+          },
+          user_id: {
+            not: user.id,
           },
         },
-      },
-      take: 20,
-      // cẩn bổ sung orderBy
-    });
+        include: {
+          belong_categories: {
+            select: {
+              id: true,
+            },
+          },
+        },
+        take: 20,
+        // cẩn bổ sung orderBy
+      });
 
-    const user_favourite_songs = await prisma.favouriteSong.findMany({
-      where: { user_id: user.id },
-      select: { song_id: true },
-    });
-    recommended_songs = recommended_songs.map((song) => ({
-      ...song,
-      is_liked: user_favourite_songs.some((fs) => fs.song_id === song.id),
-    }));
+      const user_favourite_songs = await prisma.favouriteSong.findMany({
+        where: { user_id: user.id },
+        select: { song_id: true },
+      });
+      recommended_songs = recommended_songs.map((song) => ({
+        ...song,
+        is_liked: user_favourite_songs.some((fs) => fs.song_id === song.id),
+      }));
 
-    return res.json({ songs: recommended_songs });
+      return res.json({ songs: recommended_songs });
+    } catch (error) {
+      console.log(error);
+      return res.status(500).json({
+        msg: 'Có lỗi xảy ra',
+      });
+    }
+  },
+
+  // lấy ra lyric của một bài hát
+  async getSongLyric(req: any, res: Response) {
+    try {
+      const user = req.user;
+      const { song_id } = req.query;
+
+      console.log({ song_id });
+
+      const song = await prisma.song.findFirst({
+        where: { id: song_id, is_deleted: false },
+        select: {
+          lyric: {
+            select: {
+              sentences: {
+                select: {
+                  words: {
+                    select: {
+                      data: true,
+                      end_time: true,
+                      start_time: true,
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      });
+
+      if (!song) return res.status(404).json({ msg: 'Bài hát không tồn tại' });
+
+      return res.json({ data: song.lyric });
+    } catch (error) {
+      console.log(error);
+      return res.status(500).json({
+        msg: 'Có lỗi xảy ra',
+      });
+    }
   },
 };
 

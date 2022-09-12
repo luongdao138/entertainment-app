@@ -254,6 +254,12 @@ app.get('/', async (req, res) => {
   //   },
   // });
 
+  await prisma.lyric.updateMany({
+    data: {
+      status: 1,
+    },
+  });
+
   return res.json({ msg: 'Success' });
 });
 

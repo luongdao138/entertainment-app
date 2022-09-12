@@ -55,9 +55,10 @@ export interface AddSongToPlayNextParams {
 
 interface ContextState {
   openPlayer: boolean;
-  // handleOpenPlayer: () => void;
-  // handleClosePlayer: () => void;
   openQueue: boolean;
+  audio_alarm: number | null;
+  turnOnAudioAlarm: (time: number) => void;
+  turnOffAudioAlarm: () => void;
   handleToggleQueue: () => void;
   handleCloseQueue: () => void;
   playerRef: React.RefObject<HTMLDivElement>;
@@ -82,6 +83,7 @@ const AudioContext = React.createContext<ContextState>({} as ContextState);
 
 const AudioContextProvider = ({ children }: { children: React.ReactNode }) => {
   const [openQueue, setOpenQueue] = useState<boolean>(false);
+  const [audio_alarm, setAudioAlarm] = useState<number | null>(null);
   const { authUser } = useAuthContext();
 
   const current_song = useAppSelector(getAudioCurrentSongSelector);
@@ -102,6 +104,15 @@ const AudioContextProvider = ({ children }: { children: React.ReactNode }) => {
   };
   const handleCloseQueue = () => {
     setOpenQueue(false);
+  };
+
+  const turnOnAudioAlarm = (time: number) => {
+    setAudioAlarm(time);
+  };
+
+  const turnOffAudioAlarm = () => {
+    console.log('Reset audio alarm');
+    setAudioAlarm(null);
   };
 
   const resetLastSong = () => {
@@ -952,6 +963,9 @@ const AudioContextProvider = ({ children }: { children: React.ReactNode }) => {
         handleChangeAudioPlaybackRate,
         handleMoveToNextSong,
         handleMoveToPrevSong,
+        audio_alarm,
+        turnOffAudioAlarm,
+        turnOnAudioAlarm,
       }}
     >
       {children}

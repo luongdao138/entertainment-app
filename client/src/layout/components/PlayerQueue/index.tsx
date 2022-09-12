@@ -1,5 +1,5 @@
+import React, { useState } from 'react';
 import { ClickAwayListener } from '@mui/material';
-import React from 'react';
 import QueueContent from '../../../components/PlayerQueue/QueueContent';
 import PlayerQueueHeader from '../../../components/PlayerQueue/QueueHeader';
 import { useAudioContext } from '../../../context/AudioContext';
@@ -10,6 +10,7 @@ import { Container } from './style';
 const PlayerQueue = () => {
   const { openQueue, openPlayer, playerRef, handleCloseQueue } =
     useAudioContext();
+  const [openAlarm, setOpenAlarm] = useState<boolean>(false);
 
   const current_song = useAppSelector(getAudioCurrentSongSelector);
 
@@ -17,6 +18,14 @@ const PlayerQueue = () => {
     if (!playerRef.current?.contains(e.target as Node | null)) {
       // handleCloseQueue();
     }
+  };
+
+  const openAlarmModal = () => {
+    setOpenAlarm(true);
+  };
+
+  const closeAlarmModal = () => {
+    setOpenAlarm(false);
   };
 
   // phải có audio player và bài hát rồi mới có queue

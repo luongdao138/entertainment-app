@@ -620,6 +620,11 @@ const playlistController = {
                   id: true,
                 },
               },
+              lyric: {
+                select: {
+                  id: true,
+                },
+              },
             },
           },
           position: true,
@@ -832,6 +837,11 @@ const playlistController = {
             select: {
               belong_categories: {
                 select: { id: true },
+              },
+              lyric: {
+                select: {
+                  id: true,
+                },
               },
               user_id: true,
             },

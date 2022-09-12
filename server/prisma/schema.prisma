@@ -1,6 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -11,170 +8,161 @@ datasource db {
 }
 
 model User {
-  id                    String    @id @default(uuid())
+  id                    String              @id @default(uuid())
   full_name             String
-  profile_photo         String    @default("https://ca.slack-edge.com/T2JUP6F0A-U03L7HL9WBF-g6ea89c2bc88-512")
-  email                 String    @unique
+  profile_photo         String              @default("https://ca.slack-edge.com/T2JUP6F0A-U03L7HL9WBF-g6ea89c2bc88-512")
+  email                 String              @unique
   phone                 String?
-  date_of_birth         DateTime?
-  address               String?
-  title                 String?
   password              String
   refresh_token         String?
-  forgot_password_token String?
+  is_premium            Boolean             @default(false)
+  is_verified           Boolean             @default(false)
+  address               String?
+  date_of_birth         DateTime?
+  title                 String?
   verify_token          String?
-  is_verified           Boolean   @default(false)
-  is_premium            Boolean   @default(false)
-
-  songs           Song[]          @relation("uploaded")
-  favourite_songs FavouriteSong[]
-
-  playlists  Playlist[] @relation("created")
-  is_deleted Boolean    @default(false)
-  deleted_at DateTime?
-
-  favourite_playlists FavouritePlaylist[]
-}
-
-enum Privacy {
-  private
-  public
+  forgot_password_token String?
+  is_deleted            Boolean             @default(false)
+  deleted_at            DateTime?
+  favourite_playlists   FavouritePlaylist[]
+  favourite_songs       FavouriteSong[]
+  playlists             Playlist[]          @relation("created")
+  songs                 Song[]              @relation("uploaded")
 }
 
 model Song {
-  id              String  @id @default(uuid())
-  url             String
-  thumbnail       String
-  name            String
-  normalized_name String?
-  singer_name     String
-  duration        Float
-
-  user       User     @relation("uploaded", fields: [user_id], references: [id])
-  user_id    String
-  created_at DateTime @default(now())
-  updated_at DateTime @updatedAt
-
-  privacy   Privacy   @default(private)
-  public_at DateTime?
-
-  liked_by         FavouriteSong[]
-  is_deleted       Boolean         @default(false)
-  deleted_at       DateTime?
-  belong_playlists PlaylistSong[]
-
-  belong_categories Category[]
+  id                String          @id @default(uuid())
+  url               String
+  thumbnail         String
+  name              String
+  singer_name       String
+  user_id           String
+  created_at        DateTime        @default(now())
+  updated_at        DateTime        @updatedAt
+  duration          Float
+  privacy           Privacy         @default(private)
+  public_at         DateTime?
+  is_deleted        Boolean         @default(false)
+  deleted_at        DateTime?
+  normalized_name   String?
+  user              User            @relation("uploaded", fields: [user_id], references: [id])
+  liked_by          FavouriteSong[]
   lyric             Lyric?
+  belong_playlists  PlaylistSong[]
+  belong_categories Category[]
 }
 
 model Playlist {
-  id               String  @id @default(uuid())
-  thumbnail        String  @default("https://photo-zmp3.zmdcdn.me/album_default.png")
+  id               String              @id @default(uuid())
   title            String
+  creator_id       String
+  privacy          Privacy             @default(private)
+  play_random      Boolean             @default(true)
+  public_at        DateTime?
+  created_at       DateTime            @default(now())
+  updated_at       DateTime            @updatedAt
+  thumbnail        String              @default("https://photo-zmp3.zmdcdn.me/album_default.png")
+  is_deleted       Boolean             @default(false)
+  deleted_at       DateTime?
   normalized_title String?
-
-  creator    User           @relation("created", fields: [creator_id], references: [id])
-  creator_id String
-  has_songs  PlaylistSong[]
-
-  privacy     Privacy   @default(private)
-  play_random Boolean   @default(true)
-  public_at   DateTime?
-  created_at  DateTime  @default(now())
-  updated_at  DateTime  @updatedAt
-  is_deleted  Boolean   @default(false)
-  deleted_at  DateTime?
-
-  artists    Artist[]
-  categories Category[]
-
-  liked_by FavouritePlaylist[]
+  creator          User                @relation("created", fields: [creator_id], references: [id])
+  liked_by         FavouritePlaylist[]
+  has_songs        PlaylistSong[]
+  artists          Artist[]
+  categories       Category[]
 }
 
 model PlaylistSong {
-  playlist    Playlist @relation(fields: [playlist_id], references: [id])
   playlist_id String
-  song        Song     @relation(fields: [song_id], references: [id])
   song_id     String
   created_at  DateTime @default(now())
   position    Int
+  playlist    Playlist @relation(fields: [playlist_id], references: [id])
+  song        Song     @relation(fields: [song_id], references: [id])
 
   @@id([playlist_id, song_id])
 }
 
 model FavouritePlaylist {
-  user        User     @relation(fields: [user_id], references: [id])
   user_id     String
-  playlist    Playlist @relation(fields: [playlist_id], references: [id])
   playlist_id String
   created_at  DateTime @default(now())
+  playlist    Playlist @relation(fields: [playlist_id], references: [id])
+  user        User     @relation(fields: [user_id], references: [id])
 
   @@id([user_id, playlist_id])
 }
 
 model FavouriteSong {
-  user       User     @relation(fields: [user_id], references: [id])
   user_id    String
-  song       Song     @relation(fields: [song_id], references: [id])
   song_id    String
   created_at DateTime @default(now())
+  song       Song     @relation(fields: [song_id], references: [id])
+  user       User     @relation(fields: [user_id], references: [id])
 
   @@id([user_id, song_id])
 }
 
 model Artist {
-  id        String    @id @default(uuid())
-  name      String
-  thumbnail String    @default("https://photo-zmp3.zmdcdn.me/artist_default_2.png")
-  birthday  DateTime?
-  biography String?
-  national  String?
-  realname  String?
-
-  play_lists Playlist[]
-
-  created_at DateTime  @default(now())
-  updated_at DateTime  @updatedAt
-  is_deleted Boolean   @default(false)
+  id         String     @id @default(uuid())
+  name       String
+  thumbnail  String     @default("https://photo-zmp3.zmdcdn.me/artist_default_2.png")
+  birthday   DateTime?
+  biography  String?
+  national   String?
+  realname   String?
+  created_at DateTime   @default(now())
+  updated_at DateTime   @updatedAt
+  is_deleted Boolean    @default(false)
   deleted_at DateTime?
+  play_lists Playlist[]
 }
 
 model Category {
-  id        String     @id @default(uuid())
-  name      String
-  thumbnail String?
-  cover     String?
-  parent    Category?  @relation("NestCategory", fields: [parentId], references: [id])
-  parentId  String?
-  children  Category[] @relation("NestCategory")
-  playlists Playlist[]
-
-  created_at DateTime  @default(now())
-  updated_at DateTime  @updatedAt
-  is_deleted Boolean   @default(false)
+  id         String     @id @default(uuid())
+  name       String
+  thumbnail  String?
+  parentId   String?
+  created_at DateTime   @default(now())
+  updated_at DateTime   @updatedAt
+  is_deleted Boolean    @default(false)
   deleted_at DateTime?
-
-  has_songs Song[]
+  cover      String?
+  parent     Category?  @relation("NestCategory", fields: [parentId], references: [id])
+  children   Category[] @relation("NestCategory")
+  playlists  Playlist[]
+  has_songs  Song[]
 }
 
 model Lyric {
+  id         String     @id @default(uuid())
+  created_at DateTime   @default(now())
+  updated_at DateTime   @updatedAt
+  song_id    String     @unique
+  status     Int?
+  song       Song       @relation(fields: [song_id], references: [id])
+  sentences  Sentence[]
+}
+
+model Sentence {
   id         String   @id @default(uuid())
-  file       String
+  lyric_id   String
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
-
-  words Word[]
-
-  song    Song   @relation(fields: [song_id], references: [id])
-  song_id String @unique
+  lyric      Lyric    @relation(fields: [lyric_id], references: [id])
+  words      Word[]
 }
 
 model Word {
-  id         String @id @default(uuid())
-  start_time BigInt
-  end_time   BigInt
-  data       String
+  id          String   @id @default(uuid())
+  start_time  Int
+  end_time    Int
+  data        String
+  sentence_id String
+  sentence    Sentence @relation(fields: [sentence_id], references: [id])
+}
 
-  lyric    Lyric  @relation(fields: [lyric_id], references: [id])
-  lyric_id String
+enum Privacy {
+  private
+  public
 }

@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React, { useRef, useEffect } from 'react';
 import { Container } from './style';
 import { FiMusic } from 'react-icons/fi';
 import { BsFillPlayFill } from 'react-icons/bs';
@@ -42,6 +42,7 @@ interface Props {
   onClickSongAudio?: (song_id: Song | SongDetail) => void;
   onAddSongsToPlayerQueue: (song: AudioSong) => void;
   onAddSongsToPlayNext: (song: AudioSong) => void;
+  scrollToCurrentSong?: boolean;
 }
 
 const SongItem: React.FC<Props> = ({
@@ -65,6 +66,7 @@ const SongItem: React.FC<Props> = ({
   onClickSongAudio,
   onAddSongsToPlayNext,
   onAddSongsToPlayerQueue,
+  scrollToCurrentSong,
 }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const current_song = useAppSelector(getAudioCurrentSongSelector);
@@ -131,15 +133,19 @@ const SongItem: React.FC<Props> = ({
   };
 
   const handleDoubleClickSong = function (e: React.MouseEvent<HTMLDivElement>) {
-    console.log({
-      currentTarget: e.currentTarget,
-      target: e.target,
-      ref: containerRef.current,
-      isEqual: e.currentTarget === e.target,
-    });
-
     onClickSongAudio?.(song);
   };
+
+  useEffect(() => {
+    if (current_song?.id === song.id && scrollToCurrentSong) {
+      if (containerRef.current) {
+        scrollTo({
+          top: containerRef.current.offsetTop - 200,
+          behavior: 'smooth',
+        });
+      }
+    }
+  }, []);
 
   const renderSongIcon = (() => {
     if (current_song?.id !== song.id) {
@@ -171,7 +177,7 @@ const SongItem: React.FC<Props> = ({
     }
   })();
 
-  // return null
+  // return null;
 
   return (
     <>

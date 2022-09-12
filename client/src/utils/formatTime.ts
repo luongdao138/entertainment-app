@@ -1,7 +1,18 @@
-const formatTimeNumber = (number: number) =>
-  number < 10 ? `0${number}` : number;
+export const formatTimeNumber = (number: number) =>
+  number < 10 ? `0${number}` : `${number}`;
 
-export const formatSongDuration = (time: number): string => {
+export const convertTimeToNumber = (time: string) => {
+  let new_val = time;
+  if (new_val.startsWith('0')) {
+    new_val = new_val.slice(1);
+  }
+  return Number(new_val);
+};
+
+export const formatSongDuration = (
+  time: number,
+  hour_mode?: boolean
+): string => {
   let result = '';
 
   if (time >= 60 * 60) {
@@ -17,7 +28,9 @@ export const formatSongDuration = (time: number): string => {
     const minutes = Math.floor(time / 60);
     const seconds = Math.floor(time % 60);
 
-    result = `${formatTimeNumber(minutes)}:${formatTimeNumber(seconds)}`;
+    result = hour_mode
+      ? `00:${formatTimeNumber(minutes)}:${formatTimeNumber(seconds)}`
+      : `${formatTimeNumber(minutes)}:${formatTimeNumber(seconds)}`;
   }
 
   return result;

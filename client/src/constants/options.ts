@@ -21,6 +21,11 @@ export enum ReplayMode {
   ONE,
 }
 
+export interface AlarmTimeOption {
+  label: string;
+  value: number;
+}
+
 export const privacyOptions: PrivacyOption[] = [
   {
     label: 'Cá nhân',
@@ -89,3 +94,17 @@ export const playbackRateOptions: AudioPlaybackRateType[] = [
     value: 2.0,
   },
 ];
+
+export const hourOptions: AlarmTimeOption[] = Array(13)
+  .fill({})
+  .map((_, index) => ({
+    label: `${index < 10 ? `0${index}` : index} giờ`,
+    value: index,
+  }));
+
+export const minuteOptions: AlarmTimeOption[] = Array(12)
+  .fill({})
+  .map((_, index) => ({
+    label: `${index * 5 < 10 ? `0${index * 5}` : index * 5} phút`,
+    value: index * 5,
+  }));

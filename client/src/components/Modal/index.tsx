@@ -11,7 +11,9 @@ const Modal: React.FC<Props> = ({ open, children, ...props }) => {
     <Dialog
       open={open}
       fullWidth
-      PaperProps={{ sx: { backgroundColor: 'transparent' } }}
+      PaperProps={{
+        sx: { backgroundColor: 'transparent' },
+      }}
       {...props}
     >
       {children}
