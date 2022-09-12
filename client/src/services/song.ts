@@ -19,9 +19,11 @@ export interface Song {
   belong_categories: { id: string }[];
   user_id?: string;
   // audio_type?: AudioType;
-  is_current_audio?: boolean;
-  queue_id?: string;
   has_lyric?: boolean;
+
+  queue_id?: string;
+  is_current_audio?: boolean;
+  queue_playlist_id?: string | null;
 }
 
 export interface SongDetail extends Song {

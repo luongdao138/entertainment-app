@@ -7,7 +7,7 @@ import {
   changeFavourite,
   getRecommendedSongsAction,
 } from '../song/songActions';
-import { AudioPlaybackRateType } from '../../constants/options';
+import { AudioPlaybackRateType, ReplayMode } from '../../constants/options';
 
 export type AudioSong = Song | SongDetail;
 export type AudioPlaylist = Playlist | PlaylistDetail;
@@ -16,9 +16,11 @@ interface SliceState {
     is_shuffle: boolean;
     is_from_recommend: boolean;
     is_autoplay_recommend: boolean;
+    replay_mode: ReplayMode;
     volume: number;
     duration: number;
     current_time: number;
+    is_last_song: boolean;
     playback_rate: AudioPlaybackRateType;
   };
   current_song: AudioSong | null;
@@ -75,6 +77,8 @@ const initialState: SliceState = {
       value: 1.0,
       label: '1x',
     },
+    replay_mode: ReplayMode.NONE,
+    is_last_song: false,
   },
   next_list: {
     data: [],
@@ -164,28 +168,37 @@ const audioPlayerSlice = createSlice({
     ) {
       state.audio_meta = { ...state.audio_meta, ...action.payload.new_meta };
     },
-    addSongsToPlayerList(state, action: PayloadAction<{ songs: AudioSong[] }>) {
+    addSongsToPlayerList(
+      state,
+      action: PayloadAction<{ songs: AudioSong[]; queue_playlist_id?: string }>
+    ) {
       // if (!state.audio_state.is_from_recommend) {
       const new_songs = action.payload.songs.map((s) => ({
         ...s,
         is_current_audio: false,
         queue_id: uuid(),
+        queue_playlist_id: action.payload.queue_playlist_id,
       }));
       state.next_list.data = state.next_list.data.concat(new_songs);
       state.audio_list_songs = state.audio_list_songs.concat(new_songs);
       // }
     },
-    addSongToPlayNext(state, action: PayloadAction<{ song: AudioSong }>) {
+    addSongToPlayNext(
+      state,
+      action: PayloadAction<{ song: AudioSong; queue_playlist_id?: string }>
+    ) {
       // if (!state.audio_state.is_from_recommend) {
       let new_song: AudioSong = {
         ...action.payload.song,
         is_current_audio: false,
         queue_id: uuid(),
+        queue_playlist_id: action.payload.queue_playlist_id,
       };
       state.next_list.data.unshift(new_song);
       state.audio_list_songs.push(new_song);
       // }
     },
+    changeCurrentPlaylistSongs() {},
     resetAudioPlayer(state) {
       state.archived_list.data = [];
       state.next_list.data = [];

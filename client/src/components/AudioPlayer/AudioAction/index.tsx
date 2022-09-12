@@ -7,6 +7,7 @@ import {
   BsFillSkipStartFill,
 } from 'react-icons/bs';
 import { FiRepeat } from 'react-icons/fi';
+import { TbRepeatOnce } from 'react-icons/tb';
 import {
   getAudioArchivedListSelector,
   getAudioMetaSelector,
@@ -14,10 +15,11 @@ import {
 } from '../../../redux/audioPlayer/audioPlayerSelectors';
 import { changeAudioCurrentState } from '../../../redux/audioPlayer/audioPlayerSlice';
 import { useAppDispatch, useAppSelector } from '../../../redux/hooks';
-import { Container } from './style';
+import { ActionItemButton, Container } from './style';
 import { RotatingLines } from 'react-loader-spinner';
 import { disableClickEvent } from '../../../utils/common';
 import { useAudioContext } from '../../../context/AudioContext';
+import { ReplayMode } from '../../../constants/options';
 
 const AudioAction = () => {
   const dispatch = useAppDispatch();
@@ -43,6 +45,22 @@ const AudioAction = () => {
     );
   };
 
+  const getReplaceIcon = (() => {
+    switch (audio_state.replay_mode) {
+      case ReplayMode.NONE:
+        return <FiRepeat />;
+
+      case ReplayMode.ALL:
+        return <FiRepeat />;
+
+      case ReplayMode.ONE:
+        return <TbRepeatOnce />;
+
+      default:
+        return <></>;
+    }
+  })();
+
   const handleClickPlayButton = (e: React.MouseEvent<HTMLElement>) => {
     disableClickEvent(e);
     if (audio_meta.is_audio_loading) return;
@@ -64,25 +82,38 @@ const AudioAction = () => {
     handleMoveToPrevSong();
   };
 
+  const handleChangeReplaceMode = (e: React.MouseEvent<HTMLElement>) => {
+    disableClickEvent(e);
+    let new_play_mode: ReplayMode = ReplayMode.NONE;
+    if (audio_state.replay_mode === ReplayMode.NONE)
+      new_play_mode = ReplayMode.ALL;
+    if (audio_state.replay_mode === ReplayMode.ALL)
+      new_play_mode = ReplayMode.ONE;
+
+    dispatch(
+      changeAudioCurrentState({ new_state: { replay_mode: new_play_mode } })
+    );
+  };
+
   return (
     <Container>
       {/* Shuffle songs */}
-      <button
-        style={{ color: audio_state.is_shuffle ? '#c662ef' : '#fff' }}
+      <ActionItemButton
+        active={audio_state.is_shuffle}
         className='action-item'
         onClick={handleClickShuffle}
       >
         <BsShuffle />
-      </button>
+      </ActionItemButton>
 
       {/* Go to previous song in queue */}
-      <button
+      <ActionItemButton
         className='action-item'
         onClick={handleClickPrevSong}
         disabled={audio_meta.is_audio_error || is_first_song}
       >
         <BsFillSkipStartFill className='big-icon' />
-      </button>
+      </ActionItemButton>
 
       {/* Play or pause song */}
       <button
@@ -107,19 +138,23 @@ const AudioAction = () => {
         {/* <BsFillPlayFill /> */}
       </button>
 
-      {/* G oto next song in playlist queue */}
-      <button
+      {/* Goto next song in playlist queue */}
+      <ActionItemButton
         onClick={handleClickNextSong}
         className='action-item'
         disabled={audio_meta.is_audio_error}
       >
         <BsFillSkipEndFill className='big-icon' />
-      </button>
+      </ActionItemButton>
 
       {/* Replay all */}
-      <button className='action-item'>
-        <FiRepeat />
-      </button>
+      <ActionItemButton
+        active={audio_state.replay_mode !== ReplayMode.NONE}
+        className='action-item'
+        onClick={handleChangeReplaceMode}
+      >
+        {getReplaceIcon}
+      </ActionItemButton>
     </Container>
   );
 };

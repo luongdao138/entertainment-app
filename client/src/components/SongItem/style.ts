@@ -105,6 +105,10 @@ export const Container = styled.div`
       font-size: 1.4rem;
       line-height: 1.8rem;
       color: #fff;
+      display: -webkit-box;
+      -webkit-line-clamp: 1;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
       margin-bottom: 0.3rem;
     }
 

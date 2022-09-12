@@ -15,6 +15,12 @@ export interface AudioPlaybackRateType {
   desc: string;
 }
 
+export enum ReplayMode {
+  NONE,
+  ALL,
+  ONE,
+}
+
 export const privacyOptions: PrivacyOption[] = [
   {
     label: 'Cá nhân',

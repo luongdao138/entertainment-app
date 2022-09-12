@@ -51,6 +51,7 @@ const PlaylistItemMenu: React.FC<Props> = ({
       handleAddSongsToPlayerQueue({
         playlist,
         songs: new_songs,
+        queue_playlist_id: playlist.id,
       });
       closePlaylistItemMenu();
     } catch (error: any) {

@@ -15,7 +15,7 @@ const AudioSeekbar = () => {
 
   const { duration } = useAppSelector(getAudioStateSelector);
   const { is_audio_loaded } = useAppSelector(getAudioMetaSelector);
-  const { handleChangeAudioCurrentTime, audioRef } = useAudioContext();
+  const { audioRef } = useAudioContext();
   const [isTimePlayed, setIsTimePlayed] = useState<boolean>(true);
   const [temp_current_time, setTempCurrentTime] = useState<number | null>(null);
 

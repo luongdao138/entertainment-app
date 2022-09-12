@@ -248,6 +248,12 @@ app.get('/', async (req, res) => {
   //     },
   //   });
 
+  // await prisma.song.updateMany({
+  //   data: {
+  //     privacy: 'public',
+  //   },
+  // });
+
   return res.json({ msg: 'Success' });
 });
 

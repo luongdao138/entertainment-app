@@ -53,7 +53,7 @@ const PlaylistRecommendSongs: React.FC<Props> = ({ playlist_id }) => {
       </div>
 
       <div className='recommend-songs'>
-        {songs.slice(0, 20).map((song) => (
+        {songs.slice(0, 10).map((song) => (
           <RecommendPlaylistSongItem
             playlist_id={playlist_id}
             key={song.id}

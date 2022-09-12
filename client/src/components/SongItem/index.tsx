@@ -17,10 +17,10 @@ import {
   getAudioCurrentSongSelector,
   getAudioMetaSelector,
 } from '../../redux/audioPlayer/audioPlayerSelectors';
-import { useAudioContext } from '../../context/AudioContext';
 import { disableClickEvent } from '../../utils/common';
 import { RotatingLines } from 'react-loader-spinner';
 import AudioPlayingIcon from '../AudioPlayingIcon';
+import { AudioSong } from '../../redux/audioPlayer/audioPlayerSlice';
 interface Props {
   song: Song;
   focusSong: string | null;
@@ -40,6 +40,8 @@ interface Props {
   enable_select_multiple?: boolean;
   handleRemoveSongOutOfPlaylist?: (song_id: string) => void;
   onClickSongAudio?: (song_id: Song | SongDetail) => void;
+  onAddSongsToPlayerQueue: (song: AudioSong) => void;
+  onAddSongsToPlayNext: (song: AudioSong) => void;
 }
 
 const SongItem: React.FC<Props> = ({
@@ -61,6 +63,8 @@ const SongItem: React.FC<Props> = ({
   can_remove_out_of_list,
   enable_select_multiple,
   onClickSongAudio,
+  onAddSongsToPlayNext,
+  onAddSongsToPlayerQueue,
 }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const current_song = useAppSelector(getAudioCurrentSongSelector);
@@ -80,8 +84,9 @@ const SongItem: React.FC<Props> = ({
   const isShowCheckbox = selectedSongs.length > 0;
   const isActive = isFocused || isSelected;
   const is_current_audio = current_song?.id === song.id;
-  const { handleAddSongsToPlayerQueue, handleAddSongToPlayNext } =
-    useAudioContext();
+
+  const can_click_play =
+    !audio_meta.is_audio_loading || current_song?.id !== song.id;
 
   // const is_owner = song.
 
@@ -201,8 +206,8 @@ const SongItem: React.FC<Props> = ({
           handleRemoveSongOutOfPlaylist={handleRemoveSongOutOfPlaylist}
           can_remove_out_of_list={can_remove_out_of_list}
           handleOpenDeleteConfirmModal={handleOpenDeleteConfirmModal}
-          handleAddSongsToPlayerQueue={handleAddSongsToPlayerQueue}
-          handleAddSongToPlayNext={handleAddSongToPlayNext}
+          onAddSongsToPlayNext={onAddSongsToPlayNext}
+          onAddSongsToPlayerQueue={onAddSongsToPlayerQueue}
         />
       </Menu>
       <Container
@@ -249,7 +254,7 @@ const SongItem: React.FC<Props> = ({
           <div
             className='song-thumbnail'
             onClick={() => {
-              if (!audio_meta.is_audio_loading) {
+              if (can_click_play) {
                 onClickSongAudio?.(song);
               }
             }}

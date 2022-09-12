@@ -1,8 +1,9 @@
 import React, { useEffect, useMemo, useRef } from 'react';
 import { toast } from 'react-toastify';
-import { playbackRateOptions } from '../../constants/options';
+import { playbackRateOptions, ReplayMode } from '../../constants/options';
 import { useAudioContext } from '../../context/AudioContext';
 import {
+  getAudioCurrentListSongs,
   getAudioCurrentPlaylistSelector,
   getAudioCurrentSongSelector,
   getAudioMetaSelector,
@@ -19,7 +20,10 @@ const AudioPlayer = () => {
   const current_song = useAppSelector(getAudioCurrentSongSelector);
   const current_playlist = useAppSelector(getAudioCurrentPlaylistSelector);
   const audio_volume = useAppSelector(getAudioVolumeSelector);
-  const { playback_rate } = useAppSelector(getAudioStateSelector);
+  const audio_list_songs = useAppSelector(getAudioCurrentListSongs);
+  const { playback_rate, is_last_song, replay_mode } = useAppSelector(
+    getAudioStateSelector
+  );
   const { is_audio_playing } = useAppSelector(getAudioMetaSelector);
 
   const { audioRef, handlePlayAudio, handleMoveToNextSong } = useAudioContext();
@@ -27,7 +31,17 @@ const AudioPlayer = () => {
 
   const handleAudioEndRef = useRef<() => void>();
 
-  handleAudioEndRef.current = handleMoveToNextSong;
+  handleAudioEndRef.current = () => {
+    if (replay_mode !== ReplayMode.ONE) {
+      handleMoveToNextSong(true);
+    } else {
+      console.log('Play again: ', is_last_song);
+      // người dùng đang bật chế độ nghe lại một bài => khi bài hát này kết thúc thì phát lại chính bài hát này
+      audioRef.current?.load();
+    }
+  };
+
+  const current_queue_song = audio_list_songs.find((s) => s.is_current_audio);
 
   useEffect(() => {
     if (current_song?.url && audioRef?.current) {
@@ -57,6 +71,10 @@ const AudioPlayer = () => {
 
         // tự động phát bài hát mỗi khi data được load thành công
         // trong một số trường hợp ko đc auto play bài hát => cần xem xét sau, hiện tại luôn bật chức năng autoplay bài hát
+        if (replay_mode === ReplayMode.NONE && is_last_song) {
+          // nếu ko bật chế độ phát lại và đây là bài cuối cùng => return
+          return;
+        }
         handlePlayAudio();
       };
 
@@ -127,23 +145,6 @@ const AudioPlayer = () => {
         );
       };
 
-      // const handleAudioTimeUpdate = () => {
-      //   console.log(
-      //     'Audio event fire: timeupdate, current time: ',
-      //     audioRef.current?.currentTime
-      //   );
-
-      //   // if (audioRef.current) {
-      //   //   dispatch(
-      //   //     changeAudioCurrentState({
-      //   //       new_state: {
-      //   //         current_time: audioRef.current.currentTime,
-      //   //       },
-      //   //     })
-      //   //   );
-      //   // }
-      // };
-
       const handleAudioDurationChange = () => {
         console.log(
           'Audio event fire: durationchange, song name: ',
@@ -176,9 +177,8 @@ const AudioPlayer = () => {
         dispatch(
           changeAudioCurrentMeta({
             new_meta: {
-              is_audio_loaded: false,
               is_audio_loading: true,
-              is_audio_error: true,
+              // is_audio_error: false,
             },
           })
         );
@@ -280,30 +280,32 @@ const AudioPlayer = () => {
         audioRef.current?.removeEventListener('seeking', handleAudioSeeked);
       };
     }
-  }, [current_song?.id, current_song?.id, current_playlist?.id]);
+  }, [
+    current_song?.id,
+    current_song?.id,
+    current_playlist?.id,
+    replay_mode,
+    is_last_song,
+  ]);
 
   // mỗi khi thay đổi bài hát thì sẽ thay đổi trạng thái thành loading
   useEffect(() => {
-    if (current_song) {
+    if (current_queue_song?.queue_id && audioRef.current) {
+      audioRef.current.load();
       dispatch(
         changeAudioCurrentMeta({
           new_meta: {
             is_audio_loading: true,
             is_audio_playing: false,
             is_audio_error: false,
+            is_audio_loaded: false,
           },
         })
       );
 
       dispatch(changeAudioCurrentState({ new_state: { duration: 0 } }));
     }
-  }, [current_song?.id, current_playlist?.id]);
-
-  useEffect(() => {
-    if (audioRef.current) {
-      audioRef.current.load();
-    }
-  }, [current_playlist?.id]);
+  }, [current_queue_song?.queue_id, current_playlist?.id]);
 
   useEffect(() => {
     if (audioRef.current) audioRef.current.volume = audio_volume;
@@ -327,19 +329,19 @@ const AudioPlayer = () => {
         preload='metadata'
         controls
         ref={audioRef}
-        src={current_song.url}
+        src={current_queue_song?.url}
         hidden
       >
         <p>
           Your browser does not support HTML audio, but you can still
-          <a href={current_song.url} target='_blank'>
+          <a href={current_song.url} download target='_blank'>
             download the music
           </a>
           .
         </p>
       </audio>
     );
-  }, [current_song?.id, audio_volume, playback_rate]);
+  }, [current_queue_song?.id, audio_volume, playback_rate]);
 
   return Audio;
 };

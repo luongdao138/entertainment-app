@@ -134,9 +134,9 @@ const UploadSongForm: React.FC<Props> = ({ closeUploadModal }) => {
 
       toast.info('Một file đang được tải lên', { autoClose: 1500 });
       handleUploadImage(file, '/images/', () => {
-        if (prevThumbnail) {
-          delefile(prevThumbnail);
-        }
+        // if (prevThumbnail) {
+        //   delefile(prevThumbnail);
+        // }
       });
     } else {
       // upload audio
@@ -154,14 +154,16 @@ const UploadSongForm: React.FC<Props> = ({ closeUploadModal }) => {
           setSingerName(data.tags.artist || null);
         },
         onError(error) {
+          setName('Chưa biết');
+          setSingerName('Chưa biết');
           console.log(error);
         },
       });
 
       handleUploadAudio(file, '/audios/', () => {
-        if (prevAudioUrl) {
-          delefile(prevAudioUrl);
-        }
+        // if (prevAudioUrl) {
+        //   delefile(prevAudioUrl);
+        // }
       });
     }
   };

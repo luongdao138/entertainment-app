@@ -28,6 +28,8 @@ interface Props {
   disable_add_to_play_next?: boolean;
   can_remove_out_of_queue?: boolean;
   onRemoveSongOutOfQueue?: (queue_id: string) => void;
+  onAddSongsToPlayerQueue: (song: AudioSong) => void;
+  onAddSongsToPlayNext: (song: AudioSong) => void;
 }
 
 const SongItemMenu: React.FC<Props> = ({
@@ -40,12 +42,12 @@ const SongItemMenu: React.FC<Props> = ({
   changeSelectedSong,
   handleRemoveSongOutOfPlaylist,
   handleOpenDeleteConfirmModal,
-  handleAddSongToPlayNext,
-  handleAddSongsToPlayerQueue,
   disable_add_to_play_next,
   disable_add_to_player_queue,
   can_remove_out_of_queue,
   onRemoveSongOutOfQueue,
+  onAddSongsToPlayNext,
+  onAddSongsToPlayerQueue,
 }) => {
   const handleDownloadSong = () => {
     // fileSaver.saveAs(song.url);
@@ -72,15 +74,12 @@ const SongItemMenu: React.FC<Props> = ({
   };
 
   const handleAddToPlayerList = () => {
-    handleAddSongsToPlayerQueue?.({
-      playlist: null,
-      songs: [song],
-    });
+    onAddSongsToPlayerQueue(song);
     closeSongItemAction();
   };
 
   const onAddSongToPlayNext = () => {
-    handleAddSongToPlayNext?.({ song });
+    onAddSongsToPlayNext(song);
     closeSongItemAction();
   };
 

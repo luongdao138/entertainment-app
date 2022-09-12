@@ -38,7 +38,9 @@ const QueueContent = () => {
   const dispatch = useAppDispatch();
 
   const { handleChangeAutoPlayRecommend } = useAudioContext();
-  const is_playlist_playing = !_.isNil(current_playlist);
+  const is_playlist_playing =
+    !_.isNil(current_playlist) &&
+    next_list.some((s) => s.queue_playlist_id === current_playlist.id);
   // && next_list.some((s) => current_playlist_songs.some((_s) => _s.id === s.id));
 
   const onDragEnd = (result: DropResult, provided: ResponderProvided) => {

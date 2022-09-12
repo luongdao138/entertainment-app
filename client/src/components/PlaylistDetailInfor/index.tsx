@@ -11,8 +11,8 @@ import { DEFAULT_PLAYLIST_THUMBNAIL } from '../../constants/images';
 import { useAudioContext } from '../../context/AudioContext';
 import { useUploadPlaylistContext } from '../../context/UploadPlaylistContext';
 import {
+  getAudioCurrentListSongs,
   getAudioCurrentPlaylistSelector,
-  getAudioCurrentSongSelector,
   getAudioMetaSelector,
 } from '../../redux/audioPlayer/audioPlayerSelectors';
 import { logout } from '../../redux/auth/authSlice';
@@ -43,7 +43,7 @@ const PlaylistDetailInfor: React.FC<Props> = ({
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const current_playlist = useAppSelector(getAudioCurrentPlaylistSelector);
-  const current_song = useAppSelector(getAudioCurrentSongSelector);
+  const audio_list_songs = useAppSelector(getAudioCurrentListSongs);
 
   const { changeToEditMode, setEditedPlaylist, openUploadPlaylistForm } =
     useUploadPlaylistContext();
@@ -59,7 +59,9 @@ const PlaylistDetailInfor: React.FC<Props> = ({
   const is_playing =
     is_audio_playing &&
     current_playlist?.id === playlist_detail.id &&
-    songs.some((s) => s.id === current_song?.id);
+    Boolean(
+      audio_list_songs.find((s) => s.is_current_audio)?.queue_playlist_id
+    );
 
   const onClickSongAudio = () => {
     if (is_audio_loading) return;

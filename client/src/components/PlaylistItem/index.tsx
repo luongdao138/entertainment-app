@@ -21,6 +21,7 @@ import LoginRequired from '../LoginRequired';
 import { DEFAULT_PLAYLIST_THUMBNAIL } from '../../constants/images';
 import { toast } from 'react-toastify';
 import {
+  getAudioCurrentListSongs,
   getAudioCurrentPlaylistSelector,
   getAudioCurrentSongSelector,
   getAudioMetaSelector,
@@ -59,8 +60,14 @@ const PlaylistItem: React.FC<Props> = ({
   const deletePlaylistMeta = useAppSelector(deletePlaylistMetaSelector);
   const current_song = useAppSelector(getAudioCurrentSongSelector);
   const { handleToggleAudioPlayState } = useAudioContext();
+  const audio_list_songs = useAppSelector(getAudioCurrentListSongs);
 
-  const is_playing = is_audio_playing && current_playlist?.id === playlist.id;
+  const is_playing =
+    is_audio_playing &&
+    current_playlist?.id === playlist.id &&
+    Boolean(
+      audio_list_songs.find((s) => s.is_current_audio)?.queue_playlist_id
+    );
   // && current_playlist_songs.some((s) => s.id === current_song?.id);
 
   const handleClickMore = (e: React.MouseEvent<HTMLElement>) => {

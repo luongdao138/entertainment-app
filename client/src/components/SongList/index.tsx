@@ -43,6 +43,7 @@ import {
 } from '../../redux/song/songSlice';
 import { useAudioContext } from '../../context/AudioContext';
 import { SortType } from '../../constants/options';
+import { AudioSong } from '../../redux/audioPlayer/audioPlayerSlice';
 
 interface Props {
   songs: Song[];
@@ -87,7 +88,23 @@ const SongList: React.FC<Props> = ({
   const [selectedSongs, setSelectedSongs] = useState<string[]>([]);
   const dispatch = useAppDispatch();
   const [sort_type, setSortType] = useState<SortType>('default');
-  const { handleAddSongsToPlayerQueue } = useAudioContext();
+  const { handleAddSongsToPlayerQueue, handleAddSongToPlayNext } =
+    useAudioContext();
+
+  const onAddSongsToPlayerQueue = (song: AudioSong) => {
+    handleAddSongsToPlayerQueue({
+      playlist: null,
+      songs: [song],
+      queue_playlist_id: playlist_id,
+    });
+  };
+
+  const onAddSongsToPlayNext = (song: AudioSong) => {
+    handleAddSongToPlayNext({
+      song,
+      queue_playlist_id: playlist_id,
+    });
+  };
 
   const sorted_songs = useMemo(() => {
     let new_songs = [...songs];
@@ -499,6 +516,8 @@ const SongList: React.FC<Props> = ({
                             }
                             enable_select_multiple={enable_select_multiple}
                             onClickSongAudio={onClickSongAudio}
+                            onAddSongsToPlayNext={onAddSongsToPlayNext}
+                            onAddSongsToPlayerQueue={onAddSongsToPlayerQueue}
                           />
                         </div>
                       )}

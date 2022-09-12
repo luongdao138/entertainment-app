@@ -81,6 +81,10 @@ export const Container = styled.div`
       line-height: 1.8rem;
       color: #fff;
       margin-bottom: 0.3rem;
+      display: -webkit-box;
+      -webkit-line-clamp: 1;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
     }
 
     & .singer {
