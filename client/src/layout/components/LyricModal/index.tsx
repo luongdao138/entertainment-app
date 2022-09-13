@@ -1,4 +1,7 @@
 import React, { useEffect } from "react";
+import LyricBottom from "../../../components/LyricModal/LyricBottom";
+import LyricContent from "../../../components/LyricModal/LyricContent";
+import LyricHeader from "../../../components/LyricModal/LyricHeader";
 import { useLyricContext } from "../../../context/LyricContext";
 import useLockScreen from "../../../hooks/useLockScreen";
 import { Container } from "./style";
@@ -8,7 +11,6 @@ const LyricModal = () => {
   const [_, setLocked] = useLockScreen();
 
   useEffect(() => {
-    // setLocked(true);
     setLocked(open_lyric);
   }, [open_lyric]);
 
@@ -23,6 +25,12 @@ const LyricModal = () => {
           }}
         ></div>
         <div className="overlay"></div>
+      </div>
+
+      <div className="lyric-content">
+        <LyricHeader />
+        <LyricContent />
+        <LyricBottom />
       </div>
     </Container>
   );

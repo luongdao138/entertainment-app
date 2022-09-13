@@ -15,6 +15,7 @@ import AudioLyric from "../../../components/AudioPlayer/AudioLyric";
 import AudioAlarm from "../../../components/AudioAlarm";
 import Modal from "../../../components/Modal";
 import ContinueSongConfirm from "../../../components/ContinueSongConfirm";
+import { useLyricContext } from "../../../context/LyricContext";
 
 const Player = () => {
   const {
@@ -32,6 +33,7 @@ const Player = () => {
 
   const navigate = useNavigate();
   const current_song = useAppSelector(getAudioCurrentSongSelector);
+  const { open_lyric } = useLyricContext();
 
   const open_player = Boolean(current_song);
   const open_audio_alarm = Boolean(audio_alarm);
@@ -83,6 +85,7 @@ const Player = () => {
   return (
     <Container
       openQueue={openQueue}
+      open_lyric={open_lyric}
       ref={playerRef}
       onClick={handleClickPlayer}
     >

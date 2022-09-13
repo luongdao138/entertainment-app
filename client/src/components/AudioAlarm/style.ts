@@ -1,4 +1,8 @@
-import styled from 'styled-components';
+import styled from "styled-components";
+
+interface Props {
+  open_lyric?: boolean;
+}
 
 export const Container = styled.div`
   position: absolute;
@@ -16,6 +20,9 @@ export const Container = styled.div`
   align-items: center;
   justify-content: center;
   cursor: default;
+
+  opacity: ${(props: Props) => (props.open_lyric ? 0 : 1)};
+  visibility: ${(props: Props) => (props.open_lyric ? "hidden" : "visible")};
 
   span {
     font-size: 12px;

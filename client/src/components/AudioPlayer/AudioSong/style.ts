@@ -1,4 +1,4 @@
-import styled from 'styled-components';
+import styled from "styled-components";
 
 interface Props {
   is_liked?: boolean;
@@ -86,7 +86,7 @@ export const Container = styled.div`
     }
     & .like-btn svg {
       color: ${(props: Props) =>
-        props.is_liked ? '#7200A1 !important' : '#fff'};
+        props.is_liked ? "#7200A1 !important" : "#fff"};
     }
   }
 `;

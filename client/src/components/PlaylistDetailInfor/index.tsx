@@ -1,30 +1,30 @@
-import { Menu } from '@mui/material';
-import _ from 'lodash';
-import React, { useRef, startTransition, useEffect, useState } from 'react';
-import { AiFillHeart, AiOutlineHeart } from 'react-icons/ai';
-import { BsFillPlayFill } from 'react-icons/bs';
-import { MdOutlineModeEdit, MdPause, MdMoreHoriz } from 'react-icons/md';
-import { useNavigate } from 'react-router-dom';
-import { toast } from 'react-toastify';
-import appRoutes from '../../constants/appRoutes';
-import { DEFAULT_PLAYLIST_THUMBNAIL } from '../../constants/images';
-import { useAudioContext } from '../../context/AudioContext';
-import { useUploadPlaylistContext } from '../../context/UploadPlaylistContext';
+import { Menu } from "@mui/material";
+import _ from "lodash";
+import React, { useRef, startTransition, useEffect, useState } from "react";
+import { AiFillHeart, AiOutlineHeart } from "react-icons/ai";
+import { BsFillPlayFill } from "react-icons/bs";
+import { MdOutlineModeEdit, MdPause, MdMoreHoriz } from "react-icons/md";
+import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
+import appRoutes from "../../constants/appRoutes";
+import { DEFAULT_PLAYLIST_THUMBNAIL } from "../../constants/images";
+import { useAudioContext } from "../../context/AudioContext";
+import { useUploadPlaylistContext } from "../../context/UploadPlaylistContext";
 import {
   getAudioCurrentListSongs,
   getAudioCurrentPlaylistSelector,
   getAudioMetaSelector,
-} from '../../redux/audioPlayer/audioPlayerSelectors';
-import { logout } from '../../redux/auth/authSlice';
-import { useAppDispatch, useAppSelector } from '../../redux/hooks';
-import { changePlaylistFavourite } from '../../redux/playlist/playlistActions';
-import { deletePlaylist, PlaylistDetail } from '../../services/playlist';
-import { Song } from '../../services/song';
-import AudioPlayingIcon from '../AudioPlayingIcon';
-import ConfirmDialog from '../ConfirmDialog';
-import LoginRequired from '../LoginRequired';
-import PlaylistItemMenu from '../PlaylistItemMenu';
-import { Container } from './style';
+} from "../../redux/audioPlayer/audioPlayerSelectors";
+import { logout } from "../../redux/auth/authSlice";
+import { useAppDispatch, useAppSelector } from "../../redux/hooks";
+import { changePlaylistFavourite } from "../../redux/playlist/playlistActions";
+import { deletePlaylist, PlaylistDetail } from "../../services/playlist";
+import { Song } from "../../services/song";
+import AudioPlayingIcon from "../AudioPlayingIcon";
+import ConfirmDialog from "../ConfirmDialog";
+import LoginRequired from "../LoginRequired";
+import PlaylistItemMenu from "../PlaylistItemMenu";
+import { Container } from "./style";
 
 interface Props {
   is_liked?: boolean;
@@ -86,7 +86,6 @@ const PlaylistDetailInfor: React.FC<Props> = ({
         playlist_play_random: playlist_detail?.is_owner
           ? playlist_detail.play_random
           : undefined,
-        playlist_songs: songs,
       });
     } else {
       // ngược lại, thay đổi trạng thái play/pause của bài hát đang được phát
@@ -130,9 +129,9 @@ const PlaylistDetailInfor: React.FC<Props> = ({
         await deletePlaylist({ id: playlist_detail.id });
         navigate(appRoutes.LIBRARY_PLAYLIST);
       } catch (error: any) {
-        toast.success(error.response?.data.msg || 'Có lỗi xảy ra');
+        toast.success(error.response?.data.msg || "Có lỗi xảy ra");
         if (error.response?.status === 403) {
-          localStorage.removeItem('music_token');
+          localStorage.removeItem("music_token");
           dispatch(logout());
         }
       }
@@ -148,9 +147,9 @@ const PlaylistDetailInfor: React.FC<Props> = ({
         data: playlist_detail.id,
         onSuccess() {
           if (prev) {
-            toast.success('Đã xóa playlist khỏi thư viện');
+            toast.success("Đã xóa playlist khỏi thư viện");
           } else {
-            toast.success('Đã thêm playlist vào thư viện');
+            toast.success("Đã thêm playlist vào thư viện");
           }
         },
         onError(error) {
@@ -174,31 +173,31 @@ const PlaylistDetailInfor: React.FC<Props> = ({
     >
       {playlist_detail.can_delete && (
         <ConfirmDialog
-          desc='Playlist của bạn sẽ bị xóa khỏi thư viện cá nhân. Bạn có muốn xóa?'
-          title='Xóa Playlist'
+          desc="Playlist của bạn sẽ bị xóa khỏi thư viện cá nhân. Bạn có muốn xóa?"
+          title="Xóa Playlist"
           open={openDeleteConfirmModal}
           onCancel={handleCloseDeleteConfirmModal}
           onOk={handleDeletePlaylist}
         />
       )}
       <Menu
-        id='playlist-item-menu'
+        id="playlist-item-menu"
         MenuListProps={{
-          'aria-labelledby': 'playlist-item-button',
+          "aria-labelledby": "playlist-item-button",
         }}
         anchorEl={anchorEl}
         open={openPlaylistMenu}
         onClose={handleClose}
         sx={{
-          '& .MuiList-root': {
+          "& .MuiList-root": {
             padding: 0,
           },
         }}
         PaperProps={{
           sx: {
             padding: 0,
-            background: 'none',
-            boxShadow: 'none',
+            background: "none",
+            boxShadow: "none",
           },
         }}
       >
@@ -211,39 +210,39 @@ const PlaylistDetailInfor: React.FC<Props> = ({
           closePlaylistItemMenu={handleClose}
         />
       </Menu>
-      <div className='playlist-thumbnail-container' onClick={onClickSongAudio}>
-        <div className='thumbnail-icon'>
-          <button className='play-state'>
+      <div className="playlist-thumbnail-container" onClick={onClickSongAudio}>
+        <div className="thumbnail-icon">
+          <button className="play-state">
             {is_playing ? <AudioPlayingIcon /> : <BsFillPlayFill />}
           </button>
         </div>
         {songs.length >= 4 ? (
-          <div className='playlist-thumbnail multiple'>
-            <div className='imgs'>
-              <img src={songs[0].thumbnail} alt='' />
-              <img src={songs[1].thumbnail} alt='' />
-              <img src={songs[2].thumbnail} alt='' />
-              <img src={songs[3].thumbnail} alt='' />
+          <div className="playlist-thumbnail multiple">
+            <div className="imgs">
+              <img src={songs[0].thumbnail} alt="" />
+              <img src={songs[1].thumbnail} alt="" />
+              <img src={songs[2].thumbnail} alt="" />
+              <img src={songs[3].thumbnail} alt="" />
             </div>
-            <div className='thumbnail-backdrop'></div>
+            <div className="thumbnail-backdrop"></div>
           </div>
         ) : (
-          <div className='playlist-thumbnail'>
+          <div className="playlist-thumbnail">
             <img
               src={
                 songs.length === 0
                   ? DEFAULT_PLAYLIST_THUMBNAIL
                   : songs[0].thumbnail
               }
-              alt=''
+              alt=""
             />
-            <div className='thumbnail-backdrop'></div>
+            <div className="thumbnail-backdrop"></div>
           </div>
         )}
       </div>
 
-      <div className='playlist-info-content'>
-        <div className='playlist-name'>
+      <div className="playlist-info-content">
+        <div className="playlist-name">
           <h2>{playlist_detail?.title}</h2>
           {playlist_detail.can_edit && (
             <button onClick={handleOpenEditPlaylistForm}>
@@ -252,32 +251,32 @@ const PlaylistDetailInfor: React.FC<Props> = ({
           )}
         </div>
 
-        <p className='creator'>
+        <p className="creator">
           Tạo bởi <span>{playlist_detail?.creator.full_name}</span>
         </p>
 
-        <p className='privacy'>
-          {playlist_detail?.privacy === 'private' ? 'Riêng tư' : 'Công khai'}
+        <p className="privacy">
+          {playlist_detail?.privacy === "private" ? "Riêng tư" : "Công khai"}
         </p>
-        <p className='like-count'>188k người yêu thích</p>
+        <p className="like-count">188k người yêu thích</p>
 
-        <button className='play-btn' onClick={onClickSongAudio}>
+        <button className="play-btn" onClick={onClickSongAudio}>
           {is_playing ? <MdPause /> : <BsFillPlayFill />}
           <span>
             {current_playlist?.id === playlist_detail.id
               ? is_playing
-                ? 'Tạm dừng'
-                : 'Tiếp tục phát'
+                ? "Tạm dừng"
+                : "Tiếp tục phát"
               : playlist_detail.play_random
-              ? 'Phát ngẫu nhiên'
-              : 'Phát tất cả'}
+              ? "Phát ngẫu nhiên"
+              : "Phát tất cả"}
           </span>
         </button>
 
-        <div className='playlist-actions'>
+        <div className="playlist-actions">
           {!playlist_detail.is_owner && (
             <LoginRequired>
-              <button className='action favorite' onClick={toggleLikePlaylist}>
+              <button className="action favorite" onClick={toggleLikePlaylist}>
                 {playlist_detail.is_liked ? (
                   <AiFillHeart />
                 ) : (
@@ -288,13 +287,13 @@ const PlaylistDetailInfor: React.FC<Props> = ({
           )}
 
           <button
-            aria-label='more'
-            id='playlist-item-button'
-            aria-controls={openPlaylistMenu ? 'playlist-item-menu' : undefined}
-            aria-expanded={openPlaylistMenu ? 'true' : undefined}
-            aria-haspopup='true'
+            aria-label="more"
+            id="playlist-item-button"
+            aria-controls={openPlaylistMenu ? "playlist-item-menu" : undefined}
+            aria-expanded={openPlaylistMenu ? "true" : undefined}
+            aria-haspopup="true"
             onClick={handleClickMore}
-            className='action more-btn'
+            className="action more-btn"
           >
             <MdMoreHoriz />
           </button>

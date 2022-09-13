@@ -14,10 +14,11 @@ export type PlayerQueueTab = "player" | "recent";
 
 const PlayerQueue = () => {
   const [tab, setTab] = useState<PlayerQueueTab>("player");
-  const { openQueue, playerRef, handleCloseQueue } = useAudioContext();
+  const { openQueue, openPlayer, playerRef, handleCloseQueue } =
+    useAudioContext();
   const { open_lyric } = useLyricContext();
 
-  const is_open_queue = openQueue && !open_lyric;
+  const is_open_queue = openPlayer && openQueue;
   const current_song = useAppSelector(getAudioCurrentSongSelector);
 
   const handleClickAwayPlayerQueue = (e: MouseEvent | TouchEvent) => {

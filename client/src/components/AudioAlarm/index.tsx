@@ -1,13 +1,14 @@
-import React, { useRef, useEffect, useState } from 'react';
-import { IoMdClose } from 'react-icons/io';
-import { useAudioContext } from '../../context/AudioContext';
-import useCountdown from '../../hooks/useCountdown';
-import { getAudioMetaSelector } from '../../redux/audioPlayer/audioPlayerSelectors';
-import { useAppSelector } from '../../redux/hooks';
-import { disableClickEvent } from '../../utils/common';
-import { formatSongDuration } from '../../utils/formatTime';
-import ConfirmDialog from '../ConfirmDialog';
-import { Container } from './style';
+import React, { useRef, useEffect, useState } from "react";
+import { IoMdClose } from "react-icons/io";
+import { useAudioContext } from "../../context/AudioContext";
+import { useLyricContext } from "../../context/LyricContext";
+import useCountdown from "../../hooks/useCountdown";
+import { getAudioMetaSelector } from "../../redux/audioPlayer/audioPlayerSelectors";
+import { useAppSelector } from "../../redux/hooks";
+import { disableClickEvent } from "../../utils/common";
+import { formatSongDuration } from "../../utils/formatTime";
+import ConfirmDialog from "../ConfirmDialog";
+import { Container } from "./style";
 
 interface Props {
   audio_alarm: number;
@@ -24,6 +25,8 @@ const AudioAlarm: React.FC<Props> = ({ audio_alarm, openConfirmModal }) => {
   const countStartRef = useRef<number>(converToCountStart(audio_alarm));
   const [openAlarmConfirm, setOpenAlarmConfirm] =
     React.useState<boolean>(false);
+
+  const { open_lyric } = useLyricContext();
 
   const openAlarmConfirmModal = () => {
     setOpenAlarmConfirm(true);
@@ -60,19 +63,22 @@ const AudioAlarm: React.FC<Props> = ({ audio_alarm, openConfirmModal }) => {
   }, [time_left, is_audio_playing]);
 
   return (
-    <Container onClick={disableClickEvent}>
+    <>
       <ConfirmDialog
-        desc='Bạn có chắc chắn muốn xóa hẹn giờ?'
-        title='Xóa Hẹn Giờ'
+        desc="Bạn có chắc chắn muốn xóa hẹn giờ?"
+        title="Xóa Hẹn Giờ"
         open={openAlarmConfirm}
         onCancel={closeAlarmConfirmModal}
         onOk={handleTurnOffAlarm}
       />
-      <span>
-        Nhạc sẽ dừng sau: <strong>{formatSongDuration(time_left, true)}</strong>
-      </span>
-      <IoMdClose onClick={openAlarmConfirmModal} />
-    </Container>
+      <Container open_lyric={open_lyric} onClick={disableClickEvent}>
+        <span>
+          Nhạc sẽ dừng sau:{" "}
+          <strong>{formatSongDuration(time_left, true)}</strong>
+        </span>
+        <IoMdClose onClick={openAlarmConfirmModal} />
+      </Container>
+    </>
   );
 };
 

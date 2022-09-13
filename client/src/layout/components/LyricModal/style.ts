@@ -12,7 +12,29 @@ export const Container = styled.div`
   right: 0;
   z-index: 1003;
   background-color: red;
-  visibility: ${(props: Props) => (props.open_lyric ? "visible" : "hidden")};
+  transform: ${(props: Props) =>
+    props.open_lyric ? "translateY(0)" : "translateY(100%)"};
+  animation: ${(props: Props) =>
+    props.open_lyric ? "slide-up .8s forwards" : "slide-down .8s forwards"};
+
+  @keyframes slide-up {
+    from {
+      transform: translateY(100%);
+    }
+    to {
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes slide-down {
+    from {
+      transform: ${(props: Props) =>
+        props.open_lyric ? "translateY(0)" : "translateY(100%)"};
+    }
+    to {
+      transform: translateY(100%);
+    }
+  }
 
   & .background-container {
     position: absolute;
@@ -20,6 +42,7 @@ export const Container = styled.div`
     left: 0;
     bottom: 0;
     right: 0;
+    background-color: #432275;
     overflow: hidden;
 
     & .blur-image {
@@ -43,5 +66,16 @@ export const Container = styled.div`
       bottom: 0;
       right: 0;
     }
+  }
+
+  & .lyric-content {
+    position: absolute;
+    bottom: 90px;
+    z-index: 1;
+    top: 0;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    /* background-color: red; */
   }
 `;

@@ -17,7 +17,11 @@ const LyricProvider = ({ children }: { children: React.ReactNode }) => {
   } = useBoolean();
   return (
     <LyricContext.Provider
-      value={{ handleCloseLyric, handleOpenLyric, open_lyric }}
+      value={{
+        handleCloseLyric,
+        handleOpenLyric,
+        open_lyric,
+      }}
     >
       {children}
     </LyricContext.Provider>
