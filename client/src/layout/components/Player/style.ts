@@ -1,4 +1,4 @@
-import styled from 'styled-components';
+import styled from "styled-components";
 
 interface StyleProps {
   openQueue?: boolean;
@@ -9,7 +9,7 @@ export const Container = styled.div`
   bottom: 0;
   left: 0;
   right: 0;
-  z-index: 200;
+  z-index: 1005;
   cursor: pointer;
   background-color: #170f23;
 
@@ -41,11 +41,15 @@ export const Container = styled.div`
         height: 33px;
         width: 1px;
         background-color: hsla(0, 0%, 100%, 0.1);
+
+        @media (min-width: 1590px) {
+          display: none;
+        }
       }
       & .queue {
         button {
           background-color: ${(props: StyleProps) =>
-            props.openQueue ? '#7200a1' : 'hsla(0, 0%, 100%, 0.1)'};
+            props.openQueue ? "#7200a1" : "hsla(0, 0%, 100%, 0.1)"};
           border-radius: 4px;
           padding: 0 5px;
           color: #fff;
@@ -56,6 +60,10 @@ export const Container = styled.div`
           svg {
             font-size: 2rem;
           }
+        }
+
+        @media (min-width: 1590px) {
+          display: none;
         }
       }
     }

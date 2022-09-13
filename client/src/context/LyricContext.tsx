@@ -1,5 +1,5 @@
-import React, { useContext } from 'react';
-import useBoolean from '../hooks/useBoolean';
+import React, { useContext } from "react";
+import useBoolean from "../hooks/useBoolean";
 
 interface ContextState {
   open_lyric: boolean;

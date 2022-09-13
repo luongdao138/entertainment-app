@@ -1,25 +1,26 @@
-import { Outlet } from 'react-router-dom';
-import Player from './components/Player';
-import PlayerQueue from './components/PlayerQueue';
-import Sidebar from './components/Sidebar';
-import styled from 'styled-components';
-import Header from './components/Header';
-import Modal from '../components/Modal';
-import SignUp from '../pages/Auth/SignUp';
-import Login from '../pages/Auth/Login';
-import { AuthType, useAuthContext } from '../context/AuthContext';
-import { useEffect, useMemo, useRef } from 'react';
-import { useAppDispatch, useAppSelector } from '../redux/hooks';
-import { getUserInfo } from '../redux/auth/authActions';
-import UploadSongForm from '../components/UploadSongForm';
-import { useUploadContext } from '../context/UploadContext';
-import SignupSuccess from '../pages/Auth/SignupSuccess';
-import ForgotPassword from '../pages/Auth/ForgotPassword';
-import { useUploadPlaylistContext } from '../context/UploadPlaylistContext';
-import NewPlaylistForm from '../components/NewPlaylistForm';
-import { useAudioContext } from '../context/AudioContext';
-import { getAudioCurrentSongSelector } from '../redux/audioPlayer/audioPlayerSelectors';
-import LyricProvider from '../context/LyricContext';
+import { Outlet } from "react-router-dom";
+import Player from "./components/Player";
+import PlayerQueue from "./components/PlayerQueue";
+import Sidebar from "./components/Sidebar";
+import styled from "styled-components";
+import Header from "./components/Header";
+import Modal from "../components/Modal";
+import SignUp from "../pages/Auth/SignUp";
+import Login from "../pages/Auth/Login";
+import { AuthType, useAuthContext } from "../context/AuthContext";
+import { useEffect, useMemo, useRef } from "react";
+import { useAppDispatch, useAppSelector } from "../redux/hooks";
+import { getUserInfo } from "../redux/auth/authActions";
+import UploadSongForm from "../components/UploadSongForm";
+import { useUploadContext } from "../context/UploadContext";
+import SignupSuccess from "../pages/Auth/SignupSuccess";
+import ForgotPassword from "../pages/Auth/ForgotPassword";
+import { useUploadPlaylistContext } from "../context/UploadPlaylistContext";
+import NewPlaylistForm from "../components/NewPlaylistForm";
+import { useAudioContext } from "../context/AudioContext";
+import { getAudioCurrentSongSelector } from "../redux/audioPlayer/audioPlayerSelectors";
+import LyricProvider from "../context/LyricContext";
+import LyricModal from "./components/LyricModal";
 
 interface StyleProps {
   openPlayer: boolean;
@@ -33,7 +34,11 @@ const Container = styled.div`
     background-color: #170f23;
     padding-left: var(--padding-section);
     padding-right: var(--padding-section);
-    padding-bottom: ${(props: StyleProps) => (props.openPlayer ? '90px' : 0)};
+    padding-bottom: ${(props: StyleProps) => (props.openPlayer ? "90px" : 0)};
+
+    @media (min-width: 1590px) {
+      padding-right: calc(var(--padding-section) + 330px);
+    }
   }
 `;
 
@@ -47,7 +52,7 @@ const MainLayout = () => {
 
   const { openPlayer } = useAudioContext();
 
-  console.log('Main layout rerender');
+  console.log("Main layout rerender");
 
   const dispatch = useAppDispatch();
   // const isFirstRenderRef = useRef<boolean>(true);
@@ -88,7 +93,7 @@ const MainLayout = () => {
       <Sidebar />
       <Header />
 
-      <Modal open={isOpenAuthModal} maxWidth='sm' onClose={closeAuthModal}>
+      <Modal open={isOpenAuthModal} maxWidth="sm" onClose={closeAuthModal}>
         {renderAuthLayout}
       </Modal>
 
@@ -97,21 +102,21 @@ const MainLayout = () => {
       </Modal>
 
       <Modal
-        maxWidth='xs'
+        maxWidth="xs"
         open={isOpenUploadPlaylistForm}
         onClose={closeUploadPlaylistForm}
       >
         <NewPlaylistForm closeUploadModal={closeUploadPlaylistForm} />
       </Modal>
 
-      {current_song && (
-        <LyricProvider>
-          <Player />
-        </LyricProvider>
-      )}
-      <PlayerQueue />
+      <LyricProvider>
+        {/* Màn hình lời bài hát (lyric) */}
+        <LyricModal />
+        {current_song && <Player />}
+        <PlayerQueue />
+      </LyricProvider>
 
-      <div className='content'>
+      <div className="content">
         <Outlet />
       </div>
     </Container>

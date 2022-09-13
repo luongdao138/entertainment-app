@@ -1,58 +1,59 @@
-import { Routes, Route, Navigate } from 'react-router-dom';
-import HomePage from './pages/HomePage';
-import MainLayout from './layout/MainLayout';
-import MyMusicPage from './pages/MyMusicPage';
-import Song from './pages/MyMusicPage/Song';
-import FavouriteSong from './pages/MyMusicPage/Song/FavouriteSong';
-import UploadedSong from './pages/MyMusicPage/Song/UploadedSong';
-import { ToastContainer } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
-import RequiredAuth from './components/LoginRequired/RequiredAuth';
-import UserProfilePage from './pages/UserProfilePage';
-import VerifyAccount from './pages/Auth/VerifyAccount';
-import AlreadyAuth from './components/AlreadyAuth';
-import RetrievePassword from './pages/Auth/RetrievePassword';
-import appRoutes from './constants/appRoutes';
-import PlaylistDetailPage from './pages/PlaylistDetailPage';
-import LibraryPlaylist from './pages/MyMusicPage/LibraryPlaylist';
-import SongDetailPage from './pages/SongDetailPage';
+import { Routes, Route, Navigate } from "react-router-dom";
+import HomePage from "./pages/HomePage";
+import MainLayout from "./layout/MainLayout";
+import MyMusicPage from "./pages/MyMusicPage";
+import Song from "./pages/MyMusicPage/Song";
+import FavouriteSong from "./pages/MyMusicPage/Song/FavouriteSong";
+import UploadedSong from "./pages/MyMusicPage/Song/UploadedSong";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import RequiredAuth from "./components/LoginRequired/RequiredAuth";
+import UserProfilePage from "./pages/UserProfilePage";
+import VerifyAccount from "./pages/Auth/VerifyAccount";
+import AlreadyAuth from "./components/AlreadyAuth";
+import RetrievePassword from "./pages/Auth/RetrievePassword";
+import appRoutes from "./constants/appRoutes";
+import PlaylistDetailPage from "./pages/PlaylistDetailPage";
+import LibraryPlaylist from "./pages/MyMusicPage/LibraryPlaylist";
+import SongDetailPage from "./pages/SongDetailPage";
+import "react-loading-skeleton/dist/skeleton.css";
 // import 'react-loader-spinner/dist/loader/css/react-spinner-loader.css';
 
 function App() {
   return (
     <>
       <ToastContainer
-        position='top-right'
+        position="top-right"
         hideProgressBar
         autoClose={1000}
-        theme='colored'
+        theme="colored"
       />
       <Routes>
-        <Route path='/' element={<MainLayout />}>
+        <Route path="/" element={<MainLayout />}>
           <Route index element={<HomePage />} />
 
           {/* Những route cần người dùng đăng nhập vào */}
           <Route element={<RequiredAuth />}>
-            <Route path='mymusic/' element={<MyMusicPage />}>
+            <Route path="mymusic/" element={<MyMusicPage />}>
               <Route element={<Song />}>
                 <Route index element={<FavouriteSong />} />
               </Route>
-              <Route path='song' element={<Song />}>
+              <Route path="song" element={<Song />}>
                 <Route index element={<FavouriteSong />} />
-                <Route path='favourite' element={<FavouriteSong />} />
-                <Route path='upload' element={<UploadedSong />} />
+                <Route path="favourite" element={<FavouriteSong />} />
+                <Route path="upload" element={<UploadedSong />} />
               </Route>
             </Route>
             <Route
               path={appRoutes.LIBRARY_PLAYLIST}
               element={<LibraryPlaylist />}
             />
-            <Route path='profile' element={<UserProfilePage />} />
+            <Route path="profile" element={<UserProfilePage />} />
             <Route
-              path='playlist/:playlist_id'
+              path="playlist/:playlist_id"
               element={<PlaylistDetailPage />}
             />
-            <Route path='song/:song_id' element={<SongDetailPage />} />
+            <Route path="song/:song_id" element={<SongDetailPage />} />
           </Route>
 
           {/* Những route đăng nhập hay không đều vào được */}
@@ -69,7 +70,7 @@ function App() {
             />
           </Route>
 
-          <Route path='*' element={<Navigate to={appRoutes.HOME} />} />
+          <Route path="*" element={<Navigate to={appRoutes.HOME} />} />
         </Route>
       </Routes>
     </>

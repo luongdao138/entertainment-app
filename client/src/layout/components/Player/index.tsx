@@ -1,20 +1,20 @@
-import React, { useEffect, useState } from 'react';
-import { MdOutlineQueueMusic } from 'react-icons/md';
-import AudioAction from '../../../components/AudioPlayer/AudioAction';
-import AudioSeekbar from '../../../components/AudioPlayer/AudioSeekbar';
-import AudioSong from '../../../components/AudioPlayer/AudioSong';
-import AudioVolume from '../../../components/AudioPlayer/AudioVolume';
-import { Container } from './style';
-import AudioPlayer from '../../../components/AudioPlayer';
-import { useAudioContext } from '../../../context/AudioContext';
-import { useNavigate } from 'react-router-dom';
-import { useAppDispatch, useAppSelector } from '../../../redux/hooks';
-import { getAudioCurrentSongSelector } from '../../../redux/audioPlayer/audioPlayerSelectors';
-import AudioPlaybackRate from '../../../components/AudioPlayer/AudioPlaybackRate';
-import AudioLyric from '../../../components/AudioPlayer/AudioLyric';
-import AudioAlarm from '../../../components/AudioAlarm';
-import Modal from '../../../components/Modal';
-import ContinueSongConfirm from '../../../components/ContinueSongConfirm';
+import React, { useEffect, useState } from "react";
+import { MdOutlineQueueMusic } from "react-icons/md";
+import AudioAction from "../../../components/AudioPlayer/AudioAction";
+import AudioSeekbar from "../../../components/AudioPlayer/AudioSeekbar";
+import AudioSong from "../../../components/AudioPlayer/AudioSong";
+import AudioVolume from "../../../components/AudioPlayer/AudioVolume";
+import { Container } from "./style";
+import AudioPlayer from "../../../components/AudioPlayer";
+import { useAudioContext } from "../../../context/AudioContext";
+import { useNavigate } from "react-router-dom";
+import { useAppSelector } from "../../../redux/hooks";
+import { getAudioCurrentSongSelector } from "../../../redux/audioPlayer/audioPlayerSelectors";
+import AudioPlaybackRate from "../../../components/AudioPlayer/AudioPlaybackRate";
+import AudioLyric from "../../../components/AudioPlayer/AudioLyric";
+import AudioAlarm from "../../../components/AudioAlarm";
+import Modal from "../../../components/Modal";
+import ContinueSongConfirm from "../../../components/ContinueSongConfirm";
 
 const Player = () => {
   const {
@@ -29,7 +29,6 @@ const Player = () => {
   } = useAudioContext();
   const [openContinueSongConfirm, setOpenContinueSongConfirm] =
     useState<boolean>(false);
-  const dispatch = useAppDispatch();
 
   const navigate = useNavigate();
   const current_song = useAppSelector(getAudioCurrentSongSelector);
@@ -57,20 +56,20 @@ const Player = () => {
       const handleClickBackspace = (e: KeyboardEvent) => {
         console.log({ target: e.target, currentTarget: e.currentTarget });
         if (
-          (e.target as any)?.nodeName === 'INPUT' ||
-          (e.target as any)?.nodeName === 'TEXTAREA'
+          (e.target as any)?.nodeName === "INPUT" ||
+          (e.target as any)?.nodeName === "TEXTAREA"
         ) {
           return;
         }
-        if (e.code === 'Space') {
+        if (e.code === "Space") {
           e.preventDefault();
           handleToggleAudioPlayState();
         }
       };
-      addEventListener('keydown', handleClickBackspace);
+      addEventListener("keydown", handleClickBackspace);
 
       return () => {
-        removeEventListener('keydown', handleClickBackspace);
+        removeEventListener("keydown", handleClickBackspace);
       };
     }
   }, [open_player]);
@@ -87,12 +86,14 @@ const Player = () => {
       ref={playerRef}
       onClick={handleClickPlayer}
     >
+      {/* Modal xuất hiện khi hết thời gian hẹn giờ */}
+      {/* Để confirm xem người dùng có muốn nghe nhạc tiếp hay không */}
       <Modal
-        maxWidth='xs'
+        maxWidth="xs"
         open={openContinueSongConfirm}
         onClose={() => setOpenContinueSongConfirm(false)}
         PaperProps={{
-          sx: { maxWidth: '330px', backgroundColor: 'transparent' },
+          sx: { maxWidth: "330px", backgroundColor: "transparent" },
         }}
       >
         <ContinueSongConfirm
@@ -101,27 +102,29 @@ const Player = () => {
         />
       </Modal>
 
+      {/* Thông báo thời gian còn lại khi có hẹn giờ phát nhạc */}
       {open_audio_alarm && (
         <AudioAlarm
           openConfirmModal={handleEndAlarm}
           audio_alarm={audio_alarm as number}
         />
       )}
-      <div className='player-content'>
-        <div className='player-left'>
+
+      <div className="player-content">
+        <div className="player-left">
           <AudioSong />
         </div>
-        <div className='player-middle'>
+        <div className="player-middle">
           <AudioAction />
           <AudioSeekbar />
           <AudioPlayer />
         </div>
-        <div className='player-right'>
+        <div className="player-right">
           <AudioLyric />
           <AudioPlaybackRate />
           <AudioVolume />
-          <div className='divider'></div>
-          <div className='queue'>
+          <div className="divider"></div>
+          <div className="queue">
             <button onClick={toggleQueue}>
               <MdOutlineQueueMusic />
             </button>

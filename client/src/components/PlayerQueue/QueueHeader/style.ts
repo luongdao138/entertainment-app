@@ -1,4 +1,4 @@
-import styled from 'styled-components';
+import styled from "styled-components";
 
 export const Container = styled.div`
   flex-shrink: 0;
@@ -26,6 +26,11 @@ export const Container = styled.div`
     font-size: 1.6rem;
     margin-left: 0.5rem;
 
+    &:disabled {
+      opacity: 0.4;
+      cursor: default;
+    }
+
     :hover {
       filter: brightness(0.9);
     }
@@ -35,9 +40,9 @@ export const Container = styled.div`
 export const TabButton = styled.button`
   box-shadow: 0 1px 3px 0 rgb(0 0 0 / 7%);
   background-color: ${(props: { active?: boolean }) =>
-    props.active ? 'hsla(0, 0%, 100%, 0.3)' : 'transparent'};
+    props.active ? "hsla(0, 0%, 100%, 0.3)" : "transparent"};
   color: ${(props: { active?: boolean }) =>
-    props.active ? '#fff' : '#dadada'};
+    props.active ? "#fff" : "#dadada"};
   font-weight: ${(props: { active?: boolean }) => (props.active ? 500 : 400)};
   border-radius: 999px;
   padding: 5px 0;

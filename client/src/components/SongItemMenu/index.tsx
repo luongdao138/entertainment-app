@@ -1,17 +1,17 @@
-import React from 'react';
-import { BsLink45Deg, BsMusicNoteList } from 'react-icons/bs';
-import { FiDownload } from 'react-icons/fi';
-import { HiOutlineBan } from 'react-icons/hi';
-import { MdOutlineSkipNext, MdPlaylistAdd } from 'react-icons/md';
-import { Song } from '../../services/song';
-import AddToPlaylist from '../AddToPlaylist';
-import { MdOutlineDeleteOutline, MdOutlineModeEdit } from 'react-icons/md';
-import { Container } from './style';
-import { FaRegComment } from 'react-icons/fa';
-import { useAuthContext } from '../../context/AuthContext';
-import useCopyToClipboard from '../../hooks/useCopyToClipboard';
-import { AudioSong } from '../../redux/audioPlayer/audioPlayerSlice';
-import { AddSongToPlayerParams } from '../../context/AudioContext';
+import React from "react";
+import { BsLink45Deg, BsMusicNoteList } from "react-icons/bs";
+import { FiDownload } from "react-icons/fi";
+import { HiOutlineBan } from "react-icons/hi";
+import { MdOutlineSkipNext, MdPlaylistAdd } from "react-icons/md";
+import { Song } from "../../services/song";
+import AddToPlaylist from "../AddToPlaylist";
+import { MdOutlineDeleteOutline, MdOutlineModeEdit } from "react-icons/md";
+import { Container } from "./style";
+import { FaRegComment } from "react-icons/fa";
+import { useAuthContext } from "../../context/AuthContext";
+import useCopyToClipboard from "../../hooks/useCopyToClipboard";
+import { AudioSong } from "../../redux/audioPlayer/audioPlayerSlice";
+import { AddSongToPlayerParams } from "../../context/AudioContext";
 interface Props {
   song: Song;
   can_delete_song?: boolean;
@@ -28,8 +28,8 @@ interface Props {
   disable_add_to_play_next?: boolean;
   can_remove_out_of_queue?: boolean;
   onRemoveSongOutOfQueue?: (queue_id: string) => void;
-  onAddSongsToPlayerQueue: (song: AudioSong) => void;
-  onAddSongsToPlayNext: (song: AudioSong) => void;
+  onAddSongsToPlayerQueue?: (song: AudioSong) => void;
+  onAddSongsToPlayNext?: (song: AudioSong) => void;
 }
 
 const SongItemMenu: React.FC<Props> = ({
@@ -53,7 +53,7 @@ const SongItemMenu: React.FC<Props> = ({
     // fileSaver.saveAs(song.url);
   };
 
-  const [_, copy] = useCopyToClipboard('Link đã được sao chép vào clipboard');
+  const [_, copy] = useCopyToClipboard("Link đã được sao chép vào clipboard");
   const { authUser } = useAuthContext();
 
   const handleCopyLinkToClipboard = () => {
@@ -74,12 +74,12 @@ const SongItemMenu: React.FC<Props> = ({
   };
 
   const handleAddToPlayerList = () => {
-    onAddSongsToPlayerQueue(song);
+    onAddSongsToPlayerQueue?.(song);
     closeSongItemAction();
   };
 
   const onAddSongToPlayNext = () => {
-    onAddSongsToPlayNext(song);
+    onAddSongsToPlayNext?.(song);
     closeSongItemAction();
   };
 
@@ -92,15 +92,15 @@ const SongItemMenu: React.FC<Props> = ({
 
   return (
     <Container>
-      <div className='menu-info'>
-        <img src={song.thumbnail} alt='' />
-        <div className='menu-name'>
+      <div className="menu-info">
+        <img src={song.thumbnail} alt="" />
+        <div className="menu-name">
           <h4>{song.name}</h4>
           <p>{song.singer_name}</p>
         </div>
       </div>
 
-      <div className='menu-btns'>
+      <div className="menu-btns">
         <button onClick={handleDownloadSong}>
           <FiDownload />
           <span>Tải xuống</span>
@@ -115,7 +115,7 @@ const SongItemMenu: React.FC<Props> = ({
         </button>
       </div>
 
-      <ul className='menu-list'>
+      <ul className="menu-list">
         {!disable_add_to_player_queue && (
           <li onClick={handleAddToPlayerList}>
             <MdPlaylistAdd />
