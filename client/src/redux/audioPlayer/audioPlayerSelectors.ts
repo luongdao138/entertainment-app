@@ -1,5 +1,6 @@
 import { createSelector } from '@reduxjs/toolkit';
 import { RootState } from '../store';
+import { AudioSong } from './audioPlayerSlice';
 
 const getRoot = (state: RootState) => state.audioPlayer;
 
@@ -8,10 +9,10 @@ export const getAudioVolumeSelector = createSelector(
   (state) => state.audio_state.volume
 );
 
-export const getAudioCurrentSongSelector = createSelector(
-  getRoot,
-  (state) => state.current_song
-);
+export const getAudioCurrentSongSelector = createSelector(getRoot, (state) => {
+  let new_current_song: AudioSong | null = state.current_song;
+  return new_current_song;
+});
 
 export const getAudioStateSelector = createSelector(
   getRoot,

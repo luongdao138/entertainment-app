@@ -1,4 +1,5 @@
 import apiEndpoints from '../constants/apiEndpoints';
+import { AudioSong } from '../redux/audioPlayer/audioPlayerSlice';
 import { privateClient } from './client';
 import { Playlist } from './playlist';
 
@@ -92,7 +93,7 @@ export interface GetRecommendedSongResponse {
 }
 
 export interface GetSongLyricParams {
-  song_id: string;
+  song: AudioSong;
 }
 
 export interface GetSongLyricReponse {
@@ -174,7 +175,7 @@ export const getSongLyric = async (
 ): Promise<GetSongLyricReponse> => {
   const res = await privateClient.get<GetSongLyricReponse>(
     apiEndpoints.GET_SONG_LYRIC,
-    { params }
+    { params: { song_id: params.song.id } }
   );
   return res.data;
 };

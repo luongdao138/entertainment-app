@@ -19,6 +19,7 @@ import { useUploadPlaylistContext } from '../context/UploadPlaylistContext';
 import NewPlaylistForm from '../components/NewPlaylistForm';
 import { useAudioContext } from '../context/AudioContext';
 import { getAudioCurrentSongSelector } from '../redux/audioPlayer/audioPlayerSelectors';
+import LyricProvider from '../context/LyricContext';
 
 interface StyleProps {
   openPlayer: boolean;
@@ -103,7 +104,11 @@ const MainLayout = () => {
         <NewPlaylistForm closeUploadModal={closeUploadPlaylistForm} />
       </Modal>
 
-      {current_song && <Player />}
+      {current_song && (
+        <LyricProvider>
+          <Player />
+        </LyricProvider>
+      )}
       <PlayerQueue />
 
       <div className='content'>

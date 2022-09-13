@@ -1,11 +1,12 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { toast } from 'react-toastify';
 import * as services from '../../services/song';
+import { AudioSong } from '../audioPlayer/audioPlayerSlice';
 import { logout } from '../auth/authSlice';
 import { LYRIC_ACTION_TYPES } from './lyricTypes';
 
 interface GetSongLyricReponse {
-  song_id: string;
+  song: AudioSong;
   data: services.GetSongLyricReponse['data'];
 }
 
@@ -18,7 +19,7 @@ export const getSongLyricAction = createAsyncThunk<
     try {
       const res = await services.getSongLyric(params);
       return {
-        song_id: params.song_id,
+        song: params.song,
         data: res.data,
       };
     } catch (error: any) {

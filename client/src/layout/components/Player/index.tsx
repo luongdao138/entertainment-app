@@ -55,6 +55,13 @@ const Player = () => {
   useEffect(() => {
     if (open_player) {
       const handleClickBackspace = (e: KeyboardEvent) => {
+        console.log({ target: e.target, currentTarget: e.currentTarget });
+        if (
+          (e.target as any)?.nodeName === 'INPUT' ||
+          (e.target as any)?.nodeName === 'TEXTAREA'
+        ) {
+          return;
+        }
         if (e.code === 'Space') {
           e.preventDefault();
           handleToggleAudioPlayState();

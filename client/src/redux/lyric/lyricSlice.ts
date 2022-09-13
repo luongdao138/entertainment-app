@@ -1,15 +1,16 @@
 import { createSlice } from '@reduxjs/toolkit';
 import { Category } from '../../services/category';
 import { Lyric } from '../../services/song';
+import { AudioSong } from '../audioPlayer/audioPlayerSlice';
 import { getSongLyricAction } from './lyricActions';
 
 interface SliceState {
-  song_id: string | null;
+  song: AudioSong | null;
   data: Lyric | null;
 }
 
 const initialState: SliceState = {
-  song_id: null,
+  song: null,
   data: null,
 };
 
@@ -18,7 +19,7 @@ const lyricSlice = createSlice({
   reducers: {},
   extraReducers(builder) {
     builder.addCase(getSongLyricAction.fulfilled, (state, action) => {
-      state.song_id = action.payload.song_id;
+      state.song = action.payload.song;
       state.data = action.payload.data;
     });
   },
