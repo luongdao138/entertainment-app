@@ -1,14 +1,14 @@
-import React, { useRef, useEffect, useState } from "react";
-import { IoMdClose } from "react-icons/io";
-import { useAudioContext } from "../../context/AudioContext";
-import { useLyricContext } from "../../context/LyricContext";
-import useCountdown from "../../hooks/useCountdown";
-import { getAudioMetaSelector } from "../../redux/audioPlayer/audioPlayerSelectors";
-import { useAppSelector } from "../../redux/hooks";
-import { disableClickEvent } from "../../utils/common";
-import { formatSongDuration } from "../../utils/formatTime";
-import ConfirmDialog from "../ConfirmDialog";
-import { Container } from "./style";
+import React, { useRef, useEffect, useState } from 'react';
+import { IoMdClose } from 'react-icons/io';
+import { useAudioContext } from '../../context/AudioContext';
+import { useLyricContext } from '../../context/LyricContext';
+import useCountdown from '../../hooks/useCountdown';
+import { getAudioMetaSelector } from '../../redux/audioPlayer/audioPlayerSelectors';
+import { useAppSelector } from '../../redux/hooks';
+import { disableClickEvent } from '../../utils/common';
+import { formatSongDuration } from '../../utils/formatTime';
+import ConfirmDialog from '../ConfirmDialog';
+import { Container } from './style';
 
 interface Props {
   audio_alarm: number;
@@ -63,22 +63,22 @@ const AudioAlarm: React.FC<Props> = ({ audio_alarm, openConfirmModal }) => {
   }, [time_left, is_audio_playing]);
 
   return (
-    <>
+    <div onClick={disableClickEvent}>
       <ConfirmDialog
-        desc="Bạn có chắc chắn muốn xóa hẹn giờ?"
-        title="Xóa Hẹn Giờ"
+        desc='Bạn có chắc chắn muốn xóa hẹn giờ?'
+        title='Xóa Hẹn Giờ'
         open={openAlarmConfirm}
         onCancel={closeAlarmConfirmModal}
         onOk={handleTurnOffAlarm}
       />
-      <Container open_lyric={open_lyric} onClick={disableClickEvent}>
+      <Container open_lyric={open_lyric}>
         <span>
-          Nhạc sẽ dừng sau:{" "}
+          Nhạc sẽ dừng sau:{' '}
           <strong>{formatSongDuration(time_left, true)}</strong>
         </span>
         <IoMdClose onClick={openAlarmConfirmModal} />
       </Container>
-    </>
+    </div>
   );
 };
 

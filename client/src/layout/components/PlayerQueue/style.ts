@@ -1,4 +1,4 @@
-import styled from "styled-components";
+import styled from 'styled-components';
 
 interface Props {
   openQueue: boolean;
@@ -9,7 +9,7 @@ export const Container = styled.div`
   position: fixed;
   right: 0;
   top: 0;
-  bottom: ${(props: Props) => (props.openPlayer ? "90px" : "0")};
+  bottom: ${(props: Props) => (props.openPlayer ? '90px' : '0')};
   z-index: 1000;
   box-shadow: 0 1px 0 rgba(0, 0, 0, 0.3), 0 1px 6px rgba(0, 0, 0, 0.3),
     inset 0 1px 1px rgba(25, 255, 255, 0.05);
@@ -22,7 +22,7 @@ export const Container = styled.div`
   transition: right 0.5s ease-in;
 
   // hiện tại đang hack cứng chiều rộng của player queue, có thể phải đặt biến global chỗ này
-  right: ${(props: Props) => (props.openQueue ? "0" : "-330px")};
+  right: ${(props: Props) => (props.openQueue ? '0' : '-330px')};
 
   & .queue-content {
     flex-grow: 1;

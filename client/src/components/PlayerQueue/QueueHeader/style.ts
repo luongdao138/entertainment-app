@@ -1,4 +1,4 @@
-import styled from "styled-components";
+import styled from 'styled-components';
 
 export const Container = styled.div`
   flex-shrink: 0;
@@ -6,13 +6,8 @@ export const Container = styled.div`
   align-items: center;
   margin-bottom: 20px;
 
-  & .queue-header-tabs {
-    border-radius: 999px;
-    flex-grow: 1;
-    padding: 3px;
-    background-color: hsla(0, 0%, 100%, 0.1);
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
+  & .tabs-item:hover {
+    color: #fff;
   }
 
   & .queue-header-action {
@@ -34,22 +29,5 @@ export const Container = styled.div`
     :hover {
       filter: brightness(0.9);
     }
-  }
-`;
-
-export const TabButton = styled.button`
-  box-shadow: 0 1px 3px 0 rgb(0 0 0 / 7%);
-  background-color: ${(props: { active?: boolean }) =>
-    props.active ? "hsla(0, 0%, 100%, 0.3)" : "transparent"};
-  color: ${(props: { active?: boolean }) =>
-    props.active ? "#fff" : "#dadada"};
-  font-weight: ${(props: { active?: boolean }) => (props.active ? 500 : 400)};
-  border-radius: 999px;
-  padding: 5px 0;
-  font-size: 1.2rem;
-  line-height: 1.8rem;
-
-  &:hover {
-    color: #fff;
   }
 `;

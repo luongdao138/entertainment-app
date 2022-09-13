@@ -1,4 +1,4 @@
-import styled from "styled-components";
+import styled from 'styled-components';
 
 export const Container = styled.div`
   padding: 2rem;
@@ -6,14 +6,24 @@ export const Container = styled.div`
   align-items: center;
   justify-content: space-between;
 
-  & .lyric-header-tabs {
-    border-radius: 999px;
-    padding: 3px;
-    background-color: hsla(0, 0%, 100%, 0.1);
+  & .tabs-container {
     display: grid;
     width: max-content;
     flex-shrink: 0;
     grid-template-columns: repeat(3, 1fr);
+
+    & .tabs-item {
+      padding: 7px 45px;
+      font-weight: 700;
+      font-size: 1.6rem;
+      box-shadow: none;
+
+      @media (max-width: 1200px) {
+        font-size: 14px;
+        line-height: 1.4rem;
+        padding: 7px 30px;
+      }
+    }
   }
 
   & .lyric-header-actions {
@@ -42,17 +52,4 @@ export const Container = styled.div`
       margin-left: 1.5rem;
     }
   }
-`;
-
-export const TabButton = styled.button`
-  box-shadow: 0 1px 3px 0 rgb(0 0 0 / 7%);
-  background-color: ${(props: { active?: boolean }) =>
-    props.active ? "hsla(0, 0%, 100%, 0.3)" : "transparent"};
-  color: ${(props: { active?: boolean }) =>
-    props.active ? "#fff" : "hsla(0,0%,100%,.5)"};
-  font-weight: ${(props: { active?: boolean }) => (props.active ? 500 : 400)};
-  border-radius: 999px;
-  padding: 6px 45px;
-  font-weight: 700;
-  font-size: 1.6rem;
 `;

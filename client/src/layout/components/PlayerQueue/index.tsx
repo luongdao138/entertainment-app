@@ -1,19 +1,19 @@
-import React, { useMemo, useState } from "react";
-import { ClickAwayListener } from "@mui/material";
-import QueueContent from "../../../components/PlayerQueue/QueueContent";
-import PlayerQueueHeader from "../../../components/PlayerQueue/QueueHeader";
-import { useAudioContext } from "../../../context/AudioContext";
-import { getAudioCurrentSongSelector } from "../../../redux/audioPlayer/audioPlayerSelectors";
-import { useAppSelector } from "../../../redux/hooks";
-import { Container, NoPlayerContainer } from "./style";
-import { useLyricContext } from "../../../context/LyricContext";
-import QueueSongItemSkeleton from "../../../components/Skeleton/QueueSongItem";
-import { BsFillPlayFill } from "react-icons/bs";
+import React, { useMemo, useState, useEffect } from 'react';
+import { ClickAwayListener } from '@mui/material';
+import QueueContent from '../../../components/PlayerQueue/QueueContent';
+import PlayerQueueHeader from '../../../components/PlayerQueue/QueueHeader';
+import { useAudioContext } from '../../../context/AudioContext';
+import { getAudioCurrentSongSelector } from '../../../redux/audioPlayer/audioPlayerSelectors';
+import { useAppSelector } from '../../../redux/hooks';
+import { Container, NoPlayerContainer } from './style';
+import { useLyricContext } from '../../../context/LyricContext';
+import QueueSongItemSkeleton from '../../../components/Skeleton/QueueSongItem';
+import { BsFillPlayFill } from 'react-icons/bs';
 
-export type PlayerQueueTab = "player" | "recent";
+export type PlayerQueueTab = 'player' | 'recent';
 
 const PlayerQueue = () => {
-  const [tab, setTab] = useState<PlayerQueueTab>("player");
+  const [tab, setTab] = useState<PlayerQueueTab>('player');
   const { openQueue, openPlayer, playerRef, handleCloseQueue } =
     useAudioContext();
   const { open_lyric } = useLyricContext();
@@ -31,16 +31,22 @@ const PlayerQueue = () => {
     setTab(tab);
   };
 
+  useEffect(() => {
+    if (open_lyric) {
+      handleCloseQueue();
+    }
+  }, [open_lyric]);
+
   const NoPlayerQueueContent = useMemo(() => {
     return (
       <NoPlayerContainer>
-        <div className="skeleton-container">
+        <div className='skeleton-container'>
           {[...new Array(5)].map((_, index) => (
             <QueueSongItemSkeleton key={index} />
           ))}
         </div>
 
-        <div className="bottom">
+        <div className='bottom'>
           <p>Khám phá thêm các bài hát mới của Zing MP3</p>
           <button>
             <BsFillPlayFill />
@@ -52,7 +58,7 @@ const PlayerQueue = () => {
   }, []);
 
   const renderContent = useMemo(() => {
-    if (tab === "recent") return <>Recent</>;
+    if (tab === 'recent') return <>Recent</>;
     else {
       if (Boolean(current_song)) return <QueueContent />;
       else return NoPlayerQueueContent;
@@ -62,10 +68,10 @@ const PlayerQueue = () => {
   return (
     <ClickAwayListener onClickAway={handleClickAwayPlayerQueue}>
       <Container openPlayer={Boolean(current_song)} openQueue={is_open_queue}>
-        <div className="queue-header">
+        <div className='queue-header'>
           <PlayerQueueHeader tab={tab} changeTab={changeTab} />
         </div>
-        <div className="queue-content">{renderContent}</div>
+        <div className='queue-content'>{renderContent}</div>
       </Container>
     </ClickAwayListener>
   );

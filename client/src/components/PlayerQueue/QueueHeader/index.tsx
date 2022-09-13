@@ -1,13 +1,14 @@
-import { Menu } from "@mui/material";
-import React from "react";
-import { MdMoreHoriz, MdOutlineAlarm } from "react-icons/md";
-import { useAudioContext } from "../../../context/AudioContext";
-import { PlayerQueueTab } from "../../../layout/components/PlayerQueue";
-import ConfirmDialog from "../../ConfirmDialog";
-import Modal from "../../Modal";
-import QueueAlarm from "./QueueAlarm";
-import QueueMenu from "./QueueMenu";
-import { Container, TabButton } from "./style";
+import { Menu } from '@mui/material';
+import React from 'react';
+import { MdMoreHoriz, MdOutlineAlarm } from 'react-icons/md';
+import { useAudioContext } from '../../../context/AudioContext';
+import { PlayerQueueTab } from '../../../layout/components/PlayerQueue';
+import ConfirmDialog from '../../ConfirmDialog';
+import Modal from '../../Modal';
+import Tabs from '../../Tabs';
+import QueueAlarm from './QueueAlarm';
+import QueueMenu from './QueueMenu';
+import { Container } from './style';
 
 interface Props {
   tab: PlayerQueueTab;
@@ -21,12 +22,12 @@ interface TabOption {
 
 const tabOptions: TabOption[] = [
   {
-    label: "Danh sách phát",
-    value: "player",
+    label: 'Danh sách phát',
+    value: 'player',
   },
   {
-    label: "Nghe gần đây",
-    value: "recent",
+    label: 'Nghe gần đây',
+    value: 'recent',
   },
 ];
 
@@ -78,77 +79,71 @@ const PlayerQueueHeader: React.FC<Props> = ({ changeTab, tab }) => {
   return (
     <>
       <ConfirmDialog
-        desc="Bạn có chắc chắn muốn xóa hẹn giờ?"
-        title="Xóa Hẹn Giờ"
+        desc='Bạn có chắc chắn muốn xóa hẹn giờ?'
+        title='Xóa Hẹn Giờ'
         open={openAlarmConfirm}
         onCancel={closeAlarmConfirmModal}
         onOk={handleTurnOffAlarm}
       />
 
       <Modal
-        maxWidth="xs"
+        maxWidth='xs'
         open={openAlarm}
         onClose={closeAlarmModal}
         // sx={{ maxWidth: '330px' }}
         PaperProps={{
-          sx: { maxWidth: "330px", backgroundColor: "transparent" },
+          sx: { maxWidth: '330px', backgroundColor: 'transparent' },
         }}
       >
         <QueueAlarm closeAlarmModal={closeAlarmModal} />
       </Modal>
       <Menu
-        id="queue-menu"
+        id='queue-menu'
         MenuListProps={{
-          "aria-labelledby": "queue-button",
+          'aria-labelledby': 'queue-button',
         }}
         anchorEl={anchorEl}
         open={openMenu}
         onClose={handleClose}
         sx={{
-          "& .MuiList-root": {
+          '& .MuiList-root': {
             padding: 0,
           },
         }}
         PaperProps={{
           sx: {
             padding: 0,
-            background: "none",
-            boxShadow: "none",
+            background: 'none',
+            boxShadow: 'none',
           },
         }}
       >
         <QueueMenu closeMenu={handleClose} closeQueue={handleCloseQueue} />
       </Menu>
       <Container>
-        <div className="queue-header-tabs">
-          {tabOptions.map((to) => (
-            <TabButton
-              key={to.value}
-              active={tab === to.value}
-              onClick={() => changeTab(to.value)}
-            >
-              {to.label}
-            </TabButton>
-          ))}
-        </div>
+        <Tabs
+          value={tab}
+          onChange={(value) => changeTab(value as PlayerQueueTab)}
+          options={tabOptions}
+        />
         <button
           style={{
-            backgroundColor: audio_alarm ? "#7200a1" : "hsla(0, 0%, 100%, 0.1)",
+            backgroundColor: audio_alarm ? '#7200a1' : 'hsla(0, 0%, 100%, 0.1)',
           }}
           onClick={handleClickAlarm}
-          className="queue-header-action"
+          className='queue-header-action'
           disabled={!openPlayer}
         >
           <MdOutlineAlarm />
         </button>
         <button
           disabled={!openPlayer}
-          className="queue-header-action"
-          aria-label="more"
-          id="queue-button"
-          aria-controls={openMenu ? "queue-menu" : undefined}
-          aria-expanded={openMenu ? "true" : undefined}
-          aria-haspopup="true"
+          className='queue-header-action'
+          aria-label='more'
+          id='queue-button'
+          aria-controls={openMenu ? 'queue-menu' : undefined}
+          aria-expanded={openMenu ? 'true' : undefined}
+          aria-haspopup='true'
           onClick={handleClick}
         >
           <MdMoreHoriz />

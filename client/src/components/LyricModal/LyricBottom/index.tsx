@@ -1,10 +1,19 @@
-import React from "react";
-import { Container } from "./style";
+import React from 'react';
+import { LyricContentTab } from '../../../layout/components/LyricModal';
+import { Container } from './style';
 
-const LyricBottom = () => {
+interface Props {
+  tab: LyricContentTab;
+}
+
+const LyricBottom: React.FC<Props> = ({ tab }) => {
   return (
     <Container>
-      Cô Phương Tự Thưởng / 孤芳自赏 - <span> Dương Tiểu Tráng</span>
+      {tab === 'playlist' ? null : (
+        <>
+          Cô Phương Tự Thưởng / 孤芳自赏 - <span> Dương Tiểu Tráng</span>
+        </>
+      )}
     </Container>
   );
 };
