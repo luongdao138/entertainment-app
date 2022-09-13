@@ -1,24 +1,25 @@
-import { Menu } from "@mui/material";
-import React, { useState } from "react";
-import { AiFillHeart, AiOutlineHeart } from "react-icons/ai";
-import { BsFillPlayFill } from "react-icons/bs";
-import { MdMoreHoriz } from "react-icons/md";
-import { toast } from "react-toastify";
-import { useAudioContext } from "../../../../context/AudioContext";
+import { Menu } from '@mui/material';
+import React, { useState } from 'react';
+import { AiFillHeart, AiOutlineHeart } from 'react-icons/ai';
+import { BsFillPlayFill } from 'react-icons/bs';
+import { MdMoreHoriz } from 'react-icons/md';
+import { toast } from 'react-toastify';
+import { useAudioContext } from '../../../../context/AudioContext';
 import {
   getAudioArchivedListSelector,
   getAudioCurrentListSongs,
   getAudioCurrentSongSelector,
   getAudioMetaSelector,
-} from "../../../../redux/audioPlayer/audioPlayerSelectors";
-import { logout } from "../../../../redux/auth/authSlice";
-import { useAppDispatch, useAppSelector } from "../../../../redux/hooks";
-import { changeFavourite } from "../../../../redux/song/songActions";
-import { Song } from "../../../../services/song";
-import { disableClickEvent } from "../../../../utils/common";
-import AudioPlayingIcon from "../../../AudioPlayingIcon";
-import SongItemMenu from "../../../SongItemMenu";
-import { Container } from "./style";
+} from '../../../../redux/audioPlayer/audioPlayerSelectors';
+import { logout } from '../../../../redux/auth/authSlice';
+import { useAppDispatch, useAppSelector } from '../../../../redux/hooks';
+import { changeFavourite } from '../../../../redux/song/songActions';
+import { Song } from '../../../../services/song';
+import { disableClickEvent } from '../../../../utils/common';
+import AudioPlayingIcon from '../../../AudioPlayingIcon';
+import SongItemMenu from '../../../SongItemMenu';
+import MyTooltip from '../../../Tooltip';
+import { Container } from './style';
 
 interface Props {
   song: Song;
@@ -68,15 +69,15 @@ const QueueSongItem: React.FC<Props> = ({
         changeFavourite({
           data: song.id,
           onSuccess() {
-            if (!prev) toast.success("Đã thêm bài hát vào thư viện");
-            else toast.success("Đã xóa bài hát khỏi thư viện");
+            if (!prev) toast.success('Đã thêm bài hát vào thư viện');
+            else toast.success('Đã xóa bài hát khỏi thư viện');
           },
         })
       );
     } catch (error: any) {
-      toast.error(error.response?.data.msg || "Có lỗi xảy ra");
+      toast.error(error.response?.data.msg || 'Có lỗi xảy ra');
       if (error.response?.status === 403) {
-        localStorage.removeItem("music_token");
+        localStorage.removeItem('music_token');
         dispatch(logout());
       }
     }
@@ -91,23 +92,23 @@ const QueueSongItem: React.FC<Props> = ({
   return (
     <>
       <Menu
-        id="song-item-menu"
+        id='song-item-menu'
         MenuListProps={{
-          "aria-labelledby": "song-item-button",
+          'aria-labelledby': 'song-item-button',
         }}
         anchorEl={anchorEl}
         open={openSongMenu}
         onClose={handleCloseSongMenu}
         sx={{
-          "& .MuiList-root": {
+          '& .MuiList-root': {
             padding: 0,
           },
         }}
         PaperProps={{
           sx: {
             padding: 0,
-            background: "none",
-            boxShadow: "none",
+            background: 'none',
+            boxShadow: 'none',
           },
         }}
       >
@@ -127,47 +128,54 @@ const QueueSongItem: React.FC<Props> = ({
         is_dragging={is_dragging}
         onDoubleClick={onClickQueueSong}
       >
-        <div className="song-left">
+        <div className='song-left'>
           <div
-            className="song-thumbnail"
+            className='song-thumbnail'
             onDoubleClick={disableClickEvent}
             onClick={onClickQueueSong}
           >
-            <img src={song.thumbnail} alt="" />
-            <div className="opacity"></div>
+            <img src={song.thumbnail} alt='' />
+            <div className='opacity'></div>
             {is_playing ? (
-              <span className="play-state">
+              <span className='play-state'>
                 <AudioPlayingIcon width={20} />
               </span>
             ) : (
-              <BsFillPlayFill className="play-state" />
+              <BsFillPlayFill className='play-state' />
             )}
           </div>
-          <div className="song-info">
-            <h4 className="name">{song.name}</h4>
-            <p className="singer">{song.singer_name}</p>
+          <div className='song-info'>
+            <h4 className='name'>{song.name}</h4>
+            <p className='singer'>{song.singer_name}</p>
           </div>
         </div>
-        <div className="song-right">
-          <button
-            onDoubleClick={disableClickEvent}
-            className="favourite action"
-            onClick={handleClickFavourite}
+        <div className='song-right'>
+          <MyTooltip
+            title={song.is_liked ? 'Xóa khỏi thư viện' : 'Thêm vào thư viện'}
+            placement='top'
           >
-            {song.is_liked ? <AiFillHeart /> : <AiOutlineHeart />}
-          </button>
-          <button
-            onDoubleClick={disableClickEvent}
-            aria-label="more"
-            id="song-item-button"
-            aria-controls={openSongMenu ? "song-item-menu" : undefined}
-            aria-expanded={openSongMenu ? "true" : undefined}
-            aria-haspopup="true"
-            onClick={handleOpenSongMenu}
-            className="more-btn action"
-          >
-            <MdMoreHoriz />
-          </button>
+            <button
+              onDoubleClick={disableClickEvent}
+              className='favourite action'
+              onClick={handleClickFavourite}
+            >
+              {song.is_liked ? <AiFillHeart /> : <AiOutlineHeart />}
+            </button>
+          </MyTooltip>
+          <MyTooltip title='Khác' placement='top'>
+            <button
+              onDoubleClick={disableClickEvent}
+              aria-label='more'
+              id='song-item-button'
+              aria-controls={openSongMenu ? 'song-item-menu' : undefined}
+              aria-expanded={openSongMenu ? 'true' : undefined}
+              aria-haspopup='true'
+              onClick={handleOpenSongMenu}
+              className='more-btn action'
+            >
+              <MdMoreHoriz />
+            </button>
+          </MyTooltip>
         </div>
       </Container>
     </>

@@ -20,6 +20,7 @@ import { RotatingLines } from 'react-loader-spinner';
 import { disableClickEvent } from '../../../utils/common';
 import { useAudioContext } from '../../../context/AudioContext';
 import { ReplayMode } from '../../../constants/options';
+import MyTooltip from '../../Tooltip';
 
 const AudioAction = () => {
   const dispatch = useAppDispatch();
@@ -98,13 +99,20 @@ const AudioAction = () => {
   return (
     <Container>
       {/* Shuffle songs */}
-      <ActionItemButton
-        active={audio_state.is_shuffle}
-        className='action-item'
-        onClick={handleClickShuffle}
+      <MyTooltip
+        placement='top'
+        title={
+          audio_state.is_shuffle ? 'Tắt phát ngẫu nhiên' : 'Bật phát ngẫu nhiên'
+        }
       >
-        <BsShuffle />
-      </ActionItemButton>
+        <ActionItemButton
+          active={audio_state.is_shuffle}
+          className='action-item'
+          onClick={handleClickShuffle}
+        >
+          <BsShuffle />
+        </ActionItemButton>
+      </MyTooltip>
 
       {/* Go to previous song in queue */}
       <ActionItemButton
@@ -148,13 +156,24 @@ const AudioAction = () => {
       </ActionItemButton>
 
       {/* Replay all */}
-      <ActionItemButton
-        active={audio_state.replay_mode !== ReplayMode.NONE}
-        className='action-item'
-        onClick={handleChangeReplaceMode}
+      <MyTooltip
+        placement='top'
+        title={
+          audio_state.replay_mode === ReplayMode.NONE
+            ? 'Bật phát lại tất cả'
+            : audio_state.replay_mode === ReplayMode.ALL
+            ? 'Bật phát lại một bài'
+            : 'Tắt phát lại'
+        }
       >
-        {getReplaceIcon}
-      </ActionItemButton>
+        <ActionItemButton
+          active={audio_state.replay_mode !== ReplayMode.NONE}
+          className='action-item'
+          onClick={handleChangeReplaceMode}
+        >
+          {getReplaceIcon}
+        </ActionItemButton>
+      </MyTooltip>
     </Container>
   );
 };

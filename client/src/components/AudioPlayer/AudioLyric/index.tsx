@@ -1,10 +1,11 @@
-import React from "react";
-import { Container } from "./style";
-import { TbMicrophone2 } from "react-icons/tb";
-import { useAppSelector } from "../../../redux/hooks";
-import { getAudioCurrentSongSelector } from "../../../redux/audioPlayer/audioPlayerSelectors";
-import { disableClickEvent } from "../../../utils/common";
-import { useLyricContext } from "../../../context/LyricContext";
+import React from 'react';
+import { Container } from './style';
+import { TbMicrophone2 } from 'react-icons/tb';
+import { useAppSelector } from '../../../redux/hooks';
+import { getAudioCurrentSongSelector } from '../../../redux/audioPlayer/audioPlayerSelectors';
+import { disableClickEvent } from '../../../utils/common';
+import { useLyricContext } from '../../../context/LyricContext';
+import MyTooltip from '../../Tooltip';
 
 const AudioLyric = () => {
   const { handleOpenLyric } = useLyricContext();
@@ -21,13 +22,19 @@ const AudioLyric = () => {
 
   return (
     <Container>
-      <button
-        onClick={handleClickLyricBtn}
-        className="karaoke-icon"
+      <MyTooltip
+        placement='top'
         disabled={!Boolean(has_lyric)}
+        title='Xem lời bài hát'
       >
-        <TbMicrophone2 />
-      </button>
+        <button
+          onClick={handleClickLyricBtn}
+          className='karaoke-icon'
+          disabled={!Boolean(has_lyric)}
+        >
+          <TbMicrophone2 />
+        </button>
+      </MyTooltip>
     </Container>
   );
 };

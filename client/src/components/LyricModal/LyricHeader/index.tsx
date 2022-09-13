@@ -8,6 +8,7 @@ import { useLyricContext } from '../../../context/LyricContext';
 import { LyricContentTab } from '../../../layout/components/LyricModal';
 import Tabs from '../../Tabs';
 import { AiOutlineShrink } from 'react-icons/ai';
+import MyTooltip from '../../Tooltip';
 
 const tabOptions = [
   {
@@ -57,23 +58,35 @@ const LyricHeader: React.FC<Props> = ({
       />
 
       <div className='lyric-header-actions'>
-        <button
-          onClick={isFullScreenMode ? exitFullscreenMode : enterFullscreenMode}
-          className='action-btn'
+        <MyTooltip
+          title={isFullScreenMode ? 'Thoát toàn màn hình' : 'Toàn màn hình'}
+          placement='bottom'
         >
-          {isFullScreenMode ? (
-            <AiOutlineShrink style={{ fontSize: '2.5rem' }} />
-          ) : (
-            <CgArrowsExpandRight />
-          )}
-        </button>
-        <button className='action-btn'>
-          <FiSettings />
-        </button>
-        {!isFullScreenMode && (
-          <button onClick={onCloseLyric} className='action-btn'>
-            <BsChevronDown />
+          <button
+            onClick={
+              isFullScreenMode ? exitFullscreenMode : enterFullscreenMode
+            }
+            className='action-btn'
+          >
+            {isFullScreenMode ? (
+              <AiOutlineShrink style={{ fontSize: '2.5rem' }} />
+            ) : (
+              <CgArrowsExpandRight />
+            )}
           </button>
+        </MyTooltip>
+        <MyTooltip title='Cài đặt' placement='bottom'>
+          <button className='action-btn'>
+            <FiSettings />
+          </button>
+        </MyTooltip>
+
+        {!isFullScreenMode && (
+          <MyTooltip title='Đóng' placement='bottom'>
+            <button onClick={onCloseLyric} className='action-btn'>
+              <BsChevronDown />
+            </button>
+          </MyTooltip>
         )}
       </div>
     </Container>

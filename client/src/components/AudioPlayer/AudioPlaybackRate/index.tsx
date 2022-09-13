@@ -5,6 +5,7 @@ import { useAudioContext } from '../../../context/AudioContext';
 import { getAudioStateSelector } from '../../../redux/audioPlayer/audioPlayerSelectors';
 import { useAppSelector } from '../../../redux/hooks';
 import { disableClickEvent } from '../../../utils/common';
+import MyTooltip from '../../Tooltip';
 import { Container, SpeedItem, SpeedMenu } from './style';
 
 const AudioPlaybackRate = () => {
@@ -67,17 +68,19 @@ const AudioPlaybackRate = () => {
         </SpeedMenu>
       </Menu>
       <Container>
-        <button
-          className='speed-btn'
-          aria-label='more'
-          id='song-speed-button'
-          aria-controls={openSpeedMenu ? 'song-speed-menu' : undefined}
-          aria-expanded={openSpeedMenu ? 'true' : undefined}
-          aria-haspopup='true'
-          onClick={handleOpenSpeedMenu}
-        >
-          {playback_rate.label}
-        </button>
+        <MyTooltip placement='top' title='Tốc độ phát'>
+          <button
+            className='speed-btn'
+            aria-label='more'
+            id='song-speed-button'
+            aria-controls={openSpeedMenu ? 'song-speed-menu' : undefined}
+            aria-expanded={openSpeedMenu ? 'true' : undefined}
+            aria-haspopup='true'
+            onClick={handleOpenSpeedMenu}
+          >
+            {playback_rate.label}
+          </button>
+        </MyTooltip>
       </Container>
     </>
   );

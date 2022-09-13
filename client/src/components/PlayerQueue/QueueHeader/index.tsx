@@ -6,6 +6,7 @@ import { PlayerQueueTab } from '../../../layout/components/PlayerQueue';
 import ConfirmDialog from '../../ConfirmDialog';
 import Modal from '../../Modal';
 import Tabs from '../../Tabs';
+import MyTooltip from '../../Tooltip';
 import QueueAlarm from './QueueAlarm';
 import QueueMenu from './QueueMenu';
 import { Container } from './style';
@@ -126,28 +127,39 @@ const PlayerQueueHeader: React.FC<Props> = ({ changeTab, tab }) => {
           onChange={(value) => changeTab(value as PlayerQueueTab)}
           options={tabOptions}
         />
-        <button
-          style={{
-            backgroundColor: audio_alarm ? '#7200a1' : 'hsla(0, 0%, 100%, 0.1)',
-          }}
-          onClick={handleClickAlarm}
-          className='queue-header-action'
+        <MyTooltip
           disabled={!openPlayer}
+          title='Hẹn giờ dừng phát nhạc'
+          placement='bottom'
         >
-          <MdOutlineAlarm />
-        </button>
-        <button
-          disabled={!openPlayer}
-          className='queue-header-action'
-          aria-label='more'
-          id='queue-button'
-          aria-controls={openMenu ? 'queue-menu' : undefined}
-          aria-expanded={openMenu ? 'true' : undefined}
-          aria-haspopup='true'
-          onClick={handleClick}
-        >
-          <MdMoreHoriz />
-        </button>
+          <button
+            style={{
+              backgroundColor: audio_alarm
+                ? '#7200a1'
+                : 'hsla(0, 0%, 100%, 0.1)',
+            }}
+            onClick={handleClickAlarm}
+            className='queue-header-action'
+            disabled={!openPlayer}
+          >
+            <MdOutlineAlarm />
+          </button>
+        </MyTooltip>
+
+        <MyTooltip placement='bottom' disabled={!openPlayer} title='Khác'>
+          <button
+            disabled={!openPlayer}
+            className='queue-header-action'
+            aria-label='more'
+            id='queue-button'
+            aria-controls={openMenu ? 'queue-menu' : undefined}
+            aria-expanded={openMenu ? 'true' : undefined}
+            aria-haspopup='true'
+            onClick={handleClick}
+          >
+            <MdMoreHoriz />
+          </button>
+        </MyTooltip>
       </Container>
     </>
   );

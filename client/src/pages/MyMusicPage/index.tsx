@@ -10,6 +10,7 @@ import { getLibraryPlaylist } from '../../redux/playlist/playlistSelector';
 import appRoutes from '../../constants/appRoutes';
 import { Container, NavigationItem } from './style';
 import { toast } from 'react-toastify';
+import MyTooltip from '../../components/Tooltip';
 
 const MyMusicPage = () => {
   const location = useLocation();
@@ -33,9 +34,11 @@ const MyMusicPage = () => {
         <div className='playlist__header'>
           <div className='playlist__header__left'>
             <span>Playlist</span>
-            <button onClick={openUploadPlaylistForm}>
-              <MdAdd />
-            </button>
+            <MyTooltip placement='top' title='Tạo playlist mới'>
+              <button onClick={openUploadPlaylistForm}>
+                <MdAdd />
+              </button>
+            </MyTooltip>
           </div>
           <Link
             to={appRoutes.LIBRARY_PLAYLIST}

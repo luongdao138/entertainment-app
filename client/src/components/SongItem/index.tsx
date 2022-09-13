@@ -21,6 +21,7 @@ import { disableClickEvent } from '../../utils/common';
 import { RotatingLines } from 'react-loader-spinner';
 import AudioPlayingIcon from '../AudioPlayingIcon';
 import { AudioSong } from '../../redux/audioPlayer/audioPlayerSlice';
+import MyTooltip from '../Tooltip';
 interface Props {
   song: Song;
   focusSong: string | null;
@@ -285,26 +286,33 @@ const SongItem: React.FC<Props> = ({
         )}
 
         <div className='song-right'>
-          <button
-            className='favorite'
-            onDoubleClick={disableClickEvent}
-            onClick={handleClickFavourite}
+          <MyTooltip
+            title={song.is_liked ? 'Xóa khỏi thư viện' : 'Thêm vào thư viện'}
+            placement='top'
           >
-            {song.is_liked ? <AiFillHeart /> : <AiOutlineHeart />}
-          </button>
+            <button
+              className='favorite'
+              onDoubleClick={disableClickEvent}
+              onClick={handleClickFavourite}
+            >
+              {song.is_liked ? <AiFillHeart /> : <AiOutlineHeart />}
+            </button>
+          </MyTooltip>
           <span className='duration'>{formatSongDuration(song.duration)}</span>
-          <button
-            onDoubleClick={disableClickEvent}
-            className='more-action'
-            aria-label='more'
-            id='song-item-button'
-            aria-controls={openMenu ? 'song-item-menu' : undefined}
-            aria-expanded={openMenu ? 'true' : undefined}
-            aria-haspopup='true'
-            onClick={handleClick}
-          >
-            <MdMoreHoriz />
-          </button>
+          <MyTooltip title='Khác' placement='top'>
+            <button
+              onDoubleClick={disableClickEvent}
+              className='more-action'
+              aria-label='more'
+              id='song-item-button'
+              aria-controls={openMenu ? 'song-item-menu' : undefined}
+              aria-expanded={openMenu ? 'true' : undefined}
+              aria-haspopup='true'
+              onClick={handleClick}
+            >
+              <MdMoreHoriz />
+            </button>
+          </MyTooltip>
         </div>
       </Container>
     </>

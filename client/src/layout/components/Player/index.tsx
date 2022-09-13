@@ -1,21 +1,22 @@
-import React, { useEffect, useState } from "react";
-import { MdOutlineQueueMusic } from "react-icons/md";
-import AudioAction from "../../../components/AudioPlayer/AudioAction";
-import AudioSeekbar from "../../../components/AudioPlayer/AudioSeekbar";
-import AudioSong from "../../../components/AudioPlayer/AudioSong";
-import AudioVolume from "../../../components/AudioPlayer/AudioVolume";
-import { Container } from "./style";
-import AudioPlayer from "../../../components/AudioPlayer";
-import { useAudioContext } from "../../../context/AudioContext";
-import { useNavigate } from "react-router-dom";
-import { useAppSelector } from "../../../redux/hooks";
-import { getAudioCurrentSongSelector } from "../../../redux/audioPlayer/audioPlayerSelectors";
-import AudioPlaybackRate from "../../../components/AudioPlayer/AudioPlaybackRate";
-import AudioLyric from "../../../components/AudioPlayer/AudioLyric";
-import AudioAlarm from "../../../components/AudioAlarm";
-import Modal from "../../../components/Modal";
-import ContinueSongConfirm from "../../../components/ContinueSongConfirm";
-import { useLyricContext } from "../../../context/LyricContext";
+import React, { useEffect, useState } from 'react';
+import { MdOutlineQueueMusic } from 'react-icons/md';
+import AudioAction from '../../../components/AudioPlayer/AudioAction';
+import AudioSeekbar from '../../../components/AudioPlayer/AudioSeekbar';
+import AudioSong from '../../../components/AudioPlayer/AudioSong';
+import AudioVolume from '../../../components/AudioPlayer/AudioVolume';
+import { Container } from './style';
+import AudioPlayer from '../../../components/AudioPlayer';
+import { useAudioContext } from '../../../context/AudioContext';
+import { useNavigate } from 'react-router-dom';
+import { useAppSelector } from '../../../redux/hooks';
+import { getAudioCurrentSongSelector } from '../../../redux/audioPlayer/audioPlayerSelectors';
+import AudioPlaybackRate from '../../../components/AudioPlayer/AudioPlaybackRate';
+import AudioLyric from '../../../components/AudioPlayer/AudioLyric';
+import AudioAlarm from '../../../components/AudioAlarm';
+import Modal from '../../../components/Modal';
+import ContinueSongConfirm from '../../../components/ContinueSongConfirm';
+import { useLyricContext } from '../../../context/LyricContext';
+import MyTooltip from '../../../components/Tooltip';
 
 const Player = () => {
   const {
@@ -58,20 +59,20 @@ const Player = () => {
       const handleClickBackspace = (e: KeyboardEvent) => {
         console.log({ target: e.target, currentTarget: e.currentTarget });
         if (
-          (e.target as any)?.nodeName === "INPUT" ||
-          (e.target as any)?.nodeName === "TEXTAREA"
+          (e.target as any)?.nodeName === 'INPUT' ||
+          (e.target as any)?.nodeName === 'TEXTAREA'
         ) {
           return;
         }
-        if (e.code === "Space") {
+        if (e.code === 'Space') {
           e.preventDefault();
           handleToggleAudioPlayState();
         }
       };
-      addEventListener("keydown", handleClickBackspace);
+      addEventListener('keydown', handleClickBackspace);
 
       return () => {
-        removeEventListener("keydown", handleClickBackspace);
+        removeEventListener('keydown', handleClickBackspace);
       };
     }
   }, [open_player]);
@@ -92,11 +93,11 @@ const Player = () => {
       {/* Modal xuất hiện khi hết thời gian hẹn giờ */}
       {/* Để confirm xem người dùng có muốn nghe nhạc tiếp hay không */}
       <Modal
-        maxWidth="xs"
+        maxWidth='xs'
         open={openContinueSongConfirm}
         onClose={() => setOpenContinueSongConfirm(false)}
         PaperProps={{
-          sx: { maxWidth: "330px", backgroundColor: "transparent" },
+          sx: { maxWidth: '330px', backgroundColor: 'transparent' },
         }}
       >
         <ContinueSongConfirm
@@ -113,24 +114,26 @@ const Player = () => {
         />
       )}
 
-      <div className="player-content">
-        <div className="player-left">
+      <div className='player-content'>
+        <div className='player-left'>
           <AudioSong />
         </div>
-        <div className="player-middle">
+        <div className='player-middle'>
           <AudioAction />
           <AudioSeekbar />
           <AudioPlayer />
         </div>
-        <div className="player-right">
+        <div className='player-right'>
           <AudioLyric />
           <AudioPlaybackRate />
           <AudioVolume />
-          <div className="divider"></div>
-          <div className="queue">
-            <button onClick={toggleQueue}>
-              <MdOutlineQueueMusic />
-            </button>
+          <div className='divider'></div>
+          <div className='queue'>
+            <MyTooltip title='Danh sách phát'>
+              <button onClick={toggleQueue}>
+                <MdOutlineQueueMusic />
+              </button>
+            </MyTooltip>
           </div>
         </div>
       </div>

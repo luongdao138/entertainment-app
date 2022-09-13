@@ -14,6 +14,7 @@ import { getUsersUploadedSongs } from '../../../redux/song/songSelectors';
 import { FaUser } from 'react-icons/fa';
 import { Link } from 'react-router-dom';
 import appRoutes from '../../../constants/appRoutes';
+import MyTooltip from '../../../components/Tooltip';
 
 const Header = () => {
   const songs = useAppSelector(getUsersUploadedSongs);
@@ -60,16 +61,20 @@ const Header = () => {
         </div>
         <div className='header-right'>
           <LoginRequired>
-            <button
-              className='header-right-item header-upload'
-              onClick={handleClickUploadButton}
-            >
-              <FiDownload />
-            </button>
+            <MyTooltip title='Tải lên' placement='bottom'>
+              <button
+                className='header-right-item header-upload'
+                onClick={handleClickUploadButton}
+              >
+                <FiDownload />
+              </button>
+            </MyTooltip>
           </LoginRequired>
-          <button className='header-right-item header-upload'>
-            <FiSettings />
-          </button>
+          <MyTooltip placement='bottom' title='Cài đặt'>
+            <button className='header-right-item header-upload'>
+              <FiSettings />
+            </button>
+          </MyTooltip>
 
           <LoginRequired>
             <button

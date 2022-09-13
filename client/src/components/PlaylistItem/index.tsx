@@ -28,6 +28,7 @@ import {
 } from '../../redux/audioPlayer/audioPlayerSelectors';
 import { useAudioContext } from '../../context/AudioContext';
 import AudioPlayingIcon from '../AudioPlayingIcon';
+import MyTooltip from '../Tooltip';
 
 interface Props {
   playlist: Playlist;
@@ -275,37 +276,51 @@ const PlaylistItem: React.FC<Props> = ({
 
             <div className='thumbnail-actions'>
               {playlist.is_owner && playlist.can_delete ? (
-                <button
-                  className='action'
-                  onClick={handleOpenDeleteConfirmModal}
-                >
-                  <MdClose />
-                </button>
+                <MyTooltip title='Xóa' placement='top'>
+                  <button
+                    className='action'
+                    onClick={handleOpenDeleteConfirmModal}
+                  >
+                    <MdClose />
+                  </button>
+                </MyTooltip>
               ) : (
                 <LoginRequired>
-                  <button className='favorite' onClick={handleLikePlaylist}>
-                    {playlist.is_liked ? <AiFillHeart /> : <AiOutlineHeart />}
-                  </button>
+                  <MyTooltip
+                    placement='top'
+                    title={
+                      playlist.is_liked
+                        ? 'Xóa khỏi thư viện'
+                        : 'Thêm vào thư viện'
+                    }
+                  >
+                    <button className='favorite' onClick={handleLikePlaylist}>
+                      {playlist.is_liked ? <AiFillHeart /> : <AiOutlineHeart />}
+                    </button>
+                  </MyTooltip>
                 </LoginRequired>
               )}
+
               <button className='play-state' onClick={handleClickPlayButton}>
                 {is_playing ? <AudioPlayingIcon /> : <BsFillPlayFill />}
               </button>
 
               <div>
-                <button
-                  className='action'
-                  aria-label='more'
-                  id='playlist-item-button'
-                  aria-controls={
-                    openPlaylistMenu ? 'playlist-item-menu' : undefined
-                  }
-                  aria-expanded={openPlaylistMenu ? 'true' : undefined}
-                  aria-haspopup='true'
-                  onClick={handleClickMore}
-                >
-                  <MdMoreHoriz />
-                </button>
+                <MyTooltip title='Khác' placement='top'>
+                  <button
+                    className='action'
+                    aria-label='more'
+                    id='playlist-item-button'
+                    aria-controls={
+                      openPlaylistMenu ? 'playlist-item-menu' : undefined
+                    }
+                    aria-expanded={openPlaylistMenu ? 'true' : undefined}
+                    aria-haspopup='true'
+                    onClick={handleClickMore}
+                  >
+                    <MdMoreHoriz />
+                  </button>
+                </MyTooltip>
               </div>
             </div>
           </Link>
