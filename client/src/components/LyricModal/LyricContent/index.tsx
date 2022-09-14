@@ -1,6 +1,9 @@
-import React, { useMemo } from 'react';
-import { LyricContentTab } from '../../../layout/components/LyricModal';
-import { Container } from './style';
+import React, { useMemo } from "react";
+import { LyricContentTab } from "../../../layout/components/LyricModal";
+import SongKaraoke from "./SongKaraoke";
+import SongLyric from "./SongLyric";
+import SongPlaylist from "./SongPlaylist";
+import { Container } from "./style";
 
 interface Props {
   tab: LyricContentTab;
@@ -9,13 +12,13 @@ interface Props {
 const LyricContent: React.FC<Props> = ({ tab }) => {
   const renderContent = useMemo(() => {
     switch (tab) {
-      case 'lyric':
-        return <h1>Lyric</h1>;
-      case 'karaoke':
-        return <h1>Karaoke</h1>;
+      case "lyric":
+        return <SongLyric />;
+      case "karaoke":
+        return <SongKaraoke />;
 
       default:
-        return <h1>Playlist</h1>;
+        return <SongPlaylist />;
     }
   }, [tab]);
 

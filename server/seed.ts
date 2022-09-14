@@ -5,710 +5,1769 @@ const mockUsers = {};
 const mockLyricData = {
   sentences: [
     {
-      words: [{ startTime: 500, endTime: 2000, data: "Anh Khác Trước Rồi" }],
-    },
-    { words: [{ startTime: 2000, endTime: 4000, data: "Ngọc Thúy" }] },
-    {
-      words: [
-        { startTime: 44869, endTime: 45289, data: "Xin" },
-        { startTime: 45299, endTime: 45649, data: "anh" },
-        { startTime: 45649, endTime: 45879, data: "đừng" },
-        { startTime: 46499, endTime: 46769, data: "nói" },
-        { startTime: 46769, endTime: 47099, data: "dối" },
-        { startTime: 47099, endTime: 47379, data: "em" },
-        { startTime: 47429, endTime: 47709, data: "nữa" },
-        { startTime: 47709, endTime: 48289, data: "được" },
-        { startTime: 48289, endTime: 48889, data: "không" },
-      ],
-    },
-    {
-      words: [
-        { startTime: 49699, endTime: 50079, data: "Vì" },
-        { startTime: 50079, endTime: 50389, data: "điều" },
-        { startTime: 50389, endTime: 50929, data: "đó" },
-        { startTime: 50929, endTime: 51359, data: "chỉ" },
-        { startTime: 51359, endTime: 51879, data: "làm" },
-        { startTime: 51889, endTime: 52199, data: "em" },
-        { startTime: 52279, endTime: 52809, data: "đau" },
-        { startTime: 52809, endTime: 53199, data: "lòng" },
-      ],
-    },
-    {
-      words: [
-        { startTime: 54209, endTime: 54589, data: "Xin" },
-        { startTime: 54599, endTime: 54889, data: "anh" },
-        { startTime: 54889, endTime: 55219, data: "đừng" },
-        { startTime: 55219, endTime: 55780, data: "làm" },
-      ],
-    },
-    {
-      words: [
-        { startTime: 56069, endTime: 56409, data: "Tổn" },
-        { startTime: 56409, endTime: 56709, data: "thương" },
-        { startTime: 56709, endTime: 56979, data: "em" },
-        { startTime: 56979, endTime: 57329, data: "được" },
-        { startTime: 57339, endTime: 57500, data: "không" },
-      ],
-    },
-    {
-      words: [
-        { startTime: 59039, endTime: 59350, data: "Đừng" },
-        { startTime: 59350, endTime: 59609, data: "làm" },
-        { startTime: 59619, endTime: 59969, data: "cho" },
-        { startTime: 59969, endTime: 60529, data: "em" },
-        { startTime: 60529, endTime: 60880, data: "níu" },
-        { startTime: 60880, endTime: 61460, data: "giữ" },
-        { startTime: 61460, endTime: 61770, data: "những" },
-        { startTime: 61780, endTime: 62419, data: "hy" },
-        { startTime: 62429, endTime: 63029, data: "vọng" },
-      ],
-    },
-    {
-      words: [
-        { startTime: 63879, endTime: 64199, data: "Nếu" },
-        { startTime: 64199, endTime: 64479, data: "có" },
-        { startTime: 64479, endTime: 64810, data: "một" },
-        { startTime: 64810, endTime: 64940, data: "lần" },
-        { startTime: 65630, endTime: 65979, data: "hai" },
-        { startTime: 65979, endTime: 66259, data: "ta" },
-        { startTime: 66259, endTime: 66599, data: "hoán" },
-        { startTime: 66609, endTime: 66919, data: "đổi" },
-        { startTime: 66929, endTime: 67379, data: "cho" },
-        { startTime: 67549, endTime: 67939, data: "nhau" },
-      ],
-    },
-    {
-      words: [
-        { startTime: 68690, endTime: 68949, data: "Anh" },
-        { startTime: 68949, endTime: 69279, data: "sẽ" },
-        { startTime: 69299, endTime: 69489, data: "biết" },
-        { startTime: 69499, endTime: 70139, data: "rằng" },
-        { startTime: 70149, endTime: 70489, data: "em" },
-        { startTime: 70489, endTime: 70739, data: "đã" },
-        { startTime: 70739, endTime: 71269, data: "đau" },
-        { startTime: 71279, endTime: 71720, data: "nhiều" },
-        { startTime: 71720, endTime: 71790, data: "lắm" },
-      ],
-    },
-    {
-      words: [
-        { startTime: 73439, endTime: 73780, data: "Nên" },
-        { startTime: 73780, endTime: 74040, data: "em" },
-        { startTime: 74040, endTime: 74329, data: "sẽ" },
-        { startTime: 74339, endTime: 74939, data: "chọn" },
-        { startTime: 75269, endTime: 75419, data: "là" },
-        { startTime: 75569, endTime: 76109, data: "người" },
-        { startTime: 76109, endTime: 76509, data: "ra" },
-        { startTime: 76509, endTime: 77439, data: "đi" },
-      ],
-    },
-    {
-      words: [
-        { startTime: 78369, endTime: 78469, data: "Vì" },
-        { startTime: 78529, endTime: 78909, data: "tình" },
-        { startTime: 78919, endTime: 79269, data: "yêu" },
-        { startTime: 79269, endTime: 79669, data: "anh" },
-        { startTime: 79679, endTime: 79879, data: "trao" },
-        { startTime: 80149, endTime: 80419, data: "em" },
-        { startTime: 80529, endTime: 80929, data: "khác" },
-        { startTime: 80949, endTime: 81359, data: "trước" },
-        { startTime: 81369, endTime: 81849, data: "rồi" },
-      ],
-    },
-    {
-      words: [
-        { startTime: 85429, endTime: 85779, data: "Nụ" },
-        { startTime: 85779, endTime: 86089, data: "cười" },
-        { startTime: 86089, endTime: 86359, data: "của" },
-        { startTime: 86359, endTime: 86929, data: "anh" },
-        { startTime: 86929, endTime: 87289, data: "nay" },
-        { startTime: 87289, endTime: 87659, data: "đã" },
-      ],
-    },
-    {
-      words: [
-        { startTime: 87789, endTime: 88189, data: "Không" },
-        { startTime: 88189, endTime: 88289, data: "còn" },
-        { startTime: 88429, endTime: 88679, data: "như" },
-        { startTime: 88689, endTime: 89189, data: "xưa" },
-        { startTime: 89189, endTime: 89669, data: "nữa" },
-        { startTime: 89669, endTime: 90159, data: "rồi" },
-      ],
-    },
-    {
-      words: [
-        { startTime: 90339, endTime: 90509, data: "Ở" },
-        { startTime: 90519, endTime: 90839, data: "trong" },
-        { startTime: 90849, endTime: 91159, data: "ánh" },
-        { startTime: 91159, endTime: 91339, data: "mắt" },
-        { startTime: 91459, endTime: 91759, data: "ấy" },
-        { startTime: 91759, endTime: 92059, data: "em" },
-        { startTime: 92059, endTime: 92349, data: "thấy" },
-      ],
-    },
-    {
-      words: [
-        { startTime: 92709, endTime: 92999, data: "Anh" },
-        { startTime: 92999, endTime: 93199, data: "đã" },
-        { startTime: 93209, endTime: 93560, data: "hết" },
-        { startTime: 93570, endTime: 94080, data: "yêu" },
-        { startTime: 94080, endTime: 94570, data: "em" },
-        { startTime: 94570, endTime: 94760, data: "rồi" },
-      ],
-    },
-    {
-      words: [
-        { startTime: 95329, endTime: 95619, data: "Em" },
-        { startTime: 95619, endTime: 95929, data: "không" },
-        { startTime: 95929, endTime: 96259, data: "cần" },
-        { startTime: 96259, endTime: 96510, data: "lời" },
-        { startTime: 96510, endTime: 96830, data: "xin" },
-        { startTime: 96900, endTime: 97230, data: "lỗi" },
-      ],
-    },
-    {
-      words: [
-        { startTime: 97439, endTime: 97729, data: "Em" },
-        { startTime: 97729, endTime: 97940, data: "cũng" },
-        { startTime: 97979, endTime: 98320, data: "chẳng" },
-        { startTime: 98320, endTime: 98479, data: "cần" },
-        { startTime: 98629, endTime: 98899, data: "lời" },
-        { startTime: 98909, endTime: 99209, data: "nói" },
-        { startTime: 99209, endTime: 99919, data: "dối" },
-      ],
-    },
-    {
-      words: [
-        { startTime: 100109, endTime: 100399, data: "Em" },
-        { startTime: 100399, endTime: 100750, data: "chỉ" },
-        { startTime: 100750, endTime: 101110, data: "cần" },
-        { startTime: 101120, endTime: 101610, data: "anh" },
-        { startTime: 101620, endTime: 101939, data: "người" },
-        { startTime: 101939, endTime: 102130, data: "của" },
-        { startTime: 102310, endTime: 102620, data: "quá" },
-        { startTime: 102810, endTime: 103130, data: "khứ" },
-        { startTime: 103350, endTime: 104190, data: "thôi" },
-      ],
-    },
-    {
-      words: [
-        { startTime: 104619, endTime: 104970, data: "Người" },
-        { startTime: 104970, endTime: 105249, data: "mà" },
-        { startTime: 105279, endTime: 105559, data: "em" },
-        { startTime: 105569, endTime: 106040, data: "yêu" },
-        { startTime: 106040, endTime: 106319, data: "ngày" },
-        { startTime: 106339, endTime: 106819, data: "xưa" },
-      ],
-    },
-    {
-      words: [
-        { startTime: 107039, endTime: 107339, data: "Chắc" },
-        { startTime: 107339, endTime: 107669, data: "nay" },
-        { startTime: 107669, endTime: 107949, data: "đã" },
-        { startTime: 107949, endTime: 108239, data: "ko" },
-        { startTime: 108439, endTime: 108699, data: "còn" },
-        { startTime: 108879, endTime: 109049, data: "nữa" },
-      ],
-    },
-    {
-      words: [
-        { startTime: 109469, endTime: 109780, data: "Người" },
-        { startTime: 109780, endTime: 110109, data: "từng" },
-        { startTime: 110109, endTime: 110540, data: "đã" },
-        { startTime: 110540, endTime: 110569, data: "hứa" },
-        { startTime: 110629, endTime: 111039, data: "sẽ" },
-        { startTime: 111159, endTime: 111249, data: "ở" },
-        { startTime: 111249, endTime: 111549, data: "bên" },
-        { startTime: 111619, endTime: 111929, data: "em" },
-      ],
-    },
-    {
-      words: [
-        { startTime: 112139, endTime: 112439, data: "Quan" },
-        { startTime: 112439, endTime: 112649, data: "tâm" },
-        { startTime: 112729, endTime: 113069, data: "em" },
-        { startTime: 113069, endTime: 113630, data: "mỗi" },
-        { startTime: 113640, endTime: 114140, data: "ngày" },
-      ],
-    },
-    {
-      words: [
-        { startTime: 114469, endTime: 114830, data: "Giờ" },
-        { startTime: 114830, endTime: 115129, data: "đây" },
-        { startTime: 115139, endTime: 115629, data: "trước" },
-        { startTime: 115639, endTime: 116049, data: "mặt" },
-        { startTime: 116069, endTime: 116459, data: "em" },
-      ],
-    },
-    {
-      words: [
-        { startTime: 116659, endTime: 116920, data: "Có" },
-        { startTime: 116920, endTime: 117280, data: "lẽ" },
-        { startTime: 117280, endTime: 117550, data: "là" },
-        { startTime: 117550, endTime: 117989, data: "một" },
-        { startTime: 117989, endTime: 118469, data: "người" },
-        { startTime: 118479, endTime: 118669, data: "khác" },
-      ],
-    },
-    {
-      words: [
-        { startTime: 119339, endTime: 119659, data: "Vẫn" },
-        { startTime: 119659, endTime: 119969, data: "nụ" },
-        { startTime: 119969, endTime: 120349, data: "cười" },
-        { startTime: 120349, endTime: 120799, data: "vẫn" },
-        { startTime: 120809, endTime: 121199, data: "ánh" },
-        { startTime: 121199, endTime: 121399, data: "mắt" },
-        { startTime: 121469, endTime: 121889, data: "ấy" },
-        { startTime: 122019, endTime: 122279, data: "mà" },
-        { startTime: 122289, endTime: 122859, data: "sao" },
-      ],
-    },
-    {
-      words: [
-        { startTime: 123380, endTime: 123960, data: "Không" },
-        { startTime: 123960, endTime: 124540, data: "phải" },
-        { startTime: 124719, endTime: 125099, data: "là" },
-        { startTime: 125280, endTime: 126030, data: "anh" },
-      ],
-    },
-    {
-      words: [
-        { startTime: 150459, endTime: 150909, data: "Xin" },
-        { startTime: 150919, endTime: 151219, data: "anh" },
-        { startTime: 151219, endTime: 151750, data: "đừng" },
-        { startTime: 152060, endTime: 152370, data: "nói" },
-        { startTime: 152370, endTime: 152689, data: "dối" },
-        { startTime: 152689, endTime: 153019, data: "em" },
-        { startTime: 153019, endTime: 153279, data: "nữa" },
-        { startTime: 153279, endTime: 153629, data: "được" },
-        { startTime: 153929, endTime: 154129, data: "không" },
-      ],
-    },
-    {
-      words: [
-        { startTime: 155339, endTime: 155699, data: "Vì" },
-        { startTime: 155699, endTime: 155989, data: "điều" },
-        { startTime: 155989, endTime: 156509, data: "đó" },
-        { startTime: 156509, endTime: 156930, data: "chỉ" },
-        { startTime: 156930, endTime: 157430, data: "làm" },
-        { startTime: 157440, endTime: 157820, data: "em" },
-        { startTime: 157820, endTime: 158319, data: "đau" },
-        { startTime: 158339, endTime: 158940, data: "lòng" },
-      ],
-    },
-    {
-      words: [
-        { startTime: 159839, endTime: 160159, data: "Xin" },
-        { startTime: 160169, endTime: 160489, data: "anh" },
-        { startTime: 160489, endTime: 160679, data: "đừng" },
-        { startTime: 160769, endTime: 161349, data: "làm" },
-      ],
-    },
-    {
-      words: [
-        { startTime: 161699, endTime: 161979, data: "Tổn" },
-        { startTime: 161979, endTime: 162259, data: "thương" },
-        { startTime: 162259, endTime: 162569, data: "em" },
-        { startTime: 162569, endTime: 162850, data: "được" },
-        { startTime: 162860, endTime: 163389, data: "không" },
-      ],
-    },
-    {
-      words: [
-        { startTime: 164669, endTime: 164919, data: "Đừng" },
-        { startTime: 164929, endTime: 165229, data: "làm" },
-        { startTime: 165229, endTime: 165589, data: "cho" },
-        { startTime: 165599, endTime: 166149, data: "em" },
-        { startTime: 166149, endTime: 166439, data: "níu" },
-        { startTime: 166439, endTime: 166809, data: "giữ" },
-        { startTime: 166819, endTime: 167339, data: "những" },
-        { startTime: 167349, endTime: 167989, data: "hy" },
-        { startTime: 168019, endTime: 168479, data: "vọng" },
-      ],
-    },
-    {
-      words: [
-        { startTime: 169489, endTime: 169789, data: "Nếu" },
-        { startTime: 169789, endTime: 170089, data: "có" },
-        { startTime: 170089, endTime: 170429, data: "một" },
-        { startTime: 170429, endTime: 170689, data: "lần" },
-        { startTime: 171249, endTime: 171569, data: "hai" },
-        { startTime: 171569, endTime: 171809, data: "ta" },
-        { startTime: 171819, endTime: 172169, data: "hoán" },
-        { startTime: 172219, endTime: 172669, data: "đổi" },
-        { startTime: 172809, endTime: 173189, data: "cho" },
-        { startTime: 173329, endTime: 173769, data: "nhau" },
-      ],
-    },
-    {
-      words: [
-        { startTime: 174279, endTime: 174469, data: "Anh" },
-        { startTime: 174479, endTime: 174879, data: "sẽ" },
-        { startTime: 174879, endTime: 175079, data: "biết" },
-        { startTime: 175089, endTime: 175539, data: "rằng" },
-        { startTime: 175769, endTime: 176039, data: "em" },
-        { startTime: 176049, endTime: 176359, data: "đã" },
-        { startTime: 176359, endTime: 176989, data: "đau" },
-        { startTime: 177209, endTime: 177859, data: "nhiều" },
-        { startTime: 177859, endTime: 178049, data: "lắm" },
-      ],
-    },
-    {
-      words: [
-        { startTime: 178980, endTime: 179170, data: "Nên" },
-        { startTime: 179199, endTime: 179589, data: "em" },
-        { startTime: 179599, endTime: 179909, data: "sẽ" },
-        { startTime: 179909, endTime: 180169, data: "chọn" },
-        { startTime: 180589, endTime: 180849, data: "là" },
-        { startTime: 180849, endTime: 181169, data: "người" },
-        { startTime: 181609, endTime: 182079, data: "ra" },
-        { startTime: 182079, endTime: 183069, data: "đi" },
-      ],
-    },
-    {
-      words: [
-        { startTime: 183699, endTime: 183719, data: "Vì" },
-        { startTime: 184109, endTime: 184479, data: "tình" },
-        { startTime: 184489, endTime: 184879, data: "yêu" },
-        { startTime: 184889, endTime: 185109, data: "anh" },
-        { startTime: 185289, endTime: 185609, data: "trao" },
-        { startTime: 185739, endTime: 186249, data: "em" },
-        { startTime: 186259, endTime: 186539, data: "khác" },
-        { startTime: 186549, endTime: 187099, data: "trước" },
-        { startTime: 187109, endTime: 187609, data: "rồi" },
-      ],
-    },
-    {
-      words: [
-        { startTime: 191039, endTime: 191329, data: "Nụ" },
-        { startTime: 191329, endTime: 191699, data: "cười" },
-        { startTime: 191699, endTime: 191899, data: "của" },
-        { startTime: 191919, endTime: 192259, data: "anh" },
-        { startTime: 192479, endTime: 192869, data: "nay" },
-        { startTime: 192869, endTime: 193349, data: "đã" },
-      ],
-    },
-    {
-      words: [
-        { startTime: 193419, endTime: 193789, data: "Không" },
-        { startTime: 193789, endTime: 194019, data: "còn" },
-        { startTime: 194029, endTime: 194289, data: "như" },
-        { startTime: 194289, endTime: 194789, data: "xưa" },
-        { startTime: 194789, endTime: 195239, data: "nữa" },
-        { startTime: 195249, endTime: 195889, data: "rồi" },
-      ],
-    },
-    {
-      words: [
-        { startTime: 195979, endTime: 196139, data: "Ở" },
-        { startTime: 196149, endTime: 196479, data: "trong" },
-        { startTime: 196479, endTime: 196789, data: "ánh" },
-        { startTime: 196789, endTime: 197059, data: "mắt" },
-        { startTime: 197159, endTime: 197359, data: "ấy" },
-        { startTime: 197369, endTime: 197679, data: "em" },
-        { startTime: 197679, endTime: 198050, data: "thấy" },
-      ],
-    },
-    {
-      words: [
-        { startTime: 198270, endTime: 198599, data: "Anh" },
-        { startTime: 198599, endTime: 198809, data: "đã" },
-        { startTime: 198809, endTime: 199169, data: "hết" },
-        { startTime: 199179, endTime: 199439, data: "yêu" },
-        { startTime: 199449, endTime: 199999, data: "em" },
-        { startTime: 200009, endTime: 200449, data: "rồi" },
-      ],
-    },
-    {
-      words: [
-        { startTime: 200929, endTime: 201209, data: "Em" },
-        { startTime: 201219, endTime: 201529, data: "không" },
-        { startTime: 201529, endTime: 201839, data: "cần" },
-        { startTime: 201839, endTime: 202090, data: "lời" },
-        { startTime: 202090, endTime: 202500, data: "xin" },
-        { startTime: 202500, endTime: 202570, data: "lỗi" },
-      ],
-    },
-    {
-      words: [
-        { startTime: 203079, endTime: 203339, data: "Em" },
-        { startTime: 203339, endTime: 203599, data: "cũng" },
-        { startTime: 203609, endTime: 203940, data: "chẳng" },
-        { startTime: 203940, endTime: 204170, data: "cần" },
-        { startTime: 204180, endTime: 204509, data: "lời" },
-        { startTime: 204509, endTime: 204789, data: "nói" },
-        { startTime: 204789, endTime: 205739, data: "dối" },
-      ],
-    },
-    {
-      words: [
-        { startTime: 205799, endTime: 206019, data: "Em" },
-        { startTime: 206019, endTime: 206349, data: "chỉ" },
-        { startTime: 206359, endTime: 206699, data: "cần" },
-        { startTime: 206709, endTime: 207259, data: "anh" },
-        { startTime: 207259, endTime: 207549, data: "người" },
-        { startTime: 207549, endTime: 207870, data: "của" },
-        { startTime: 207979, endTime: 208409, data: "quá" },
-        { startTime: 208429, endTime: 208859, data: "khứ" },
-        { startTime: 209039, endTime: 210009, data: "thôi" },
-      ],
-    },
-    {
-      words: [
-        { startTime: 210259, endTime: 210559, data: "Người" },
-        { startTime: 210579, endTime: 210849, data: "mà" },
-        { startTime: 210859, endTime: 211139, data: "em" },
-        { startTime: 211149, endTime: 211569, data: "yêu" },
-        { startTime: 211619, endTime: 212009, data: "ngày" },
-        { startTime: 212019, endTime: 212539, data: "xưa" },
-      ],
-    },
-    {
-      words: [
-        { startTime: 212619, endTime: 212869, data: "Chắc" },
-        { startTime: 212959, endTime: 213269, data: "nay" },
-        { startTime: 213279, endTime: 213559, data: "đã" },
-        { startTime: 213559, endTime: 213809, data: "ko" },
-        { startTime: 214040, endTime: 214209, data: "còn" },
-        { startTime: 214480, endTime: 214790, data: "nữa" },
-      ],
-    },
-    {
-      words: [
-        { startTime: 215060, endTime: 215280, data: "Người" },
-        { startTime: 215359, endTime: 215689, data: "từng" },
-        { startTime: 215689, endTime: 215969, data: "đã" },
-        { startTime: 215969, endTime: 216169, data: "hứa" },
-        { startTime: 216329, endTime: 216599, data: "sẽ" },
-        { startTime: 216599, endTime: 216609, data: "ở" },
-        { startTime: 216859, endTime: 217159, data: "bên" },
-        { startTime: 217169, endTime: 217469, data: "em" },
-      ],
-    },
-    {
-      words: [
-        { startTime: 217730, endTime: 217919, data: "Quan" },
-        { startTime: 218019, endTime: 218329, data: "tâm" },
-        { startTime: 218339, endTime: 218750, data: "em" },
-        { startTime: 218750, endTime: 219249, data: "mỗi" },
-        { startTime: 219249, endTime: 219879, data: "ngày" },
-      ],
-    },
-    {
-      words: [
-        { startTime: 220099, endTime: 220439, data: "Giờ" },
-        { startTime: 220439, endTime: 220739, data: "đây" },
-        { startTime: 220739, endTime: 221229, data: "trước" },
-        { startTime: 221229, endTime: 221389, data: "mặt" },
-        { startTime: 221629, endTime: 222009, data: "em" },
-      ],
-    },
-    {
-      words: [
-        { startTime: 222260, endTime: 222420, data: "Có" },
-        { startTime: 222660, endTime: 222900, data: "lẽ" },
-        { startTime: 222910, endTime: 223170, data: "là" },
-        { startTime: 223170, endTime: 223599, data: "một" },
-        { startTime: 223599, endTime: 223949, data: "người" },
-        { startTime: 223979, endTime: 224420, data: "khác" },
-      ],
-    },
-    {
-      words: [
-        { startTime: 224910, endTime: 225330, data: "Vẫn" },
-        { startTime: 225330, endTime: 225549, data: "nụ" },
-        { startTime: 225559, endTime: 226009, data: "cười" },
-        { startTime: 226009, endTime: 226139, data: "vẫn" },
-        { startTime: 226369, endTime: 226810, data: "ánh" },
-        { startTime: 226810, endTime: 227090, data: "mắt" },
-        { startTime: 227449, endTime: 227619, data: "ấy" },
-        { startTime: 227699, endTime: 228079, data: "mà" },
-        { startTime: 228079, endTime: 228599, data: "sao" },
-      ],
-    },
-    {
-      words: [
-        { startTime: 229179, endTime: 229589, data: "Không" },
-        { startTime: 229589, endTime: 230279, data: "phải" },
-        { startTime: 230399, endTime: 231000, data: "là" },
-        { startTime: 231000, endTime: 231020, data: "anh" },
-      ],
-    },
-    {
-      words: [
-        { startTime: 234269, endTime: 234569, data: "Nụ" },
-        { startTime: 234569, endTime: 234869, data: "cười" },
-        { startTime: 234869, endTime: 235129, data: "của" },
-        { startTime: 235139, endTime: 235499, data: "anh" },
-        { startTime: 235659, endTime: 236079, data: "nay" },
-        { startTime: 236079, endTime: 236469, data: "đã" },
-      ],
-    },
-    {
-      words: [
-        { startTime: 236649, endTime: 236969, data: "Không" },
-        { startTime: 236969, endTime: 237259, data: "còn" },
-        { startTime: 237269, endTime: 237509, data: "như" },
-        { startTime: 237509, endTime: 237729, data: "xưa" },
-        { startTime: 237989, endTime: 238269, data: "nữa" },
-        { startTime: 238379, endTime: 238899, data: "rồi" },
-      ],
-    },
-    {
-      words: [
-        { startTime: 239110, endTime: 239300, data: "Ở" },
-        { startTime: 239309, endTime: 239669, data: "trong" },
-        { startTime: 239669, endTime: 239949, data: "ánh" },
-        { startTime: 239949, endTime: 240239, data: "mắt" },
-        { startTime: 240249, endTime: 240559, data: "ấy" },
-        { startTime: 240559, endTime: 240779, data: "em" },
-        { startTime: 240789, endTime: 241239, data: "thấy" },
-      ],
-    },
-    {
-      words: [
-        { startTime: 241410, endTime: 241789, data: "Anh" },
-        { startTime: 241789, endTime: 241989, data: "đã" },
-        { startTime: 241989, endTime: 242369, data: "hết" },
-        { startTime: 242379, endTime: 242879, data: "yêu" },
-        { startTime: 242889, endTime: 243229, data: "em" },
-        { startTime: 243239, endTime: 243650, data: "rồi" },
-      ],
-    },
-    {
-      words: [
-        { startTime: 244099, endTime: 244400, data: "Em" },
-        { startTime: 244400, endTime: 244720, data: "không" },
-        { startTime: 244720, endTime: 245040, data: "cần" },
-        { startTime: 245040, endTime: 245270, data: "lời" },
-        { startTime: 245270, endTime: 245680, data: "xin" },
-        { startTime: 245680, endTime: 245950, data: "lỗi" },
-      ],
-    },
-    {
-      words: [
-        { startTime: 246559, endTime: 246779, data: "Em" },
-        { startTime: 246779, endTime: 246809, data: "cũng" },
-        { startTime: 246819, endTime: 247120, data: "chẳng" },
-        { startTime: 247120, endTime: 247440, data: "cần" },
-        { startTime: 247450, endTime: 247710, data: "lời" },
-        { startTime: 247710, endTime: 248009, data: "nói" },
-        { startTime: 248009, endTime: 248380, data: "dối" },
-      ],
-    },
-    {
-      words: [
-        { startTime: 248940, endTime: 249199, data: "Em" },
-        { startTime: 249199, endTime: 249529, data: "chỉ" },
-        { startTime: 249549, endTime: 249899, data: "cần" },
-        { startTime: 249909, endTime: 250459, data: "anh" },
-        { startTime: 250459, endTime: 250759, data: "người" },
-        { startTime: 250759, endTime: 251059, data: "của" },
-        { startTime: 251149, endTime: 251569, data: "quá" },
-        { startTime: 251579, endTime: 252049, data: "khứ" },
-        { startTime: 252249, endTime: 252579, data: "thôi" },
-      ],
-    },
-    {
-      words: [
-        { startTime: 253599, endTime: 253739, data: "Người" },
-        { startTime: 253919, endTime: 254049, data: "mà" },
-        { startTime: 254059, endTime: 254359, data: "em" },
-        { startTime: 254369, endTime: 254739, data: "yêu" },
-        { startTime: 254849, endTime: 255139, data: "ngày" },
-        { startTime: 255159, endTime: 255379, data: "xưa" },
-      ],
-    },
-    {
-      words: [
-        { startTime: 255839, endTime: 256029, data: "Chắc" },
-        { startTime: 256159, endTime: 256439, data: "nay" },
-        { startTime: 256489, endTime: 256749, data: "đã" },
-        { startTime: 256749, endTime: 256980, data: "ko" },
-        { startTime: 257240, endTime: 257519, data: "còn" },
-        { startTime: 257680, endTime: 257990, data: "nữa" },
-      ],
-    },
-    {
-      words: [
-        { startTime: 258269, endTime: 258480, data: "Người" },
-        { startTime: 258559, endTime: 258899, data: "từng" },
-        { startTime: 258899, endTime: 259349, data: "đã" },
-        { startTime: 259349, endTime: 259369, data: "hứa" },
-        { startTime: 259379, endTime: 259969, data: "sẽ" },
-        { startTime: 259969, endTime: 259979, data: "ở" },
-        { startTime: 260059, endTime: 260369, data: "bên" },
-        { startTime: 260379, endTime: 260729, data: "em" },
-      ],
-    },
-    {
-      words: [
-        { startTime: 260949, endTime: 261159, data: "Quan" },
-        { startTime: 261239, endTime: 261539, data: "tâm" },
-        { startTime: 261569, endTime: 261939, data: "em" },
-        { startTime: 261939, endTime: 262430, data: "mỗi" },
-        { startTime: 262430, endTime: 263050, data: "ngày" },
-      ],
-    },
-    {
-      words: [
-        { startTime: 263289, endTime: 263640, data: "Giờ" },
-        { startTime: 263640, endTime: 263950, data: "đây" },
-        { startTime: 263950, endTime: 264429, data: "trước" },
-        { startTime: 264429, endTime: 264609, data: "mặt" },
-        { startTime: 264829, endTime: 265129, data: "em" },
-      ],
-    },
-    {
-      words: [
-        { startTime: 265439, endTime: 265699, data: "Có" },
-        { startTime: 265699, endTime: 266019, data: "lẽ" },
-        { startTime: 266039, endTime: 266339, data: "là" },
-        { startTime: 266339, endTime: 266749, data: "một" },
-        { startTime: 266749, endTime: 267309, data: "người" },
-        { startTime: 267309, endTime: 267419, data: "khác" },
-      ],
-    },
-    {
-      words: [
-        { startTime: 268119, endTime: 268299, data: "Vẫn" },
-        { startTime: 268479, endTime: 268769, data: "nụ" },
-        { startTime: 268779, endTime: 269179, data: "cười" },
-        { startTime: 269179, endTime: 269619, data: "vẫn" },
-        { startTime: 269629, endTime: 269999, data: "ánh" },
-        { startTime: 269999, endTime: 270289, data: "mắt" },
-        { startTime: 270359, endTime: 270789, data: "ấy" },
-        { startTime: 270849, endTime: 271099, data: "mà" },
-        { startTime: 271099, endTime: 271779, data: "sao" },
-      ],
-    },
-    {
-      words: [
-        { startTime: 272329, endTime: 272769, data: "Không" },
-        { startTime: 272769, endTime: 273449, data: "phải" },
-        { startTime: 273449, endTime: 273469, data: "là" },
-        { startTime: 274549, endTime: 274899, data: "anh" },
-      ],
-    },
-    {
-      words: [
-        { startTime: 277730, endTime: 277860, data: "Vẫn" },
-        { startTime: 278069, endTime: 278339, data: "nụ" },
-        { startTime: 278349, endTime: 278769, data: "cười" },
-        { startTime: 278769, endTime: 279249, data: "vẫn" },
-        { startTime: 279259, endTime: 279629, data: "ánh" },
-        { startTime: 279629, endTime: 279899, data: "mắt" },
-        { startTime: 279939, endTime: 280409, data: "ấy" },
-        { startTime: 280679, endTime: 280869, data: "mà" },
-        { startTime: 280969, endTime: 281279, data: "sao" },
-      ],
-    },
-    {
       words: [
-        { startTime: 285909, endTime: 286329, data: "Không" },
-        { startTime: 286329, endTime: 287059, data: "phải" },
-        { startTime: 287639, endTime: 288029, data: "là" },
-        { startTime: 288029, endTime: 288049, data: "anh" },
+        {
+          startTime: 21050,
+          endTime: 22060,
+          data: "Xa",
+        },
+        {
+          startTime: 22060,
+          endTime: 23120,
+          data: "xa",
+        },
+        {
+          startTime: 23120,
+          endTime: 23650,
+          data: "bóng",
+        },
+        {
+          startTime: 23650,
+          endTime: 23920,
+          data: "người",
+        },
+        {
+          startTime: 23920,
+          endTime: 25510,
+          data: "thương",
+        },
+      ],
+    },
+    {
+      words: [
+        {
+          startTime: 25510,
+          endTime: 25770,
+          data: "Thấp",
+        },
+        {
+          startTime: 25770,
+          endTime: 26040,
+          data: "thoáng",
+        },
+        {
+          startTime: 26040,
+          endTime: 26310,
+          data: "trước",
+        },
+        {
+          startTime: 26310,
+          endTime: 26840,
+          data: "thềm",
+        },
+        {
+          startTime: 26840,
+          endTime: 27370,
+          data: "nhà",
+        },
+        {
+          startTime: 27370,
+          endTime: 27900,
+          data: "đang",
+        },
+        {
+          startTime: 27900,
+          endTime: 28960,
+          data: "đưa",
+        },
+        {
+          startTime: 28960,
+          endTime: 31620,
+          data: "dâu",
+        },
+      ],
+    },
+    {
+      words: [
+        {
+          startTime: 31620,
+          endTime: 32680,
+          data: "Nơi",
+        },
+        {
+          startTime: 32680,
+          endTime: 33210,
+          data: "đây",
+        },
+        {
+          startTime: 33210,
+          endTime: 33480,
+          data: "phấn",
+        },
+        {
+          startTime: 33480,
+          endTime: 34280,
+          data: "son,",
+        },
+        {
+          startTime: 34280,
+          endTime: 35070,
+          data: "áo",
+        },
+        {
+          startTime: 35070,
+          endTime: 35870,
+          data: "màu",
+        },
+      ],
+    },
+    {
+      words: [
+        {
+          startTime: 35870,
+          endTime: 36130,
+          data: "Em",
+        },
+        {
+          startTime: 36130,
+          endTime: 36400,
+          data: "sắp",
+        },
+        {
+          startTime: 36400,
+          endTime: 36930,
+          data: "theo",
+        },
+        {
+          startTime: 36930,
+          endTime: 37200,
+          data: "chồng",
+        },
+      ],
+    },
+    {
+      words: [
+        {
+          startTime: 37200,
+          endTime: 37460,
+          data: "Bỏ",
+        },
+        {
+          startTime: 37460,
+          endTime: 37730,
+          data: "lại",
+        },
+        {
+          startTime: 37730,
+          endTime: 38260,
+          data: "bến",
+        },
+        {
+          startTime: 38260,
+          endTime: 38520,
+          data: "sông",
+        },
+        {
+          startTime: 38520,
+          endTime: 38790,
+          data: "kia",
+        },
+        {
+          startTime: 38790,
+          endTime: 39320,
+          data: "chờ",
+        },
+        {
+          startTime: 39320,
+          endTime: 40920,
+          data: "mong",
+        },
+      ],
+    },
+    {
+      words: [
+        {
+          startTime: 40920,
+          endTime: 41450,
+          data: "Khải",
+        },
+        {
+          startTime: 41450,
+          endTime: 41710,
+          data: "lên",
+        },
+        {
+          startTime: 41710,
+          endTime: 41980,
+          data: "khúc",
+        },
+        {
+          startTime: 41980,
+          endTime: 42510,
+          data: "nhạc",
+        },
+        {
+          startTime: 42510,
+          endTime: 42770,
+          data: "Hoàng",
+        },
+        {
+          startTime: 42770,
+          endTime: 43040,
+          data: "Cầm",
+        },
+      ],
+    },
+    {
+      words: [
+        {
+          startTime: 43040,
+          endTime: 43310,
+          data: "Buồn",
+        },
+        {
+          startTime: 43310,
+          endTime: 43840,
+          data: "ngày",
+        },
+        {
+          startTime: 43840,
+          endTime: 44100,
+          data: "mình",
+        },
+        {
+          startTime: 44100,
+          endTime: 44370,
+          data: "biệt",
+        },
+        {
+          startTime: 44370,
+          endTime: 46230,
+          data: "ly",
+        },
+      ],
+    },
+    {
+      words: [
+        {
+          startTime: 46230,
+          endTime: 46760,
+          data: "Cung",
+        },
+        {
+          startTime: 46760,
+          endTime: 47020,
+          data: "oán,",
+        },
+        {
+          startTime: 47020,
+          endTime: 47290,
+          data: "cung",
+        },
+        {
+          startTime: 47290,
+          endTime: 47560,
+          data: "sầu",
+        },
+      ],
+    },
+    {
+      words: [
+        {
+          startTime: 47560,
+          endTime: 47820,
+          data: "Nặng",
+        },
+        {
+          startTime: 47820,
+          endTime: 48350,
+          data: "lòng",
+        },
+        {
+          startTime: 48350,
+          endTime: 48620,
+          data: "tiễn",
+        },
+        {
+          startTime: 48620,
+          endTime: 48880,
+          data: "chân",
+        },
+        {
+          startTime: 48880,
+          endTime: 49150,
+          data: "người",
+        },
+        {
+          startTime: 49150,
+          endTime: 49700,
+          data: "ra",
+        },
+        {
+          startTime: 49700,
+          endTime: 51560,
+          data: "đi",
+        },
+      ],
+    },
+    {
+      words: [
+        {
+          startTime: 51560,
+          endTime: 51820,
+          data: "Xác",
+        },
+        {
+          startTime: 51820,
+          endTime: 52090,
+          data: "pháo",
+        },
+        {
+          startTime: 52090,
+          endTime: 52350,
+          data: "vu",
+        },
+        {
+          startTime: 52350,
+          endTime: 52880,
+          data: "quy",
+        },
+        {
+          startTime: 52880,
+          endTime: 53150,
+          data: "bên",
+        },
+        {
+          startTime: 53150,
+          endTime: 54210,
+          data: "thềm",
+        },
+      ],
+    },
+    {
+      words: [
+        {
+          startTime: 54210,
+          endTime: 54480,
+          data: "Có",
+        },
+        {
+          startTime: 54480,
+          endTime: 54740,
+          data: "chăng",
+        },
+        {
+          startTime: 54740,
+          endTime: 55010,
+          data: "hạnh",
+        },
+        {
+          startTime: 55010,
+          endTime: 55540,
+          data: "phúc",
+        },
+        {
+          startTime: 55540,
+          endTime: 55810,
+          data: "êm",
+        },
+        {
+          startTime: 55810,
+          endTime: 56870,
+          data: "đềm",
+        },
+      ],
+    },
+    {
+      words: [
+        {
+          startTime: 56870,
+          endTime: 57130,
+          data: "Đời",
+        },
+        {
+          startTime: 57130,
+          endTime: 57400,
+          data: "người",
+        },
+        {
+          startTime: 57400,
+          endTime: 57670,
+          data: "con",
+        },
+        {
+          startTime: 57670,
+          endTime: 58200,
+          data: "gái",
+        },
+        {
+          startTime: 58200,
+          endTime: 58460,
+          data: "đục",
+        },
+        {
+          startTime: 58460,
+          endTime: 58730,
+          data: "trong",
+        },
+      ],
+    },
+    {
+      words: [
+        {
+          startTime: 58730,
+          endTime: 58990,
+          data: "Mười",
+        },
+        {
+          startTime: 58990,
+          endTime: 59260,
+          data: "hai",
+        },
+        {
+          startTime: 59260,
+          endTime: 59790,
+          data: "bến",
+        },
+        {
+          startTime: 59790,
+          endTime: 60320,
+          data: "nước",
+        },
+        {
+          startTime: 60320,
+          endTime: 60850,
+          data: "long",
+        },
+        {
+          startTime: 60850,
+          endTime: 61920,
+          data: "đong",
+        },
+      ],
+    },
+    {
+      words: [
+        {
+          startTime: 61920,
+          endTime: 62180,
+          data: "Dặm",
+        },
+        {
+          startTime: 62180,
+          endTime: 62710,
+          data: "ngàn",
+        },
+        {
+          startTime: 62710,
+          endTime: 62980,
+          data: "thiên",
+        },
+        {
+          startTime: 62980,
+          endTime: 63240,
+          data: "lý",
+        },
+        {
+          startTime: 63240,
+          endTime: 63510,
+          data: "tiễn",
+        },
+        {
+          startTime: 63510,
+          endTime: 63780,
+          data: "người",
+        },
+        {
+          startTime: 63780,
+          endTime: 64570,
+          data: "đi",
+        },
+      ],
+    },
+    {
+      words: [
+        {
+          startTime: 64570,
+          endTime: 64840,
+          data: "Mây",
+        },
+        {
+          startTime: 64840,
+          endTime: 65100,
+          data: "nước",
+        },
+        {
+          startTime: 65100,
+          endTime: 65370,
+          data: "u",
+        },
+        {
+          startTime: 65370,
+          endTime: 65920,
+          data: "buồn",
+        },
+        {
+          startTime: 65920,
+          endTime: 66180,
+          data: "ngày",
+        },
+        {
+          startTime: 66180,
+          endTime: 66450,
+          data: "biệt",
+        },
+        {
+          startTime: 66450,
+          endTime: 67240,
+          data: "ly",
+        },
+      ],
+    },
+    {
+      words: [
+        {
+          startTime: 67240,
+          endTime: 67510,
+          data: "Khóc",
+        },
+        {
+          startTime: 67510,
+          endTime: 67780,
+          data: "cho",
+        },
+        {
+          startTime: 67780,
+          endTime: 68040,
+          data: "duyên",
+        },
+        {
+          startTime: 68040,
+          endTime: 68310,
+          data: "mình",
+        },
+      ],
+    },
+    {
+      words: [
+        {
+          startTime: 68310,
+          endTime: 68840,
+          data: "Đoạn",
+        },
+        {
+          startTime: 68840,
+          endTime: 69100,
+          data: "trường",
+        },
+        {
+          startTime: 69100,
+          endTime: 69370,
+          data: "thương",
+        },
+        {
+          startTime: 69370,
+          endTime: 69630,
+          data: "loan",
+        },
+        {
+          startTime: 69630,
+          endTime: 70170,
+          data: "đò",
+        },
+        {
+          startTime: 70170,
+          endTime: 70700,
+          data: "sang",
+        },
+        {
+          startTime: 70700,
+          endTime: 72290,
+          data: "ngang",
+        },
+      ],
+    },
+    {
+      words: [
+        {
+          startTime: 72290,
+          endTime: 72560,
+          data: "Áo",
+        },
+        {
+          startTime: 72560,
+          endTime: 73090,
+          data: "mới",
+        },
+        {
+          startTime: 73090,
+          endTime: 73360,
+          data: "em",
+        },
+        {
+          startTime: 73360,
+          endTime: 73620,
+          data: "cài",
+        },
+        {
+          startTime: 73620,
+          endTime: 73880,
+          data: "màu",
+        },
+        {
+          startTime: 73880,
+          endTime: 74410,
+          data: "hoa",
+        },
+        {
+          startTime: 74410,
+          endTime: 74950,
+          data: "cưới",
+        },
+      ],
+    },
+    {
+      words: [
+        {
+          startTime: 74950,
+          endTime: 75210,
+          data: "Sánh",
+        },
+        {
+          startTime: 75210,
+          endTime: 75740,
+          data: "bước",
+        },
+        {
+          startTime: 75740,
+          endTime: 76010,
+          data: "bên",
+        },
+        {
+          startTime: 76010,
+          endTime: 76270,
+          data: "người",
+        },
+        {
+          startTime: 76270,
+          endTime: 76540,
+          data: "cùng",
+        },
+        {
+          startTime: 76540,
+          endTime: 76810,
+          data: "duyên",
+        },
+        {
+          startTime: 76810,
+          endTime: 77600,
+          data: "mới",
+        },
+      ],
+    },
+    {
+      words: [
+        {
+          startTime: 77600,
+          endTime: 77870,
+          data: "Nâng",
+        },
+        {
+          startTime: 77870,
+          endTime: 78130,
+          data: "chén",
+        },
+        {
+          startTime: 78130,
+          endTime: 78670,
+          data: "tiêu",
+        },
+        {
+          startTime: 78670,
+          endTime: 78930,
+          data: "sầu",
+        },
+      ],
+    },
+    {
+      words: [
+        {
+          startTime: 78930,
+          endTime: 79200,
+          data: "Khải",
+        },
+        {
+          startTime: 79200,
+          endTime: 79460,
+          data: "một",
+        },
+        {
+          startTime: 79460,
+          endTime: 79990,
+          data: "cung",
+        },
+        {
+          startTime: 79990,
+          endTime: 80260,
+          data: "đàn",
+        },
+        {
+          startTime: 80260,
+          endTime: 80520,
+          data: "từ",
+        },
+        {
+          startTime: 80520,
+          endTime: 81060,
+          data: "biệt",
+        },
+        {
+          startTime: 81060,
+          endTime: 84060,
+          data: "nhau",
+        },
+      ],
+    },
+    {
+      words: [
+        {
+          startTime: 88420,
+          endTime: 88950,
+          data: "Bướm",
+        },
+        {
+          startTime: 88950,
+          endTime: 90020,
+          data: "lượn",
+        },
+        {
+          startTime: 90020,
+          endTime: 90280,
+          data: "là",
+        },
+        {
+          startTime: 90280,
+          endTime: 90550,
+          data: "bướm",
+        },
+        {
+          startTime: 90550,
+          endTime: 91080,
+          data: "ối",
+        },
+        {
+          startTime: 91080,
+          endTime: 91350,
+          data: "a",
+        },
+        {
+          startTime: 91350,
+          endTime: 91610,
+          data: "nó",
+        },
+        {
+          startTime: 91610,
+          endTime: 94610,
+          data: "bay",
+        },
+      ],
+    },
+    {
+      words: [
+        {
+          startTime: 98800,
+          endTime: 99330,
+          data: "Cá",
+        },
+        {
+          startTime: 99330,
+          endTime: 100660,
+          data: "lội",
+        },
+        {
+          startTime: 100660,
+          endTime: 100920,
+          data: "là",
+        },
+        {
+          startTime: 100920,
+          endTime: 101190,
+          data: "cá",
+        },
+        {
+          startTime: 101190,
+          endTime: 101460,
+          data: "ối",
+        },
+        {
+          startTime: 101460,
+          endTime: 101720,
+          data: "a",
+        },
+        {
+          startTime: 101720,
+          endTime: 102250,
+          data: "nó",
+        },
+        {
+          startTime: 102250,
+          endTime: 104780,
+          data: "bơi",
+        },
+      ],
+    },
+    {
+      words: [
+        {
+          startTime: 104780,
+          endTime: 105580,
+          data: "Yêu",
+        },
+        {
+          startTime: 105580,
+          endTime: 106310,
+          data: "nhau",
+        },
+        {
+          startTime: 106310,
+          endTime: 107380,
+          data: "cởi",
+        },
+        {
+          startTime: 107380,
+          endTime: 107640,
+          data: "áo",
+        },
+        {
+          startTime: 107640,
+          endTime: 108170,
+          data: "cho",
+        },
+        {
+          startTime: 108170,
+          endTime: 108710,
+          data: "nhau",
+        },
+      ],
+    },
+    {
+      words: [
+        {
+          startTime: 108710,
+          endTime: 109240,
+          data: "Về",
+        },
+        {
+          startTime: 109240,
+          endTime: 109500,
+          data: "nhà",
+        },
+        {
+          startTime: 109500,
+          endTime: 109770,
+          data: "mẹ",
+        },
+        {
+          startTime: 109770,
+          endTime: 111040,
+          data: "hỏi",
+        },
+        {
+          startTime: 111040,
+          endTime: 111570,
+          data: "qua",
+        },
+        {
+          startTime: 111570,
+          endTime: 112100,
+          data: "cầu",
+        },
+        {
+          startTime: 112100,
+          endTime: 112900,
+          data: "gió",
+        },
+        {
+          startTime: 112900,
+          endTime: 114230,
+          data: "bay",
+        },
+      ],
+    },
+    {
+      words: [
+        {
+          startTime: 114230,
+          endTime: 114500,
+          data: "Từ",
+        },
+        {
+          startTime: 114500,
+          endTime: 114760,
+          data: "nay",
+        },
+        {
+          startTime: 114760,
+          endTime: 115030,
+          data: "hết",
+        },
+        {
+          startTime: 115030,
+          endTime: 115290,
+          data: "duyên",
+        },
+        {
+          startTime: 115290,
+          endTime: 115820,
+          data: "em",
+        },
+        {
+          startTime: 115820,
+          endTime: 116090,
+          data: "trả",
+        },
+        {
+          startTime: 116090,
+          endTime: 116810,
+          data: "áo",
+        },
+      ],
+    },
+    {
+      words: [
+        {
+          startTime: 116810,
+          endTime: 117080,
+          data: "Xem",
+        },
+        {
+          startTime: 117080,
+          endTime: 117340,
+          data: "như",
+        },
+        {
+          startTime: 117340,
+          endTime: 117610,
+          data: "hết",
+        },
+        {
+          startTime: 117610,
+          endTime: 118140,
+          data: "tình",
+        },
+        {
+          startTime: 118140,
+          endTime: 118400,
+          data: "mình",
+        },
+        {
+          startTime: 118400,
+          endTime: 118670,
+          data: "đã",
+        },
+        {
+          startTime: 118670,
+          endTime: 119420,
+          data: "trao",
+        },
+      ],
+    },
+    {
+      words: [
+        {
+          startTime: 119420,
+          endTime: 119690,
+          data: "Phận",
+        },
+        {
+          startTime: 119690,
+          endTime: 119950,
+          data: "duyên",
+        },
+        {
+          startTime: 119950,
+          endTime: 120220,
+          data: "ta",
+        },
+        {
+          startTime: 120220,
+          endTime: 120750,
+          data: "lỡ",
+        },
+      ],
+    },
+    {
+      words: [
+        {
+          startTime: 120750,
+          endTime: 121010,
+          data: "Cung",
+        },
+        {
+          startTime: 121010,
+          endTime: 121280,
+          data: "thương",
+        },
+        {
+          startTime: 121280,
+          endTime: 121550,
+          data: "đứt",
+        },
+        {
+          startTime: 121550,
+          endTime: 121810,
+          data: "đoạn,",
+        },
+        {
+          startTime: 121810,
+          endTime: 122340,
+          data: "sầu",
+        },
+        {
+          startTime: 122340,
+          endTime: 122870,
+          data: "đối",
+        },
+        {
+          startTime: 122870,
+          endTime: 123400,
+          data: "gương",
+        },
+        {
+          startTime: 123400,
+          endTime: 124470,
+          data: "loan",
+        },
+      ],
+    },
+    {
+      words: [
+        {
+          startTime: 124470,
+          endTime: 124730,
+          data: "Dặm",
+        },
+        {
+          startTime: 124730,
+          endTime: 125260,
+          data: "ngàn",
+        },
+        {
+          startTime: 125260,
+          endTime: 125530,
+          data: "thiên",
+        },
+        {
+          startTime: 125530,
+          endTime: 125790,
+          data: "lý",
+        },
+        {
+          startTime: 125790,
+          endTime: 126060,
+          data: "tiễn",
+        },
+        {
+          startTime: 126060,
+          endTime: 126590,
+          data: "người",
+        },
+        {
+          startTime: 126590,
+          endTime: 127120,
+          data: "đi",
+        },
+      ],
+    },
+    {
+      words: [
+        {
+          startTime: 127120,
+          endTime: 127390,
+          data: "Mây",
+        },
+        {
+          startTime: 127390,
+          endTime: 127650,
+          data: "nước",
+        },
+        {
+          startTime: 127650,
+          endTime: 128190,
+          data: "u",
+        },
+        {
+          startTime: 128190,
+          endTime: 128450,
+          data: "buồn",
+        },
+        {
+          startTime: 128450,
+          endTime: 128720,
+          data: "ngày",
+        },
+        {
+          startTime: 128720,
+          endTime: 128980,
+          data: "biệt",
+        },
+        {
+          startTime: 128980,
+          endTime: 129780,
+          data: "ly",
+        },
+      ],
+    },
+    {
+      words: [
+        {
+          startTime: 129780,
+          endTime: 130040,
+          data: "Khóc",
+        },
+        {
+          startTime: 130040,
+          endTime: 130310,
+          data: "cho",
+        },
+        {
+          startTime: 130310,
+          endTime: 130590,
+          data: "duyên",
+        },
+        {
+          startTime: 130590,
+          endTime: 131110,
+          data: "mình",
+        },
+      ],
+    },
+    {
+      words: [
+        {
+          startTime: 131110,
+          endTime: 131370,
+          data: "Đoạn",
+        },
+        {
+          startTime: 131370,
+          endTime: 131640,
+          data: "trường",
+        },
+        {
+          startTime: 131640,
+          endTime: 131900,
+          data: "thương",
+        },
+        {
+          startTime: 131900,
+          endTime: 132430,
+          data: "loan",
+        },
+        {
+          startTime: 132430,
+          endTime: 132700,
+          data: "đò",
+        },
+        {
+          startTime: 132700,
+          endTime: 133230,
+          data: "sang",
+        },
+        {
+          startTime: 133230,
+          endTime: 135090,
+          data: "ngang",
+        },
+      ],
+    },
+    {
+      words: [
+        {
+          startTime: 135090,
+          endTime: 135360,
+          data: "Áo",
+        },
+        {
+          startTime: 135360,
+          endTime: 135620,
+          data: "mới",
+        },
+        {
+          startTime: 135620,
+          endTime: 135890,
+          data: "em",
+        },
+        {
+          startTime: 135890,
+          endTime: 136150,
+          data: "cài",
+        },
+        {
+          startTime: 136150,
+          endTime: 136680,
+          data: "màu",
+        },
+        {
+          startTime: 136680,
+          endTime: 136950,
+          data: "hoa",
+        },
+        {
+          startTime: 136950,
+          endTime: 137480,
+          data: "cưới",
+        },
+      ],
+    },
+    {
+      words: [
+        {
+          startTime: 137480,
+          endTime: 138010,
+          data: "Sánh",
+        },
+        {
+          startTime: 138010,
+          endTime: 138280,
+          data: "bước",
+        },
+        {
+          startTime: 138280,
+          endTime: 138540,
+          data: "bên",
+        },
+        {
+          startTime: 138540,
+          endTime: 138810,
+          data: "người",
+        },
+        {
+          startTime: 138810,
+          endTime: 139340,
+          data: "cùng",
+        },
+        {
+          startTime: 139340,
+          endTime: 139610,
+          data: "duyên",
+        },
+        {
+          startTime: 139610,
+          endTime: 140080,
+          data: "mới",
+        },
+      ],
+    },
+    {
+      words: [
+        {
+          startTime: 140080,
+          endTime: 140620,
+          data: "Nâng",
+        },
+        {
+          startTime: 140620,
+          endTime: 140890,
+          data: "chén",
+        },
+        {
+          startTime: 140890,
+          endTime: 141160,
+          data: "tiêu",
+        },
+        {
+          startTime: 141160,
+          endTime: 141420,
+          data: "sầu",
+        },
+      ],
+    },
+    {
+      words: [
+        {
+          startTime: 141420,
+          endTime: 141690,
+          data: "Khải",
+        },
+        {
+          startTime: 141690,
+          endTime: 142220,
+          data: "một",
+        },
+        {
+          startTime: 142220,
+          endTime: 142480,
+          data: "cung",
+        },
+        {
+          startTime: 142480,
+          endTime: 142750,
+          data: "đàn",
+        },
+        {
+          startTime: 142750,
+          endTime: 143020,
+          data: "từ",
+        },
+        {
+          startTime: 143020,
+          endTime: 143550,
+          data: "biệt",
+        },
+        {
+          startTime: 143550,
+          endTime: 146550,
+          data: "nhau",
+        },
+      ],
+    },
+    {
+      words: [
+        {
+          startTime: 148060,
+          endTime: 148330,
+          data: "Dặm",
+        },
+        {
+          startTime: 148330,
+          endTime: 148590,
+          data: "ngàn",
+        },
+        {
+          startTime: 148590,
+          endTime: 149120,
+          data: "thiên",
+        },
+        {
+          startTime: 149120,
+          endTime: 149390,
+          data: "lý",
+        },
+        {
+          startTime: 149390,
+          endTime: 149660,
+          data: "tiễn",
+        },
+        {
+          startTime: 149660,
+          endTime: 149920,
+          data: "người",
+        },
+        {
+          startTime: 149920,
+          endTime: 150660,
+          data: "đi",
+        },
+      ],
+    },
+    {
+      words: [
+        {
+          startTime: 150660,
+          endTime: 150920,
+          data: "Mây",
+        },
+        {
+          startTime: 150920,
+          endTime: 151190,
+          data: "nước",
+        },
+        {
+          startTime: 151190,
+          endTime: 151720,
+          data: "u",
+        },
+        {
+          startTime: 151720,
+          endTime: 151980,
+          data: "buồn",
+        },
+        {
+          startTime: 151980,
+          endTime: 152250,
+          data: "ngày",
+        },
+        {
+          startTime: 152250,
+          endTime: 152510,
+          data: "biệt",
+        },
+        {
+          startTime: 152510,
+          endTime: 153050,
+          data: "ly",
+        },
+      ],
+    },
+    {
+      words: [
+        {
+          startTime: 153050,
+          endTime: 153580,
+          data: "Khóc",
+        },
+        {
+          startTime: 153580,
+          endTime: 153840,
+          data: "cho",
+        },
+        {
+          startTime: 153840,
+          endTime: 154110,
+          data: "duyên",
+        },
+        {
+          startTime: 154110,
+          endTime: 154370,
+          data: "mình",
+        },
+      ],
+    },
+    {
+      words: [
+        {
+          startTime: 154370,
+          endTime: 154910,
+          data: "Đoạn",
+        },
+        {
+          startTime: 154910,
+          endTime: 155170,
+          data: "trường",
+        },
+        {
+          startTime: 155170,
+          endTime: 155440,
+          data: "thương",
+        },
+        {
+          startTime: 155440,
+          endTime: 155700,
+          data: "loan",
+        },
+        {
+          startTime: 155700,
+          endTime: 156230,
+          data: "đò",
+        },
+        {
+          startTime: 156230,
+          endTime: 156500,
+          data: "sang",
+        },
+        {
+          startTime: 156500,
+          endTime: 158360,
+          data: "ngang",
+        },
+      ],
+    },
+    {
+      words: [
+        {
+          startTime: 158360,
+          endTime: 158630,
+          data: "Áo",
+        },
+        {
+          startTime: 158630,
+          endTime: 159150,
+          data: "mới",
+        },
+        {
+          startTime: 159150,
+          endTime: 159420,
+          data: "em",
+        },
+        {
+          startTime: 159420,
+          endTime: 159690,
+          data: "cài",
+        },
+        {
+          startTime: 159690,
+          endTime: 159950,
+          data: "màu",
+        },
+        {
+          startTime: 159950,
+          endTime: 160480,
+          data: "hoa",
+        },
+        {
+          startTime: 160480,
+          endTime: 161250,
+          data: "cưới",
+        },
+      ],
+    },
+    {
+      words: [
+        {
+          startTime: 161250,
+          endTime: 161520,
+          data: "Sánh",
+        },
+        {
+          startTime: 161520,
+          endTime: 161780,
+          data: "bước",
+        },
+        {
+          startTime: 161780,
+          endTime: 162050,
+          data: "bên",
+        },
+        {
+          startTime: 162050,
+          endTime: 162320,
+          data: "người",
+        },
+        {
+          startTime: 162320,
+          endTime: 162580,
+          data: "cùng",
+        },
+        {
+          startTime: 162580,
+          endTime: 163110,
+          data: "duyên",
+        },
+        {
+          startTime: 163110,
+          endTime: 163640,
+          data: "mới",
+        },
+      ],
+    },
+    {
+      words: [
+        {
+          startTime: 163640,
+          endTime: 163910,
+          data: "Nâng",
+        },
+        {
+          startTime: 163910,
+          endTime: 164170,
+          data: "chén",
+        },
+        {
+          startTime: 164170,
+          endTime: 164710,
+          data: "tiêu",
+        },
+        {
+          startTime: 164710,
+          endTime: 164970,
+          data: "sầu",
+        },
+      ],
+    },
+    {
+      words: [
+        {
+          startTime: 164970,
+          endTime: 165240,
+          data: "Khải",
+        },
+        {
+          startTime: 165240,
+          endTime: 165500,
+          data: "một",
+        },
+        {
+          startTime: 165500,
+          endTime: 166040,
+          data: "cung",
+        },
+        {
+          startTime: 166040,
+          endTime: 166300,
+          data: "đàn",
+        },
+        {
+          startTime: 166300,
+          endTime: 166570,
+          data: "từ",
+        },
+        {
+          startTime: 166570,
+          endTime: 167100,
+          data: "biệt",
+        },
+        {
+          startTime: 167100,
+          endTime: 169220,
+          data: "nhau",
+        },
+      ],
+    },
+    {
+      words: [
+        {
+          startTime: 169220,
+          endTime: 169750,
+          data: "Bướm",
+        },
+        {
+          startTime: 169750,
+          endTime: 170820,
+          data: "lượn",
+        },
+        {
+          startTime: 170820,
+          endTime: 171080,
+          data: "là",
+        },
+        {
+          startTime: 171080,
+          endTime: 171610,
+          data: "bướm",
+        },
+        {
+          startTime: 171610,
+          endTime: 171880,
+          data: "ối",
+        },
+        {
+          startTime: 171880,
+          endTime: 172140,
+          data: "a",
+        },
+        {
+          startTime: 172140,
+          endTime: 172410,
+          data: "nó",
+        },
+        {
+          startTime: 172410,
+          endTime: 174540,
+          data: "bay",
+        },
+      ],
+    },
+    {
+      words: [
+        {
+          startTime: 174540,
+          endTime: 175070,
+          data: "Bướm",
+        },
+        {
+          startTime: 175070,
+          endTime: 175860,
+          data: "dạo",
+        },
+        {
+          startTime: 175860,
+          endTime: 176390,
+          data: "là",
+        },
+        {
+          startTime: 176390,
+          endTime: 176660,
+          data: "bướm",
+        },
+        {
+          startTime: 176660,
+          endTime: 176930,
+          data: "ối",
+        },
+        {
+          startTime: 176930,
+          endTime: 177460,
+          data: "a",
+        },
+        {
+          startTime: 177460,
+          endTime: 177720,
+          data: "nó",
+        },
+        {
+          startTime: 177720,
+          endTime: 179580,
+          data: "bay",
+        },
+      ],
+    },
+    {
+      words: [
+        {
+          startTime: 179580,
+          endTime: 180380,
+          data: "Cá",
+        },
+        {
+          startTime: 180380,
+          endTime: 181180,
+          data: "lặn",
+        },
+        {
+          startTime: 181180,
+          endTime: 181440,
+          data: "là",
+        },
+        {
+          startTime: 181440,
+          endTime: 181970,
+          data: "cá",
+        },
+        {
+          startTime: 181970,
+          endTime: 182240,
+          data: "ối",
+        },
+        {
+          startTime: 182240,
+          endTime: 182500,
+          data: "a",
+        },
+        {
+          startTime: 182500,
+          endTime: 183030,
+          data: "nó",
+        },
+        {
+          startTime: 183030,
+          endTime: 184920,
+          data: "bơi",
+        },
+      ],
+    },
+    {
+      words: [
+        {
+          startTime: 184920,
+          endTime: 185440,
+          data: "Cá",
+        },
+        {
+          startTime: 185440,
+          endTime: 186500,
+          data: "lội",
+        },
+        {
+          startTime: 186500,
+          endTime: 186770,
+          data: "là",
+        },
+        {
+          startTime: 186770,
+          endTime: 187030,
+          data: "cá",
+        },
+        {
+          startTime: 187030,
+          endTime: 187570,
+          data: "ối",
+        },
+        {
+          startTime: 187570,
+          endTime: 187830,
+          data: "a",
+        },
+        {
+          startTime: 187830,
+          endTime: 188100,
+          data: "nó",
+        },
+        {
+          startTime: 188100,
+          endTime: 189100,
+          data: "bơi",
+        },
       ],
     },
   ],
@@ -797,7 +1856,7 @@ const main = async () => {
   // for (const sentence of mockLyricData.sentences) {
   //   await prisma.sentence.create({
   //     data: {
-  //       lyric_id: "739817ba-60b4-4d74-a163-3c16869eecb8",
+  //       lyric_id: "2e8330d5-64d0-42aa-a7b6-eb69fde7c44c",
   //       words: {
   //         createMany: {
   //           data: sentence.words.map((w) => ({
@@ -812,7 +1871,7 @@ const main = async () => {
   // }
   // await prisma.lyric.create({
   //   data: {
-  //     song_id: "5413b9ff-c7d5-45a0-a835-c0f1db1fb070",
+  //     song_id: "0d896777-a38a-4c18-8091-734bcc7698ca",
   //     status: 1,
   //   },
   // });

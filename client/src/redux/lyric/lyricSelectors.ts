@@ -1,11 +1,11 @@
-import { createSelector } from '@reduxjs/toolkit';
-import { RootState } from '../store';
+import { createSelector } from "@reduxjs/toolkit";
+import { RootState } from "../store";
 
 const getRoot = (state: RootState) => state.lyric;
 
-export const getLyricSongIdSelector = createSelector(
+export const getLyricSongSelector = createSelector(
   getRoot,
-  (state) => state.song_id
+  (state) => state.song
 );
 
 export const getLyricSongDataSelector = createSelector(

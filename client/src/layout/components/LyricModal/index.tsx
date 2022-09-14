@@ -4,6 +4,9 @@ import LyricContent from "../../../components/LyricModal/LyricContent";
 import LyricHeader from "../../../components/LyricModal/LyricHeader";
 import { useLyricContext } from "../../../context/LyricContext";
 import useLockScreen from "../../../hooks/useLockScreen";
+import { getAudioCurrentSongSelector } from "../../../redux/audioPlayer/audioPlayerSelectors";
+import { useAppDispatch, useAppSelector } from "../../../redux/hooks";
+import { getSongLyricAction } from "../../../redux/lyric/lyricActions";
 import { Container } from "./style";
 
 export type LyricContentTab = "playlist" | "karaoke" | "lyric";
@@ -22,6 +25,8 @@ const LyricModal: React.FC<Props> = ({
   const { open_lyric } = useLyricContext();
   const [_, setLocked] = useLockScreen();
   const [tab, setTab] = useState<LyricContentTab>("lyric");
+  const current_song = useAppSelector(getAudioCurrentSongSelector);
+  const dispatch = useAppDispatch();
 
   const changeLyricTab = (tab: LyricContentTab) => {
     setTab(tab);
@@ -31,14 +36,19 @@ const LyricModal: React.FC<Props> = ({
     setLocked(open_lyric);
   }, [open_lyric]);
 
+  useEffect(() => {
+    if (current_song?.lyric?.id) {
+      dispatch(getSongLyricAction({ song: current_song }));
+    }
+  }, [current_song]);
+
   return (
     <Container open_lyric={open_lyric}>
       <div className="background-container">
         <div
           className="blur-image"
           style={{
-            backgroundImage:
-              "url(https://photo-resize-zmp3.zmdcdn.me/w480_r1x1_webp/avatars/3/9/5/8/395804d8c74165e61c54d8d42343402e.jpg",
+            backgroundImage: `url(${current_song?.thumbnail})`,
           }}
         ></div>
         <div className="overlay"></div>

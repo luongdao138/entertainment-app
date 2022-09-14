@@ -1,4 +1,4 @@
-import styled from 'styled-components';
+import styled from "styled-components";
 
 interface ActionButtonProps {
   active?: boolean;
@@ -8,6 +8,16 @@ export const Container = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
+
+  & .MuiTooltip-tooltip {
+    font-size: 1.1rem !important;
+    color: #dadada;
+    background-color: #333333;
+    padding: 4px 10px;
+  }
+  & .MuiTooltip-arrow {
+    color: #333333;
+  }
 
   & .play-state {
     width: 3.5rem;
@@ -42,7 +52,7 @@ export const Container = styled.div`
 export const ActionItemButton = styled.button`
   margin: 0 8px;
   padding: 3px;
-  color: ${(props: ActionButtonProps) => (props.active ? '#c662ef' : '#fff')};
+  color: ${(props: ActionButtonProps) => (props.active ? "#c662ef" : "#fff")};
   background-color: transparent;
   font-size: 18px;
   border-radius: 999px;

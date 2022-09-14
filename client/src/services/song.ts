@@ -1,10 +1,10 @@
-import apiEndpoints from '../constants/apiEndpoints';
-import { AudioSong } from '../redux/audioPlayer/audioPlayerSlice';
-import { privateClient } from './client';
-import { Playlist } from './playlist';
+import apiEndpoints from "../constants/apiEndpoints";
+import { AudioSong } from "../redux/audioPlayer/audioPlayerSlice";
+import { privateClient } from "./client";
+import { Playlist } from "./playlist";
 
-export type SongPrivacy = 'private' | 'public';
-export type AudioType = 'recommend' | 'next' | 'archive';
+export type SongPrivacy = "private" | "public";
+export type AudioType = "recommend" | "next" | "archive";
 export interface Song {
   id: string;
   created_at: Date | string;
@@ -41,12 +41,17 @@ export interface Word {
   end_time: number;
   data: string;
 }
+
+export interface Sentence {
+  id: string;
+  words: Word[];
+}
+
 export interface Lyric {
   status: number;
-  sentences: {
-    words: Word[];
-  }[];
+  sentences: Sentence[];
 }
+
 export interface UploadSongParams {
   name: string;
   url: string;
@@ -131,7 +136,7 @@ export const getSongDetail = async (
   params: GetSongDetailParams
 ): Promise<GetSongDetailResponse> => {
   const res = await privateClient.get<GetSongDetailResponse>(
-    apiEndpoints.GET_SONG_DETAIL.replace(':song_id', params.song_id)
+    apiEndpoints.GET_SONG_DETAIL.replace(":song_id", params.song_id)
   );
 
   return res.data;
@@ -141,7 +146,7 @@ export const getRecommendedSongs = async (
   params: GetRecommendedSongParams
 ): Promise<GetRecommendedSongResponse> => {
   const res = await privateClient.post<GetRecommendedSongResponse>(
-    apiEndpoints.GET_RECOMMENDED_SONGS.replace(':song_id', params.song_id),
+    apiEndpoints.GET_RECOMMENDED_SONGS.replace(":song_id", params.song_id),
     params.data
   );
 
@@ -150,14 +155,14 @@ export const getRecommendedSongs = async (
 
 export const changeFavourite = async (params: string) => {
   const res = await privateClient.put(
-    apiEndpoints.CHANGE_FAVOURITE.replace(':id', params)
+    apiEndpoints.CHANGE_FAVOURITE.replace(":id", params)
   );
   return res.data;
 };
 
 export const editSong = async (params: EditSongParams) => {
   const res = await privateClient.put(
-    apiEndpoints.EDIT_SONG.replace(':song_id', params.id),
+    apiEndpoints.EDIT_SONG.replace(":song_id", params.id),
     params.data
   );
   return res.data;
@@ -165,7 +170,7 @@ export const editSong = async (params: EditSongParams) => {
 
 export const deleteUploadSong = async (params: string) => {
   const res = await privateClient.delete(
-    apiEndpoints.DELETE_UPLOAD_SONG.replace(':song_id', params)
+    apiEndpoints.DELETE_UPLOAD_SONG.replace(":song_id", params)
   );
   return res.data;
 };
