@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Outlet } from "react-router-dom";
 import Player from "./components/Player";
 import PlayerQueue from "./components/PlayerQueue";
@@ -21,6 +22,11 @@ import { useAudioContext } from "../context/AudioContext";
 import { getAudioCurrentSongSelector } from "../redux/audioPlayer/audioPlayerSelectors";
 import LyricProvider from "../context/LyricContext";
 import LyricModal from "./components/LyricModal";
+import {
+  useFullScreenHandle,
+  FullScreenHandle,
+  FullScreen,
+} from "react-full-screen";
 
 interface StyleProps {
   openPlayer: boolean;
@@ -49,13 +55,31 @@ const MainLayout = () => {
   const { closeUploadPlaylistForm, isOpenUploadPlaylistForm } =
     useUploadPlaylistContext();
   const current_song = useAppSelector(getAudioCurrentSongSelector);
+  const [isFullscreenMode, setIsFullScreenMode] = useState<boolean>(false);
+  const handle = useFullScreenHandle();
 
   const { openPlayer } = useAudioContext();
 
   console.log("Main layout rerender");
 
   const dispatch = useAppDispatch();
+
+  const onChangeFullScreenMode = (state: boolean, handle: FullScreenHandle) => {
+    // console.log({ state, handle });
+    setIsFullScreenMode(state);
+  };
   // const isFirstRenderRef = useRef<boolean>(true);
+  const enterFullscreenMode = () => {
+    handle.enter().catch(() => {
+      console.warn("Fullscreen mode not support");
+    });
+  };
+
+  const exitFullscreenMode = () => {
+    handle.exit().catch(() => {
+      console.warn("Can not exit fullscreen mode");
+    });
+  };
 
   const renderAuthLayout = useMemo(() => {
     switch (authType) {
@@ -89,37 +113,43 @@ const MainLayout = () => {
   }, []);
 
   return (
-    <Container openPlayer={openPlayer}>
-      <Sidebar />
-      <Header />
+    <FullScreen handle={handle} onChange={onChangeFullScreenMode}>
+      <Container openPlayer={openPlayer}>
+        <Sidebar />
+        <Header />
 
-      <Modal open={isOpenAuthModal} maxWidth="sm" onClose={closeAuthModal}>
-        {renderAuthLayout}
-      </Modal>
+        <Modal open={isOpenAuthModal} maxWidth="sm" onClose={closeAuthModal}>
+          {renderAuthLayout}
+        </Modal>
 
-      <Modal open={isOpenUploadForm} onClose={closeUploadForm}>
-        <UploadSongForm closeUploadModal={closeUploadForm} />
-      </Modal>
+        <Modal open={isOpenUploadForm} onClose={closeUploadForm}>
+          <UploadSongForm closeUploadModal={closeUploadForm} />
+        </Modal>
 
-      <Modal
-        maxWidth="xs"
-        open={isOpenUploadPlaylistForm}
-        onClose={closeUploadPlaylistForm}
-      >
-        <NewPlaylistForm closeUploadModal={closeUploadPlaylistForm} />
-      </Modal>
+        <Modal
+          maxWidth="xs"
+          open={isOpenUploadPlaylistForm}
+          onClose={closeUploadPlaylistForm}
+        >
+          <NewPlaylistForm closeUploadModal={closeUploadPlaylistForm} />
+        </Modal>
 
-      <LyricProvider>
-        {/* Màn hình lời bài hát (lyric) */}
-        <LyricModal />
-        {current_song && <Player />}
-        <PlayerQueue />
-      </LyricProvider>
+        <LyricProvider>
+          {/* Màn hình lời bài hát (lyric) */}
+          <LyricModal
+            enterFullscreenMode={enterFullscreenMode}
+            exitFullscreenMode={exitFullscreenMode}
+            isFullscreenMode={isFullscreenMode}
+          />
+          {current_song && <Player />}
+          <PlayerQueue />
+        </LyricProvider>
 
-      <div className="content">
-        <Outlet />
-      </div>
-    </Container>
+        <div className="content">
+          <Outlet />
+        </div>
+      </Container>
+    </FullScreen>
   );
 };
 

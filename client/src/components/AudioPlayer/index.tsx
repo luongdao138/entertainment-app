@@ -38,6 +38,7 @@ const AudioPlayer = () => {
       console.log("Play again: ", is_last_song);
       // người dùng đang bật chế độ nghe lại một bài => khi bài hát này kết thúc thì phát lại chính bài hát này
       audioRef.current?.load();
+      audioRef.current?.play();
     }
   };
 

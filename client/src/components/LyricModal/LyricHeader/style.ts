@@ -1,10 +1,20 @@
-import styled from 'styled-components';
+import styled from "styled-components";
 
 export const Container = styled.div`
   padding: 2rem;
   display: flex;
   align-items: center;
   justify-content: space-between;
+
+  & .MuiTooltip-tooltip {
+    font-size: 1.1rem !important;
+    color: #dadada;
+    background-color: #333333;
+    padding: 4px 10px;
+  }
+  & .MuiTooltip-arrow {
+    color: #333333;
+  }
 
   & .tabs-container {
     display: grid;
