@@ -1,8 +1,8 @@
-import { createSlice } from '@reduxjs/toolkit';
-import { Category } from '../../services/category';
-import { Lyric } from '../../services/song';
-import { AudioSong } from '../audioPlayer/audioPlayerSlice';
-import { getSongLyricAction } from './lyricActions';
+import { createSlice } from "@reduxjs/toolkit";
+import { Category } from "../../services/category";
+import { Lyric } from "../../services/song";
+import { AudioSong } from "../audioPlayer/audioPlayerSlice";
+import { getSongLyricAction } from "./lyricActions";
 
 interface SliceState {
   song: AudioSong | null;
@@ -15,8 +15,13 @@ const initialState: SliceState = {
 };
 
 const lyricSlice = createSlice({
-  name: 'category',
-  reducers: {},
+  name: "category",
+  reducers: {
+    resetLyric(state) {
+      state.data = null;
+      state.song = null;
+    },
+  },
   extraReducers(builder) {
     builder.addCase(getSongLyricAction.fulfilled, (state, action) => {
       state.song = action.payload.song;
@@ -26,4 +31,5 @@ const lyricSlice = createSlice({
   initialState,
 });
 
+export const { resetLyric } = lyricSlice.actions;
 export default lyricSlice.reducer;

@@ -1,13 +1,13 @@
-import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { Playlist, PlaylistDetail } from '../../services/playlist';
-import { Song, SongDetail } from '../../services/song';
-import { v4 as uuid } from 'uuid';
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { Playlist, PlaylistDetail } from "../../services/playlist";
+import { Song, SongDetail } from "../../services/song";
+import { v4 as uuid } from "uuid";
 
 import {
   changeFavourite,
   getRecommendedSongsAction,
-} from '../song/songActions';
-import { AudioPlaybackRateType, ReplayMode } from '../../constants/options';
+} from "../song/songActions";
+import { AudioPlaybackRateType, ReplayMode } from "../../constants/options";
 
 export type AudioSong = Song | SongDetail;
 export type AudioPlaylist = Playlist | PlaylistDetail;
@@ -33,7 +33,6 @@ interface SliceState {
   recommended_list: {
     data: AudioSong[];
   };
-  volume: number;
   audio_meta: {
     is_audio_playing: boolean;
     is_audio_loading: boolean;
@@ -73,9 +72,9 @@ const initialState: SliceState = {
     volume: 1,
     current_time: 0,
     playback_rate: {
-      desc: 'Bình thường',
+      desc: "Bình thường",
       value: 1.0,
-      label: '1x',
+      label: "1x",
     },
     replay_mode: ReplayMode.NONE,
     is_last_song: false,
@@ -86,7 +85,6 @@ const initialState: SliceState = {
   recommended_list: {
     data: [],
   },
-  volume: 1,
   current_playlist: {
     data: null,
   },
@@ -94,7 +92,7 @@ const initialState: SliceState = {
 };
 
 const audioPlayerSlice = createSlice({
-  name: 'audioPlayer',
+  name: "audioPlayer",
   reducers: {
     changeAudioCurrentSong(
       state,
@@ -158,13 +156,13 @@ const audioPlayerSlice = createSlice({
     },
     changeAudioCurrentState(
       state,
-      action: PayloadAction<{ new_state: Partial<SliceState['audio_state']> }>
+      action: PayloadAction<{ new_state: Partial<SliceState["audio_state"]> }>
     ) {
       state.audio_state = { ...state.audio_state, ...action.payload.new_state };
     },
     changeAudioCurrentMeta(
       state,
-      action: PayloadAction<{ new_meta: Partial<SliceState['audio_meta']> }>
+      action: PayloadAction<{ new_meta: Partial<SliceState["audio_meta"]> }>
     ) {
       state.audio_meta = { ...state.audio_meta, ...action.payload.new_meta };
     },

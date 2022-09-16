@@ -1,5 +1,5 @@
-import { initializeApp } from 'firebase/app';
-import { getStorage } from 'firebase/storage';
+import { initializeApp } from "firebase/app";
+import { getStorage } from "firebase/storage";
 
 const firebaseConfig = {
   apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
@@ -9,6 +9,8 @@ const firebaseConfig = {
   messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
   appId: import.meta.env.VITE_FIREBASE_APP_ID,
 };
+
+console.log({ firebaseConfig });
 
 const app = initializeApp(firebaseConfig);
 const storage = getStorage(app, import.meta.env.VITE_FIREBASE_BUCKET_URL);

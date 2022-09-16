@@ -12,10 +12,7 @@ import {
   getAudioMetaSelector,
 } from "../../../../redux/audioPlayer/audioPlayerSelectors";
 import { useAppSelector } from "../../../../redux/hooks";
-import {
-  getLyricSongDataSelector,
-  getLyricSongSelector,
-} from "../../../../redux/lyric/lyricSelectors";
+import { getLyricSongDataSelector } from "../../../../redux/lyric/lyricSelectors";
 import { convertLyric } from "../../../../utils/convertLyric";
 import AudioPlayingIcon from "../../../AudioPlayingIcon";
 import { Container, Content, LyricItem } from "./style";
@@ -31,7 +28,7 @@ export interface OutputSentence {
 
 const SongLyric = () => {
   const listRef = useRef<HTMLDivElement>(null);
-  const song = useAppSelector(getLyricSongSelector);
+  // const song = useAppSelector(getLyricSongSelector);
   const lyric = useAppSelector(getLyricSongDataSelector);
   const activeSentenceIndexRef = useRef<number>(-1);
   const positionRef = useRef<number>(0);
@@ -229,14 +226,14 @@ const SongLyric = () => {
     }
   }, [rendered_sentences]);
 
-  if (!song || !lyric) return null;
+  if (!current_song) return null;
 
   return (
     <Container>
       <Content>
         <div className="lyric-left">
           <div className="thumbnail">
-            <img src={song.thumbnail} alt="" />
+            <img src={current_song.thumbnail} alt="" />
             {is_audio_playing && (
               <div className="audio-playing-icon">
                 <AudioPlayingIcon width={32} />

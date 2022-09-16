@@ -7,6 +7,7 @@ import useLockScreen from "../../../hooks/useLockScreen";
 import { getAudioCurrentSongSelector } from "../../../redux/audioPlayer/audioPlayerSelectors";
 import { useAppDispatch, useAppSelector } from "../../../redux/hooks";
 import { getSongLyricAction } from "../../../redux/lyric/lyricActions";
+import { resetLyric } from "../../../redux/lyric/lyricSlice";
 import { Container } from "./style";
 
 export type LyricContentTab = "playlist" | "karaoke" | "lyric";
@@ -39,6 +40,8 @@ const LyricModal: React.FC<Props> = ({
   useEffect(() => {
     if (current_song?.lyric?.id) {
       dispatch(getSongLyricAction({ song: current_song }));
+    } else {
+      dispatch(resetLyric());
     }
   }, [current_song]);
 
