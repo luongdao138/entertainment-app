@@ -205,7 +205,10 @@ const audioPlayerSlice = createSlice({
       state.current_song = null;
       state.audio_list_songs = [];
       state.audio_meta = initialState.audio_meta;
-      state.audio_state = initialState.audio_state;
+      state.audio_state.is_from_recommend =
+        initialState.audio_state.is_from_recommend;
+      state.audio_state.is_from_recommend =
+        initialState.audio_state.is_from_recommend;
       state.can_auto_play = initialState.can_auto_play;
     },
     changeCanAutoPlay(state, action: PayloadAction<boolean>) {

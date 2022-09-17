@@ -7,7 +7,18 @@ export const getUsersUploadedSongs = createSelector(
   getRoot,
   (state) => state.uploaded.data
 );
+
 export const getUsersFavouriteSongs = createSelector(
   getRoot,
   (state) => state.favourite.data
+);
+
+export const getUserHistorySongsSelector = createSelector(
+  getRoot,
+  (state) => state.history.data
+);
+
+export const getUserHistorySongsPaginationSelector = createSelector(
+  getRoot,
+  (state) => state.history.pagination
 );

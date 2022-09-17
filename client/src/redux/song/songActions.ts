@@ -154,3 +154,25 @@ export const getRecommendedSongsAction = createAsyncThunk<
     }
   }
 );
+
+export const getHistorySongsAction = createAsyncThunk<
+  services.GetHistorySongsResponse,
+  services.GetHistorySongsParams
+>(
+  SONG_ACTION_TYPES.GET_HISTORY_SONGS,
+  async (params, { rejectWithValue, dispatch }) => {
+    try {
+      const res = await services.getHistorySongs(params);
+      return res;
+    } catch (error: any) {
+      toast.error(error.response?.data.msg || 'Có lỗi xảy ra');
+      if (error.response?.status === 403) {
+        localStorage.removeItem('music_token');
+        dispatch(logout());
+      }
+      return rejectWithValue(
+        error.response?.data?.msg || 'Something went wrong!'
+      );
+    }
+  }
+);

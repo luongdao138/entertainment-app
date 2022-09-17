@@ -1,9 +1,12 @@
 import React from 'react';
 import { useAudioContext } from '../../../../context/AudioContext';
 import { AudioSong } from '../../../../redux/audioPlayer/audioPlayerSlice';
-import QueueSongItem from '../QueueSongItem';
+import QueueSongItem from '../../QueueSongItem';
 import { v4 as uuid } from 'uuid';
 import { Draggable, Droppable } from 'react-beautiful-dnd';
+import { Song } from '../../../../services/song';
+import { useAppSelector } from '../../../../redux/hooks';
+import { getAudioMetaSelector } from '../../../../redux/audioPlayer/audioPlayerSelectors';
 
 interface Props {
   songs: AudioSong[];
@@ -12,7 +15,16 @@ interface Props {
 }
 
 const QueueSongList: React.FC<Props> = ({ songs, can_drop, droppable_id }) => {
-  const { handleRemoveSongsOutOfPlayQueue } = useAudioContext();
+  const { handleRemoveSongsOutOfPlayQueue, handleClickQueueSong } =
+    useAudioContext();
+  const { is_audio_loading } = useAppSelector(getAudioMetaSelector);
+
+  const onClickQueueSong = (song: Song) => {
+    if (song.queue_id && !is_audio_loading) {
+      handleClickQueueSong(song.queue_id);
+    }
+  };
+
   if (!can_drop) {
     return (
       <>
@@ -22,6 +34,9 @@ const QueueSongList: React.FC<Props> = ({ songs, can_drop, droppable_id }) => {
             onRemoveSongOutOfQueue={handleRemoveSongsOutOfPlayQueue}
             key={uuid()}
             song={song}
+            onClickQueueSong={onClickQueueSong}
+            disable_add_to_play_next
+            disable_add_to_player_queue
           />
         ))}
       </>
@@ -56,6 +71,9 @@ const QueueSongList: React.FC<Props> = ({ songs, can_drop, droppable_id }) => {
                         key={uuid()}
                         song={song}
                         is_dragging={isDragging}
+                        onClickQueueSong={onClickQueueSong}
+                        disable_add_to_play_next
+                        disable_add_to_player_queue
                       />
                     </div>
                   )}

@@ -82,6 +82,7 @@ const Player = () => {
 
   useEffect(() => {
     return () => {
+      localStorage.removeItem('music_app_current_time');
       turnOffAudioAlarm();
     };
   }, []);

@@ -5,18 +5,13 @@ import {
   getAudioMetaSelector,
   getAudioStateSelector,
 } from '../../../redux/audioPlayer/audioPlayerSelectors';
-import { changeAudioCurrentState } from '../../../redux/audioPlayer/audioPlayerSlice';
-import { useAppDispatch, useAppSelector } from '../../../redux/hooks';
+import { useAppSelector } from '../../../redux/hooks';
 import { disableClickEvent } from '../../../utils/common';
 import { formatSongDuration } from '../../../utils/formatTime';
 import MySlider from '../../Slider';
 import { Container } from './style';
 
 const AudioSeekbar = () => {
-  const dispatch = useAppDispatch();
-  // const { current_time: initial_current_time } = useAppSelector(
-  //   getAudioStateSelector
-  // );
   const [current_time, setCurrentTime] = useLocalStorage<number>(
     'music_app_current_time',
     0

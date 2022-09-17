@@ -4,11 +4,16 @@ import QueueContent from '../../../components/PlayerQueue/QueueContent';
 import PlayerQueueHeader from '../../../components/PlayerQueue/QueueHeader';
 import { useAudioContext } from '../../../context/AudioContext';
 import { getAudioCurrentSongSelector } from '../../../redux/audioPlayer/audioPlayerSelectors';
-import { useAppSelector } from '../../../redux/hooks';
+import { useAppDispatch, useAppSelector } from '../../../redux/hooks';
 import { Container, NoPlayerContainer } from './style';
 import { useLyricContext } from '../../../context/LyricContext';
 import QueueSongItemSkeleton from '../../../components/Skeleton/QueueSongItem';
 import { BsFillPlayFill } from 'react-icons/bs';
+import HistorySong from '../../../components/PlayerQueue/HistorySongs';
+import { resetHistorySongs } from '../../../redux/song/songSlice';
+import { getHistorySongsAction } from '../../../redux/song/songActions';
+import { getUserHistorySongsPaginationSelector } from '../../../redux/song/songSelectors';
+import { clearMetaData } from '../../../redux/metadata/actions';
 
 export type PlayerQueueTab = 'player' | 'recent';
 
@@ -16,6 +21,8 @@ const PlayerQueue = () => {
   const [tab, setTab] = useState<PlayerQueueTab>('player');
   const { openQueue, openPlayer, playerRef, handleCloseQueue } =
     useAudioContext();
+  const { limit, page } = useAppSelector(getUserHistorySongsPaginationSelector);
+  const dispatch = useAppDispatch();
   const { open_lyric } = useLyricContext();
 
   const is_open_queue = openPlayer && openQueue;
@@ -36,6 +43,23 @@ const PlayerQueue = () => {
       handleCloseQueue();
     }
   }, [open_lyric]);
+
+  useEffect(() => {
+    if (!current_song) {
+      changeTab('player');
+      dispatch(resetHistorySongs());
+    }
+  }, [current_song]);
+
+  useEffect(() => {
+    if (tab === 'recent') {
+      dispatch(getHistorySongsAction({ page, limit }));
+    }
+
+    return () => {
+      dispatch(resetHistorySongs());
+    };
+  }, [tab]);
 
   const NoPlayerQueueContent = useMemo(() => {
     return (
@@ -58,7 +82,7 @@ const PlayerQueue = () => {
   }, []);
 
   const renderContent = useMemo(() => {
-    if (tab === 'recent') return <>Recent</>;
+    if (tab === 'recent') return <HistorySong />;
     else {
       if (Boolean(current_song)) return <QueueContent />;
       else return NoPlayerQueueContent;
@@ -71,7 +95,9 @@ const PlayerQueue = () => {
         <div className='queue-header'>
           <PlayerQueueHeader tab={tab} changeTab={changeTab} />
         </div>
-        <div className='queue-content'>{renderContent}</div>
+        <div className='queue-content' id='player-queue-history-songs'>
+          {renderContent}
+        </div>
       </Container>
     </ClickAwayListener>
   );

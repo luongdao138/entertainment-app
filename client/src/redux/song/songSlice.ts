@@ -1,9 +1,11 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { Pagination } from '../../services/common';
 import { Song } from '../../services/song';
 import {
   changeFavourite,
   deleteUploadSongAction,
   getFavouriteSong,
+  getHistorySongsAction,
   getUploadedSong,
   uploadSong,
 } from './songActions';
@@ -15,6 +17,10 @@ interface SliceState {
   favourite: {
     data: Song[];
   };
+  history: {
+    data: Song[];
+    pagination: Pagination;
+  };
 }
 
 const initialState: SliceState = {
@@ -24,28 +30,19 @@ const initialState: SliceState = {
   favourite: {
     data: [],
   },
+  history: {
+    data: [],
+    pagination: {
+      limit: 10,
+      page: 1,
+      total_count: 1,
+    },
+  },
 };
 
 const songSlice = createSlice({
   name: 'songs',
   reducers: {
-    //  changeFavourite(state, action: PayloadAction<string>) {
-    //      state.favourite.data = state.favourite.data.map(song => {
-    //        if(song.id === action.payload) {
-    //           return {...song, is_liked: !song.is_liked}
-    //        } else {
-    //          return song;
-    //        }
-    //      })
-    //      state.uploaded.data = state.uploaded.data.map(song => {
-    //        if(song.id === action.payload) {
-    //           return {...song, is_liked: !song.is_liked}
-    //        } else {
-    //          return song;
-    //        }
-    //      })
-    //  }
-
     editSongSucess(state, action: PayloadAction<{ song: Song }>) {
       state.uploaded.data = state.uploaded.data.map((song) => {
         if (song.id === action.payload.song.id) {
@@ -64,6 +61,10 @@ const songSlice = createSlice({
       state.uploaded.data = state.uploaded.data.filter(
         (song) => !action.payload.includes(song.id)
       );
+    },
+    resetHistorySongs(state) {
+      state.history.data = [];
+      state.history.pagination = initialState.history.pagination;
     },
   },
   extraReducers(builder) {
@@ -90,11 +91,19 @@ const songSlice = createSlice({
         state.uploaded.data = state.uploaded.data.map((s) =>
           s.id === action.payload ? { ...s, is_liked: !s.is_liked } : s
         );
+      })
+      .addCase(getHistorySongsAction.fulfilled, (state, action) => {
+        state.history.data = [...state.history.data, ...action.payload.data];
+        state.history.pagination = action.payload.pagination;
       });
   },
   initialState,
 });
 
-export const { editSongSucess, removeSongOutOfFavourite, removeUploadSongs } =
-  songSlice.actions;
+export const {
+  editSongSucess,
+  resetHistorySongs,
+  removeSongOutOfFavourite,
+  removeUploadSongs,
+} = songSlice.actions;
 export default songSlice.reducer;

@@ -26,6 +26,7 @@ model User {
   deleted_at            DateTime?
   favourite_playlists   FavouritePlaylist[]
   favourite_songs       FavouriteSong[]
+  history_songs         HistorySong[]
   playlists             Playlist[]          @relation("created")
   songs                 Song[]              @relation("uploaded")
 }
@@ -49,6 +50,7 @@ model Song {
   liked_by          FavouriteSong[]
   lyric             Lyric?
   belong_playlists  PlaylistSong[]
+  history_by        HistorySong[]
   belong_categories Category[]
 }
 
@@ -94,6 +96,16 @@ model FavouritePlaylist {
 }
 
 model FavouriteSong {
+  user_id    String
+  song_id    String
+  created_at DateTime @default(now())
+  song       Song     @relation(fields: [song_id], references: [id])
+  user       User     @relation(fields: [user_id], references: [id])
+
+  @@id([user_id, song_id])
+}
+
+model HistorySong {
   user_id    String
   song_id    String
   created_at DateTime @default(now())

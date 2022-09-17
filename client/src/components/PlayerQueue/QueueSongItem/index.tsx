@@ -1,24 +1,21 @@
 import { Menu } from '@mui/material';
-import React, { useState } from 'react';
+import React from 'react';
 import { AiFillHeart, AiOutlineHeart } from 'react-icons/ai';
 import { BsFillPlayFill } from 'react-icons/bs';
 import { MdMoreHoriz } from 'react-icons/md';
 import { toast } from 'react-toastify';
-import { useAudioContext } from '../../../../context/AudioContext';
 import {
   getAudioArchivedListSelector,
-  getAudioCurrentListSongs,
-  getAudioCurrentSongSelector,
   getAudioMetaSelector,
-} from '../../../../redux/audioPlayer/audioPlayerSelectors';
-import { logout } from '../../../../redux/auth/authSlice';
-import { useAppDispatch, useAppSelector } from '../../../../redux/hooks';
-import { changeFavourite } from '../../../../redux/song/songActions';
-import { Song } from '../../../../services/song';
-import { disableClickEvent } from '../../../../utils/common';
-import AudioPlayingIcon from '../../../AudioPlayingIcon';
-import SongItemMenu from '../../../SongItemMenu';
-import MyTooltip from '../../../Tooltip';
+} from '../../../redux/audioPlayer/audioPlayerSelectors';
+import { logout } from '../../../redux/auth/authSlice';
+import { useAppDispatch, useAppSelector } from '../../../redux/hooks';
+import { changeFavourite } from '../../../redux/song/songActions';
+import { Song } from '../../../services/song';
+import { disableClickEvent } from '../../../utils/common';
+import AudioPlayingIcon from '../../AudioPlayingIcon';
+import SongItemMenu from '../../SongItemMenu';
+import MyTooltip from '../../Tooltip';
 import { Container } from './style';
 
 interface Props {
@@ -26,6 +23,10 @@ interface Props {
   is_dragging?: boolean;
   can_remove_out_of_queue?: boolean;
   onRemoveSongOutOfQueue?: (queue_id: string) => void;
+  onClickQueueSong: (song: Song) => void;
+  disable_add_to_play_next?: boolean;
+  disable_add_to_player_queue?: boolean;
+  can_play_with_lyric?: boolean;
 }
 
 const QueueSongItem: React.FC<Props> = ({
@@ -33,16 +34,15 @@ const QueueSongItem: React.FC<Props> = ({
   can_remove_out_of_queue,
   onRemoveSongOutOfQueue,
   is_dragging,
+  onClickQueueSong,
+  disable_add_to_play_next,
+  disable_add_to_player_queue,
+  can_play_with_lyric,
 }) => {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const openSongMenu = Boolean(anchorEl);
   const archive_list = useAppSelector(getAudioArchivedListSelector);
-  const audio_list_songs = useAppSelector(getAudioCurrentListSongs);
-  const current_song = useAppSelector(getAudioCurrentSongSelector);
-  const { is_audio_playing, is_audio_loading } =
-    useAppSelector(getAudioMetaSelector);
-
-  const { handleClickQueueSong } = useAudioContext();
+  const { is_audio_playing } = useAppSelector(getAudioMetaSelector);
 
   const is_current_audio = song.is_current_audio;
   const is_playing = is_current_audio && is_audio_playing;
@@ -83,12 +83,6 @@ const QueueSongItem: React.FC<Props> = ({
     }
   };
 
-  const onClickQueueSong = () => {
-    if (song.queue_id && !is_audio_loading) {
-      handleClickQueueSong(song.queue_id);
-    }
-  };
-
   return (
     <>
       <Menu
@@ -115,10 +109,11 @@ const QueueSongItem: React.FC<Props> = ({
         <SongItemMenu
           song={song}
           closeSongItemAction={handleCloseSongMenu}
-          disable_add_to_play_next
-          disable_add_to_player_queue
+          disable_add_to_play_next={disable_add_to_play_next}
+          disable_add_to_player_queue={disable_add_to_player_queue}
           can_remove_out_of_queue={can_remove_out_of_queue}
           onRemoveSongOutOfQueue={onRemoveSongOutOfQueue}
+          can_play_with_lyric={can_play_with_lyric}
         />
       </Menu>
       <Container
@@ -126,13 +121,13 @@ const QueueSongItem: React.FC<Props> = ({
         is_archive={is_archive}
         is_current_audio={is_current_audio}
         is_dragging={is_dragging}
-        onDoubleClick={onClickQueueSong}
+        onDoubleClick={() => onClickQueueSong(song)}
       >
         <div className='song-left'>
           <div
             className='song-thumbnail'
             onDoubleClick={disableClickEvent}
-            onClick={onClickQueueSong}
+            onClick={() => onClickQueueSong(song)}
           >
             <img src={song.thumbnail} alt='' />
             <div className='opacity'></div>

@@ -5,4 +5,5 @@ export const SONG_ACTION_TYPES = {
   CHANGE_FAVOURITE: 'song/changeFavourite',
   DELETE_UPLOAD_SONG: 'song/deleteUploadSong',
   GET_RECOMMENDED_SONGS: 'song/getRecommended',
+  GET_HISTORY_SONGS: 'song/getHistory',
 };

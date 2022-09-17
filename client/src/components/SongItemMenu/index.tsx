@@ -1,22 +1,27 @@
-import React from "react";
-import { BsLink45Deg, BsMusicNoteList } from "react-icons/bs";
-import { FiDownload } from "react-icons/fi";
-import { HiOutlineBan } from "react-icons/hi";
-import { MdOutlineSkipNext, MdPlaylistAdd } from "react-icons/md";
-import { Song } from "../../services/song";
-import AddToPlaylist from "../AddToPlaylist";
-import { MdOutlineDeleteOutline, MdOutlineModeEdit } from "react-icons/md";
-import { Container } from "./style";
-import { FaRegComment } from "react-icons/fa";
-import { useAuthContext } from "../../context/AuthContext";
-import useCopyToClipboard from "../../hooks/useCopyToClipboard";
-import { AudioSong } from "../../redux/audioPlayer/audioPlayerSlice";
-import { AddSongToPlayerParams } from "../../context/AudioContext";
+import React from 'react';
+import { BsLink45Deg, BsMusicNoteList } from 'react-icons/bs';
+import { FiDownload } from 'react-icons/fi';
+import { HiOutlineBan } from 'react-icons/hi';
+import { MdOutlineSkipNext, MdPlaylistAdd } from 'react-icons/md';
+import { Song } from '../../services/song';
+import AddToPlaylist from '../AddToPlaylist';
+import { MdOutlineDeleteOutline, MdOutlineModeEdit } from 'react-icons/md';
+import { Container } from './style';
+import { FaRegComment } from 'react-icons/fa';
+import { useAuthContext } from '../../context/AuthContext';
+import useCopyToClipboard from '../../hooks/useCopyToClipboard';
+import { AudioSong } from '../../redux/audioPlayer/audioPlayerSlice';
+import { AddSongToPlayerParams } from '../../context/AudioContext';
+import { TbMicrophone2 } from 'react-icons/tb';
 interface Props {
   song: Song;
   can_delete_song?: boolean;
   can_remove_out_of_list?: boolean;
   can_edit_song?: boolean;
+  disable_add_to_player_queue?: boolean;
+  disable_add_to_play_next?: boolean;
+  can_play_with_lyric?: boolean;
+  can_remove_out_of_queue?: boolean;
   handleOpenEditSongForm?: () => void;
   closeSongItemAction: () => void;
   changeSelectedSong?: (song: Song) => void;
@@ -24,9 +29,6 @@ interface Props {
   handleOpenDeleteConfirmModal?: () => void;
   handleAddSongsToPlayerQueue?: (params: AddSongToPlayerParams) => void;
   handleAddSongToPlayNext?: (params: { song: AudioSong }) => void;
-  disable_add_to_player_queue?: boolean;
-  disable_add_to_play_next?: boolean;
-  can_remove_out_of_queue?: boolean;
   onRemoveSongOutOfQueue?: (queue_id: string) => void;
   onAddSongsToPlayerQueue?: (song: AudioSong) => void;
   onAddSongsToPlayNext?: (song: AudioSong) => void;
@@ -37,14 +39,15 @@ const SongItemMenu: React.FC<Props> = ({
   can_delete_song,
   can_edit_song,
   can_remove_out_of_list,
+  disable_add_to_play_next,
+  disable_add_to_player_queue,
+  can_remove_out_of_queue,
+  can_play_with_lyric,
   handleOpenEditSongForm,
   closeSongItemAction,
   changeSelectedSong,
   handleRemoveSongOutOfPlaylist,
   handleOpenDeleteConfirmModal,
-  disable_add_to_play_next,
-  disable_add_to_player_queue,
-  can_remove_out_of_queue,
   onRemoveSongOutOfQueue,
   onAddSongsToPlayNext,
   onAddSongsToPlayerQueue,
@@ -53,7 +56,7 @@ const SongItemMenu: React.FC<Props> = ({
     // fileSaver.saveAs(song.url);
   };
 
-  const [_, copy] = useCopyToClipboard("Link đã được sao chép vào clipboard");
+  const [_, copy] = useCopyToClipboard('Link đã được sao chép vào clipboard');
   const { authUser } = useAuthContext();
 
   const handleCopyLinkToClipboard = () => {
@@ -92,15 +95,15 @@ const SongItemMenu: React.FC<Props> = ({
 
   return (
     <Container>
-      <div className="menu-info">
-        <img src={song.thumbnail} alt="" />
-        <div className="menu-name">
+      <div className='menu-info'>
+        <img src={song.thumbnail} alt='' />
+        <div className='menu-name'>
           <h4>{song.name}</h4>
           <p>{song.singer_name}</p>
         </div>
       </div>
 
-      <div className="menu-btns">
+      <div className='menu-btns'>
         <button onClick={handleDownloadSong}>
           <FiDownload />
           <span>Tải xuống</span>
@@ -115,7 +118,7 @@ const SongItemMenu: React.FC<Props> = ({
         </button>
       </div>
 
-      <ul className="menu-list">
+      <ul className='menu-list'>
         {!disable_add_to_player_queue && (
           <li onClick={handleAddToPlayerList}>
             <MdPlaylistAdd />
@@ -129,6 +132,13 @@ const SongItemMenu: React.FC<Props> = ({
           </li>
         )}
         <AddToPlaylist song_item={song} />
+
+        {can_play_with_lyric && (
+          <li>
+            <TbMicrophone2 />
+            <span>Phát cùng lời bài hát</span>
+          </li>
+        )}
 
         <li>
           <FaRegComment />

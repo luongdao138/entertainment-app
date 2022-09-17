@@ -254,11 +254,23 @@ app.get('/', async (req, res) => {
   //   },
   // });
 
-  await prisma.lyric.updateMany({
-    data: {
-      status: 1,
-    },
-  });
+  // await prisma.lyric.updateMany({
+  //   data: {
+  //     status: 1,
+  //   },
+  // });
+
+  // const songs = await prisma.song.findMany();
+  // await prisma.historySong.deleteMany({});
+
+  // for (const song of songs) {
+  //   await prisma.historySong.create({
+  //     data: {
+  //       song_id: song.id,
+  //       user_id: '65126b06-7ce7-4cd5-b35e-af6a3452d5ef',
+  //     },
+  //   });
+  // }
 
   return res.json({ msg: 'Success' });
 });

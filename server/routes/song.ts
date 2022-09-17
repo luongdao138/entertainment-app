@@ -10,6 +10,10 @@ router
   .get(songController.getUploadedSong)
   .post(songController.uploadSong);
 router.get('/lyric', songController.getSongLyric);
+router
+  .route('/history')
+  .post(songController.addSongToRecentList)
+  .get(songController.getHistorySongs);
 router.route('/favourite').get(songController.getFavouriteSong);
 router.route('/recommend/:song_id').post(songController.getRecommendedSongs);
 router.route('/favourite/:songId').put(songController.addOrRemoveFavourite);

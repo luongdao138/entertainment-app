@@ -1,6 +1,6 @@
-import { Response } from "express";
-import prisma from "../config/prisma";
-import { removeAccents } from "../utils/formatText";
+import { Response } from 'express';
+import prisma from '../config/prisma';
+import { removeAccents } from '../utils/formatText';
 
 const songController = {
   async uploadSong(req: any, res: Response) {
@@ -14,7 +14,7 @@ const songController = {
       console.log({ songCount });
       if (songCount >= 20 && !user.is_premium) {
         return res.status(400).json({
-          msg: "Tải lên thất bại, trở thành thành viên premium để tải thêm bài hát",
+          msg: 'Tải lên thất bại, trở thành thành viên premium để tải thêm bài hát',
         });
       }
 
@@ -45,12 +45,12 @@ const songController = {
       });
 
       return res.status(201).json({
-        msg: "Upload song successfully",
+        msg: 'Upload song successfully',
         song: newSong,
       });
     } catch (error) {
       console.log(error);
-      return res.status(500).json({ msg: "Có lỗi xảy ra" });
+      return res.status(500).json({ msg: 'Có lỗi xảy ra' });
     }
   },
   async getUploadedSong(req: any, res: Response) {
@@ -75,7 +75,7 @@ const songController = {
       },
 
       orderBy: {
-        created_at: "desc",
+        created_at: 'desc',
       },
     });
 
@@ -119,7 +119,7 @@ const songController = {
               NOT: {
                 user_id: user.id,
               },
-              privacy: "public",
+              privacy: 'public',
             },
           ],
         },
@@ -142,7 +142,7 @@ const songController = {
         },
       },
       orderBy: {
-        created_at: "desc",
+        created_at: 'desc',
       },
     });
 
@@ -164,7 +164,7 @@ const songController = {
       });
 
       if (!song) {
-        return res.status(400).json({
+        return res.status(404).json({
           msg: `Can not find song with id ${songId}`,
         });
       }
@@ -196,7 +196,7 @@ const songController = {
 
         return res
           .status(200)
-          .json({ msg: "Remove this song out of favourite success" });
+          .json({ msg: 'Remove this song out of favourite success' });
       } else {
         // user have not liked this song => add
         await prisma.favouriteSong.create({
@@ -208,11 +208,11 @@ const songController = {
 
         return res
           .status(200)
-          .json({ msg: "Add this song to favourite success" });
+          .json({ msg: 'Add this song to favourite success' });
       }
     } catch (error) {
       console.log(error);
-      return res.status(500).json({ msg: "Có lỗi xảy ra" });
+      return res.status(500).json({ msg: 'Có lỗi xảy ra' });
     }
   },
 
@@ -235,12 +235,12 @@ const songController = {
         },
       });
 
-      if (!song) return res.status(404).json({ msg: "Bài hát không tồn tại" });
+      if (!song) return res.status(404).json({ msg: 'Bài hát không tồn tại' });
 
       if (song.user_id !== user.id)
         return res
           .status(400)
-          .json({ msg: "Không có quyền chỉnh sửa bài hát này" });
+          .json({ msg: 'Không có quyền chỉnh sửa bài hát này' });
 
       console.log({ categories, data });
 
@@ -293,11 +293,11 @@ const songController = {
         data,
       });
 
-      return res.json({ msg: "Chỉnh sửa bài hát thành công" });
+      return res.json({ msg: 'Chỉnh sửa bài hát thành công' });
     } catch (error) {
       console.log(error);
       return res.status(500).json({
-        msg: "Có lỗi xảy ra",
+        msg: 'Có lỗi xảy ra',
       });
     }
   },
@@ -312,12 +312,12 @@ const songController = {
         where: { id: song_id, is_deleted: false },
       });
 
-      if (!song) return res.status(404).json({ msg: "Bài hát không tồn tại" });
+      if (!song) return res.status(404).json({ msg: 'Bài hát không tồn tại' });
 
       if (song.user_id !== user.id)
         return res
           .status(400)
-          .json({ msg: "Không có quyền chỉnh sửa bài hát này" });
+          .json({ msg: 'Không có quyền chỉnh sửa bài hát này' });
 
       await prisma.song.update({
         where: {
@@ -328,11 +328,11 @@ const songController = {
         },
       });
 
-      return res.json({ msg: "Xóa bài hát thành công" });
+      return res.json({ msg: 'Xóa bài hát thành công' });
     } catch (error) {
       console.log(error);
       return res.status(500).json({
-        msg: "Có lỗi xảy ra",
+        msg: 'Có lỗi xảy ra',
       });
     }
   },
@@ -355,7 +355,7 @@ const songController = {
               NOT: {
                 user_id: user.id,
               },
-              privacy: "public",
+              privacy: 'public',
             },
           ],
         },
@@ -381,7 +381,7 @@ const songController = {
         },
       });
 
-      if (!song) return res.status(404).json({ msg: "Bài hát không tồn tại" });
+      if (!song) return res.status(404).json({ msg: 'Bài hát không tồn tại' });
 
       // if (song.user_id === user.id) {
       //   res.sendStatus(404);
@@ -416,7 +416,7 @@ const songController = {
             not: song.id,
           },
           is_deleted: false,
-          privacy: "public",
+          privacy: 'public',
           belong_categories: {
             some: {
               id: {
@@ -463,7 +463,7 @@ const songController = {
         where: {
           creator_id: song.user_id,
           is_deleted: false,
-          privacy: "public",
+          privacy: 'public',
         },
         include: {
           creator: {
@@ -474,7 +474,7 @@ const songController = {
           },
           has_songs: {
             orderBy: {
-              position: "asc",
+              position: 'asc',
             },
             select: {
               song: {
@@ -486,7 +486,7 @@ const songController = {
             where: {
               song: {
                 is_deleted: false,
-                privacy: "public",
+                privacy: 'public',
               },
             },
             take: 4,
@@ -499,7 +499,7 @@ const songController = {
         },
         // cần phải xem xét lại orderBy (nên lấy những playlist nào)
         orderBy: {
-          created_at: "desc",
+          created_at: 'desc',
         },
         take: 4,
       });
@@ -520,7 +520,7 @@ const songController = {
     } catch (error) {
       console.log(error);
       return res.status(500).json({
-        msg: "Có lỗi xảy ra",
+        msg: 'Có lỗi xảy ra',
       });
     }
   },
@@ -538,10 +538,10 @@ const songController = {
           is_deleted: false,
           OR: [
             {
-              privacy: "public",
+              privacy: 'public',
             },
             {
-              privacy: "private",
+              privacy: 'private',
               user_id: user.id,
             },
           ],
@@ -560,7 +560,7 @@ const songController = {
         },
       });
 
-      if (!song) return res.status(404).json({ msg: "Bài hát không tồn tại" });
+      if (!song) return res.status(404).json({ msg: 'Bài hát không tồn tại' });
 
       const song_categories = song.belong_categories.map((bc) => bc.id);
       const song_ids = exclude_song_ids ?? [];
@@ -571,7 +571,7 @@ const songController = {
             notIn: [song.id, ...song_ids],
           },
           is_deleted: false,
-          privacy: "public",
+          privacy: 'public',
           belong_categories: {
             some: {
               id: {
@@ -607,7 +607,7 @@ const songController = {
     } catch (error) {
       console.log(error);
       return res.status(500).json({
-        msg: "Có lỗi xảy ra",
+        msg: 'Có lỗi xảy ra',
       });
     }
   },
@@ -617,8 +617,6 @@ const songController = {
     try {
       const user = req.user;
       const { song_id } = req.query;
-
-      console.log({ song_id });
 
       const song = await prisma.song.findFirst({
         where: { id: song_id, is_deleted: false },
@@ -643,13 +641,131 @@ const songController = {
         },
       });
 
-      if (!song) return res.status(404).json({ msg: "Bài hát không tồn tại" });
+      if (!song) return res.status(404).json({ msg: 'Bài hát không tồn tại' });
 
       return res.json({ data: song.lyric });
     } catch (error) {
       console.log(error);
       return res.status(500).json({
-        msg: "Có lỗi xảy ra",
+        msg: 'Có lỗi xảy ra',
+      });
+    }
+  },
+
+  async addSongToRecentList(req: any, res: Response) {
+    try {
+      const user = req.user;
+      const { song_id } = req.body;
+
+      const song = await prisma.song.findFirst({
+        where: {
+          id: song_id,
+          is_deleted: false,
+        },
+      });
+
+      if (!song) {
+        return res.status(404).json({
+          msg: `Can not find song with id ${song_id}`,
+        });
+      }
+
+      const is_exist = await prisma.historySong.findUnique({
+        where: {
+          user_id_song_id: {
+            song_id,
+            user_id: user.id,
+          },
+        },
+      });
+
+      if (is_exist) {
+        // nếu bài hát này đã có trong lịch sử phát của user thì xóa ra rồi thêm lại sau
+        await prisma.historySong.delete({
+          where: {
+            user_id_song_id: {
+              song_id,
+              user_id: user.id,
+            },
+          },
+        });
+      }
+
+      // thêm bài hát vào lịch sử phát của user
+      await prisma.historySong.create({
+        data: {
+          song_id,
+          user_id: user.id,
+        },
+      });
+
+      return res.json({ msg: 'Thêm vào lịch sử phát thành công' });
+    } catch (error) {
+      console.log(error);
+      return res.status(500).json({
+        msg: 'Có lỗi xảy ra',
+      });
+    }
+  },
+
+  // lấy ra danh sách lịch sử phát của user
+  async getHistorySongs(req: any, res: Response) {
+    try {
+      const user = req.user;
+      const page = req.query.page ? Number(req.query.page) : 1;
+      const limit = req.query.limit ? Number(req.query.limit) : 20;
+
+      const total_count = await prisma.historySong.count({
+        where: { user_id: user.id },
+      });
+      const history_songs = await prisma.historySong.findMany({
+        where: { user_id: user.id },
+        select: {
+          created_at: true,
+          user_id: true,
+          song: {
+            include: {
+              belong_categories: {
+                select: {
+                  id: true,
+                },
+              },
+              lyric: {
+                select: {
+                  id: true,
+                },
+              },
+            },
+          },
+        },
+        orderBy: {
+          created_at: 'desc',
+        },
+        take: limit,
+        skip: (page - 1) * limit,
+      });
+
+      let songs = history_songs.map((hs) => hs.song);
+      const user_favourite_songs = await prisma.favouriteSong.findMany({
+        where: { user_id: user.id },
+        select: { song_id: true },
+      });
+      songs = songs.map((song) => ({
+        ...song,
+        is_liked: user_favourite_songs.some((fs) => fs.song_id === song.id),
+      }));
+
+      return res.json({
+        data: songs,
+        pagination: {
+          page,
+          limit,
+          total_count,
+        },
+      });
+    } catch (error) {
+      return res.status(500).json({
+        msg: 'Có lỗi xảy ra',
       });
     }
   },
