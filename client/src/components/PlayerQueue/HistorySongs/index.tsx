@@ -14,16 +14,20 @@ import { clearMetaData } from '../../../redux/metadata/actions';
 import { resetHistorySongs } from '../../../redux/song/songSlice';
 import QueueSongItemSkeleton from '../../Skeleton/QueueSongItem';
 import InfiniteScroll from 'react-infinite-scroll-component';
+import { useAudioContext } from '../../../context/AudioContext';
 
-interface Props {}
+interface Props {
+  changeToPlayerTab: () => void;
+}
 
 const getHistorySongsMetaSelector = createMetaSelector(getHistorySongsAction);
 
-const HistorySong: React.FC<Props> = () => {
+const HistorySong: React.FC<Props> = ({ changeToPlayerTab }) => {
   const dispatch = useAppDispatch();
   const { limit, page, total_count } = useAppSelector(
     getUserHistorySongsPaginationSelector
   );
+  const { handleClickQueueHistorySong } = useAudioContext();
   const [current_page, setCurrentPage] = useState<number>(page);
   const { is_audio_loading } = useAppSelector(getAudioMetaSelector);
   const songs = useAppSelector(getUserHistorySongsSelector);
@@ -35,7 +39,11 @@ const HistorySong: React.FC<Props> = () => {
 
   const onClickQueueSong = (song: Song) => {
     if (!is_audio_loading) {
-      console.log({ song });
+      // thực hiện logic thêm bài hát này vào player queue
+      handleClickQueueHistorySong(song);
+
+      // chuyển sang tab player
+      changeToPlayerTab();
     }
   };
 

@@ -81,6 +81,7 @@ interface ContextState {
   handleChangeAudioPlaybackRate: (value: number) => void;
   handleMoveToNextSong: (on_end_move?: boolean) => void;
   handleMoveToPrevSong: () => void;
+  handleClickQueueHistorySong: (song: AudioSong) => void;
 }
 
 const AudioContext = React.createContext<ContextState>({} as ContextState);
@@ -900,6 +901,44 @@ const AudioContextProvider = ({ children }: { children: React.ReactNode }) => {
     dispatch(changeAudioCurrentSong({ new_current_song }));
   };
 
+  const handleClickQueueHistorySong = (song: AudioSong) => {
+    // chuyển can_auto_play về true để có thể phát nhạc
+    resetLastSong();
+
+    const new_current_audio = {
+      ...song,
+      is_current_audio: true,
+      queue_id: uuid(),
+    };
+    const new_current_song = _.omit(new_current_audio, [
+      'is_current_audio',
+      'queue_id',
+    ]);
+    const new_archived_list = [
+      ...archived_list.map((s) => ({ ...s, is_current_audio: false })),
+      new_current_audio,
+    ];
+    const new_list_songs = [
+      ...audio_list_songs.map((s) => ({ ...s, is_current_audio: false })),
+      new_current_audio,
+    ];
+    dispatch(
+      changeAudioCurrentSongData({
+        archived_list: new_archived_list,
+        current_song: new_current_song,
+        audio_list_songs: new_list_songs,
+      })
+    );
+    dispatch(
+      getRecommendedSongsAction({
+        data: {
+          exclude_song_ids: new_list_songs.map((s) => s.id),
+        },
+        song_id: new_current_song.id,
+      })
+    );
+  };
+
   useEffect(() => {
     // mỗi khi mà is_shuffle thay đổi
     if (!current_song) {
@@ -917,7 +956,7 @@ const AudioContextProvider = ({ children }: { children: React.ReactNode }) => {
       }
     } else {
       // trường hợp này, archived_list chính là bài hát được chọn và những bài hát nằm trước nó
-      const index = audio_list_songs.findIndex((s) => s.id === current_song.id);
+      const index = audio_list_songs.findIndex((s) => s.is_current_audio);
       if (index !== -1) {
         const new_archived_list = audio_list_songs.slice(0, index + 1);
         const new_next_list = audio_list_songs.slice(index + 1);
@@ -976,6 +1015,7 @@ const AudioContextProvider = ({ children }: { children: React.ReactNode }) => {
         audio_alarm,
         turnOffAudioAlarm,
         turnOnAudioAlarm,
+        handleClickQueueHistorySong,
       }}
     >
       {children}

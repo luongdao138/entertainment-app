@@ -82,7 +82,8 @@ const PlayerQueue = () => {
   }, []);
 
   const renderContent = useMemo(() => {
-    if (tab === 'recent') return <HistorySong />;
+    if (tab === 'recent')
+      return <HistorySong changeToPlayerTab={() => changeTab('player')} />;
     else {
       if (Boolean(current_song)) return <QueueContent />;
       else return NoPlayerQueueContent;
