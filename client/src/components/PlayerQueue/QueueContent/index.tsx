@@ -8,7 +8,6 @@ import {
   getAudioArchivedListSelector,
   getAudioCurrentListSongs,
   getAudioCurrentPlaylistSelector,
-  getAudioCurrentSongSelector,
   getAudioNextListSelector,
   getAudioRecommendListSelector,
   getAudioStateSelector,
@@ -33,7 +32,6 @@ const QueueContent = () => {
   const current_playlist = useAppSelector(getAudioCurrentPlaylistSelector);
   const audio_state = useAppSelector(getAudioStateSelector);
   const audio_list_songs = useAppSelector(getAudioCurrentListSongs);
-  const current_song = useAppSelector(getAudioCurrentSongSelector);
 
   const dispatch = useAppDispatch();
 

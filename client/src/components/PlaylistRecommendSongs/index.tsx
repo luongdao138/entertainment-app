@@ -10,7 +10,6 @@ import { shuffleRecommendedSongs } from '../../redux/playlistDetail/playlistDeta
 import _ from 'lodash';
 import { AudioSong } from '../../redux/audioPlayer/audioPlayerSlice';
 import { useAudioContext } from '../../context/AudioContext';
-import { getAudioCurrentSongSelector } from '../../redux/audioPlayer/audioPlayerSelectors';
 import { HiOutlineRefresh } from 'react-icons/hi';
 interface Props {
   playlist_id: string;
@@ -19,7 +18,6 @@ interface Props {
 const PlaylistRecommendSongs: React.FC<Props> = ({ playlist_id }) => {
   const title = useAppSelector(getPlaylistRecommendedTitleSelector);
   const songs = useAppSelector(getPlaylistRecommendedSongsSelector);
-  const current_song = useAppSelector(getAudioCurrentSongSelector);
   const dispatch = useAppDispatch();
   const { handleClickSongAudio } = useAudioContext();
 

@@ -45,8 +45,8 @@ const PlayerQueue = () => {
   }, [open_lyric]);
 
   useEffect(() => {
+    changeTab('player');
     if (!current_song) {
-      changeTab('player');
       dispatch(resetHistorySongs());
     }
   }, [current_song]);

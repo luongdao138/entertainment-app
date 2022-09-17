@@ -110,6 +110,7 @@ const PlaylistDetailPage = () => {
       is_full_load
     ) {
       console.log('Change image audio');
+      if (playlist_songs.length === 0) return;
       const shuffled_playlist_songs = _.shuffle(playlist_songs);
       handleClickSongAudio({
         playlist: playlist_detail,

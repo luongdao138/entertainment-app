@@ -26,7 +26,12 @@ const AudioPlayer = () => {
   const can_auto_play = useAppSelector(getAudioCanAutoPlay);
   const { is_audio_playing } = useAppSelector(getAudioMetaSelector);
 
-  const { audioRef, handlePlayAudio, handleMoveToNextSong } = useAudioContext();
+  const {
+    audioRef,
+    handlePlayAudio,
+    handleMoveToNextSong,
+    handleSaveSongToHistory,
+  } = useAudioContext();
   const dispatch = useAppDispatch();
 
   const handleAudioEndRef = useRef<() => void>();
@@ -35,6 +40,7 @@ const AudioPlayer = () => {
     if (replay_mode !== ReplayMode.ONE) {
       handleMoveToNextSong(true);
     } else {
+      handleSaveSongToHistory(current_song);
       // người dùng đang bật chế độ nghe lại một bài => khi bài hát này kết thúc thì phát lại chính bài hát này
       audioRef.current?.load();
       audioRef.current?.play();

@@ -32,6 +32,7 @@ import { useAuthContext } from './AuthContext';
 import { v4 as uuid } from 'uuid';
 import { toast } from 'react-toastify';
 import { playbackRateOptions, ReplayMode } from '../constants/options';
+import { addSongToHistory } from '../services/song';
 
 export interface ClickAudioParams {
   song: AudioSong;
@@ -82,6 +83,7 @@ interface ContextState {
   handleMoveToNextSong: (on_end_move?: boolean) => void;
   handleMoveToPrevSong: () => void;
   handleClickQueueHistorySong: (song: AudioSong) => void;
+  handleSaveSongToHistory: (song: AudioSong | null) => void;
 }
 
 const AudioContext = React.createContext<ContextState>({} as ContextState);
@@ -89,6 +91,7 @@ const AudioContext = React.createContext<ContextState>({} as ContextState);
 const AudioContextProvider = ({ children }: { children: React.ReactNode }) => {
   const [openQueue, setOpenQueue] = useState<boolean>(false);
   const [audio_alarm, setAudioAlarm] = useState<number | null>(null);
+  const isFirstRenderRef = useRef<boolean>(true);
   const { authUser } = useAuthContext();
 
   const current_song = useAppSelector(getAudioCurrentSongSelector);
@@ -126,6 +129,12 @@ const AudioContextProvider = ({ children }: { children: React.ReactNode }) => {
     if (!can_auto_play) dispatch(changeCanAutoPlay(true));
   };
 
+  const handleSaveSongToHistory = (song: AudioSong | null) => {
+    if (song) {
+      addSongToHistory({ song_id: song.id });
+    }
+  };
+
   const handleClickSongAudio = (params: ClickAudioParams) => {
     const {
       song,
@@ -145,6 +154,12 @@ const AudioContextProvider = ({ children }: { children: React.ReactNode }) => {
       handleToggleAudioPlayState();
     } else {
       // trường hợp này user muốn đổi bài hát khác
+
+      // trước tiên, ta phải thêm bài hát cũ vào lịch sử phát (nếu đây ko phải là bài hát đầu tiên)
+      if (current_song) {
+        handleSaveSongToHistory(current_song);
+      }
+
       let is_shuffle = playlist_play_random ?? audio_state.is_shuffle;
       let new_lists_songs = list_songs.map((s) => ({
         ...s,
@@ -416,6 +431,7 @@ const AudioContextProvider = ({ children }: { children: React.ReactNode }) => {
         // trong danh sách bài hát tiếp theo đang còn bài
         // thì sẽ lấy bài đầu tiên trong danh sách này đưa vào archive list và trở thành bài đang phát
         // bài đang phát sẽ bị xóa đi
+        handleSaveSongToHistory(current_song);
 
         const [removed] = [...next_list].splice(0, 1);
         const new_next_list = next_list.slice(1);
@@ -459,47 +475,92 @@ const AudioContextProvider = ({ children }: { children: React.ReactNode }) => {
       } else if (archived_list.length > 1) {
         // trường hợp này list bài hát tiếp theo đã hết nhưng list archive đang còn
         // => lấy bài hát đầu tiên của archive list làm current_song, những bài hát sau đó sẽ làm next list
+        handleSaveSongToHistory(current_song);
 
-        const [removed] = [...archived_list].splice(0, 1);
-        const new_next_list = archived_list
-          .slice(1)
-          .filter((s) => s.queue_id !== queue_id);
-        const new_current_audio: AudioSong = {
-          ...removed,
-          is_current_audio: true,
-        };
-        const new_current_song: AudioSong = _.omit(removed, [
-          'is_current_audio',
-          'queue_id',
-        ]);
-        const new_list_songs = audio_list_songs
-          .filter((s) => s.queue_id !== queue_id)
-          .map((s) =>
-            s.queue_id === new_current_audio.queue_id
-              ? { ...s, is_current_audio: true }
-              : { ...s, is_current_audio: false }
+        // chia ra 2 trường hợp
+        // nếu auto_play đang bật thì chuyển tiếp đến list recommend
+        // nếu đang tắt thì xử lý như hiện tại
+
+        if (!audio_state.is_autoplay_recommend || recommend_list.length === 0) {
+          // đây là trường hợp tự động phát đang tắt hoặc đang bật nhưng trong list recommend ko còn bài nào cả
+          const [removed] = [...archived_list].splice(0, 1);
+          const new_next_list = archived_list
+            .slice(1)
+            .filter((s) => s.queue_id !== queue_id);
+          const new_current_audio: AudioSong = {
+            ...removed,
+            is_current_audio: true,
+          };
+          const new_current_song: AudioSong = _.omit(removed, [
+            'is_current_audio',
+            'queue_id',
+          ]);
+          const new_list_songs = audio_list_songs
+            .filter((s) => s.queue_id !== queue_id)
+            .map((s) =>
+              s.queue_id === new_current_audio.queue_id
+                ? { ...s, is_current_audio: true }
+                : { ...s, is_current_audio: false }
+            );
+
+          dispatch(
+            changeAudioCurrentSongData({
+              next_list: new_next_list,
+              archived_list: [new_current_audio],
+              audio_list_songs: new_list_songs,
+              current_song: new_current_song,
+            })
           );
-
-        dispatch(
-          changeAudioCurrentSongData({
-            next_list: new_next_list,
-            archived_list: [new_current_audio],
-            audio_list_songs: new_list_songs,
-            current_song: new_current_song,
-          })
-        );
-        dispatch(
-          getRecommendedSongsAction({
-            data: {
-              exclude_song_ids: new_list_songs.map((s) => s.id),
-            },
-            song_id: new_current_song.id,
-          })
-        );
+          dispatch(
+            getRecommendedSongsAction({
+              data: {
+                exclude_song_ids: new_list_songs.map((s) => s.id),
+              },
+              song_id: new_current_song.id,
+            })
+          );
+        } else {
+          // đây là trường hợp tự động phát đang bật và vẫn còn bài trong list recommend
+          const new_current_audio = {
+            ...recommend_list[0],
+            is_current_audio: true,
+          };
+          const new_current_song = _.omit(new_current_audio, [
+            'is_current_audio',
+            'queue_id',
+          ]);
+          const new_archived_list = [
+            ...archived_list.map((s) => ({ ...s, is_current_audio: false })),
+            new_current_audio,
+          ];
+          const new_list_songs = [
+            ...audio_list_songs.map((s) => ({
+              ...s,
+              is_current_audio: false,
+            })),
+            new_current_audio,
+          ];
+          dispatch(
+            changeAudioCurrentSongData({
+              archived_list: new_archived_list,
+              current_song: new_current_song,
+              audio_list_songs: new_list_songs,
+            })
+          );
+          dispatch(
+            getRecommendedSongsAction({
+              data: {
+                exclude_song_ids: new_list_songs.map((s) => s.id),
+              },
+              song_id: new_current_song.id,
+            })
+          );
+        }
       } else {
         // trường hợp này, cả list next và archive đều đã hết => check đến list recommended
         // nếu auto_play_recommend đang bật => tiếp tục phát nhạc của recommend list
         // nếu auto_play_recommend đang tắt thì xóa nốt bài hát cuối cùng, tắt trình phát nhạc
+        handleSaveSongToHistory(current_song);
 
         if (!audio_state.is_autoplay_recommend) {
           // tự động phát đang tắt
@@ -543,6 +604,7 @@ const AudioContextProvider = ({ children }: { children: React.ReactNode }) => {
 
   const handleClickQueueSong = (queue_id: string) => {
     resetLastSong();
+    handleSaveSongToHistory(current_song);
     const is_archived_index = archived_list.findIndex(
       (s) => s.queue_id === queue_id && !s.is_current_audio
     );
@@ -717,6 +779,7 @@ const AudioContextProvider = ({ children }: { children: React.ReactNode }) => {
   };
 
   const handleMoveToNextSong = (on_end_move?: boolean) => {
+    handleSaveSongToHistory(current_song);
     if (next_list.length === 0) {
       if (!audio_state.is_autoplay_recommend || recommend_list.length === 0) {
         // đây là trường hợp tự động phát đang tắt hoặc là ko có bài hát nào trong danh sách bài hát gợi ý
@@ -904,6 +967,7 @@ const AudioContextProvider = ({ children }: { children: React.ReactNode }) => {
   const handleClickQueueHistorySong = (song: AudioSong) => {
     // chuyển can_auto_play về true để có thể phát nhạc
     resetLastSong();
+    handleSaveSongToHistory(current_song);
 
     const new_current_audio = {
       ...song,
@@ -945,6 +1009,11 @@ const AudioContextProvider = ({ children }: { children: React.ReactNode }) => {
       return;
     }
 
+    if (isFirstRenderRef.current) {
+      isFirstRenderRef.current = false;
+      return;
+    }
+
     if (audio_state.is_shuffle) {
       const is_included = audio_list_songs.find((s) => s.is_current_audio);
       if (is_included) {
@@ -976,18 +1045,18 @@ const AudioContextProvider = ({ children }: { children: React.ReactNode }) => {
   }, [audio_state.is_shuffle]);
 
   // check xem sự thay đổi của các list có đúng ko
-  useEffect(() => {
-    console.log(
-      'Audio list songs change hehe',
-      audio_list_songs.map((s) => ({
-        queue_id: s.queue_id,
-        name: s.name,
-        is_current_audio: s.is_current_audio,
-        id: s.id,
-        queue_playlist_id: s.queue_playlist_id,
-      }))
-    );
-  }, [audio_list_songs]);
+  // useEffect(() => {
+  //   console.log(
+  //     'Audio list songs change hehe',
+  //     audio_list_songs.map((s) => ({
+  //       queue_id: s.queue_id,
+  //       name: s.name,
+  //       is_current_audio: s.is_current_audio,
+  //       id: s.id,
+  //       queue_playlist_id: s.queue_playlist_id,
+  //     }))
+  //   );
+  // }, [audio_list_songs]);
 
   return (
     <AudioContext.Provider
@@ -997,12 +1066,12 @@ const AudioContextProvider = ({ children }: { children: React.ReactNode }) => {
         handleToggleQueue,
         handleCloseQueue,
         playerRef,
-        handleClickSongAudio,
-        handleAddSongsToPlayerQueue,
+        handleClickSongAudio, // hàm này có thể làm thay đổi bài hát đang phát của playlist
+        handleAddSongsToPlayerQueue, // hàm này chỉ thêm bài bát vào queue, ko thay đổi bài hát đang phát
         handleChangeAutoPlayRecommend,
-        handleAddSongToPlayNext,
-        handleRemoveSongsOutOfPlayQueue,
-        handleClickQueueSong,
+        handleAddSongToPlayNext, // hàm này chỉ thêm bài bát vào queue, ko thay đổi bài hát đang phát
+        handleRemoveSongsOutOfPlayQueue, // hàm này có thể làm thay đổi bài hát đang phát của playlist
+        handleClickQueueSong, // hàm này có thể làm thay đổi bài hát đang phát của playlist
         audioRef,
         handlePlayAudio,
         handlePauseAudio,
@@ -1010,12 +1079,13 @@ const AudioContextProvider = ({ children }: { children: React.ReactNode }) => {
         handleChangeAudioVolume,
         handleChangeAudioCurrentTime,
         handleChangeAudioPlaybackRate,
-        handleMoveToNextSong,
-        handleMoveToPrevSong,
+        handleMoveToNextSong, // hàm này có thể làm thay đổi bài hát đang phát của playlist
+        handleMoveToPrevSong, // hàm này có thể làm thay đổi bài hát đang phát của playlist
         audio_alarm,
         turnOffAudioAlarm,
         turnOnAudioAlarm,
-        handleClickQueueHistorySong,
+        handleClickQueueHistorySong, // hàm này có thể làm thay đổi bài hát đang phát của playlist
+        handleSaveSongToHistory,
       }}
     >
       {children}
