@@ -8,6 +8,9 @@ import RetrievePassword from '../pages/Auth/RetrievePassword';
 import VerifyAccount from '../pages/Auth/VerifyAccount';
 import HomePage from '../pages/HomePage';
 import MyMusicPage from '../pages/MyMusicPage';
+import HistoryPage from '../pages/MyMusicPage/History';
+import HistoryPlaylist from '../pages/MyMusicPage/History/Playlist';
+import HistorySong from '../pages/MyMusicPage/History/Song';
 import LibraryPlaylist from '../pages/MyMusicPage/LibraryPlaylist';
 import Song from '../pages/MyMusicPage/Song';
 import FavouriteSong from '../pages/MyMusicPage/Song/FavouriteSong';
@@ -36,6 +39,11 @@ const AppRouter = () => {
               </Route>
             </Route>
             <Route path='library/playlist' element={<LibraryPlaylist />} />
+            <Route path='history' element={<HistoryPage />}>
+              <Route index element={<HistoryPlaylist />} />
+              <Route path='playlist' element={<HistoryPlaylist />} />
+              <Route path='song' element={<HistorySong />} />
+            </Route>
           </Route>
           <Route path='profile' element={<UserProfilePage />} />
           <Route

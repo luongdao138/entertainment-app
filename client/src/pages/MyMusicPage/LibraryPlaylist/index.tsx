@@ -1,6 +1,4 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
-import Tabs from '@mui/material/Tabs';
-import Tab from '@mui/material/Tab';
 import { Container } from './style';
 import { useAppDispatch, useAppSelector } from '../../../redux/hooks';
 import { getPrivatePlaylists } from '../../../redux/playlist/playlistActions';
@@ -12,6 +10,7 @@ import { IoIosAddCircleOutline } from 'react-icons/io';
 import PlaylistItem from '../../../components/PlaylistItem';
 import { useUploadPlaylistContext } from '../../../context/UploadPlaylistContext';
 import { Playlist } from '../../../services/playlist';
+import PageTabs from '../../../components/PageTabs';
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -35,13 +34,6 @@ function TabPanel(props: TabPanelProps) {
   );
 }
 
-function a11yProps(index: number) {
-  return {
-    id: `simple-tab-${index}`,
-    'aria-controls': `simple-tabpanel-${index}`,
-  };
-}
-
 export default function LibraryPlaylist() {
   const [value, setValue] = useState(0);
   // const firstRenderRef = useRef<boolean>(false);
@@ -51,7 +43,7 @@ export default function LibraryPlaylist() {
   const private_playlists = useAppSelector(getPrivatePlaylist);
   const library_playlists = useAppSelector(getLibraryPlaylist);
 
-  const handleChange = (event: React.SyntheticEvent, newValue: number) => {
+  const handleChange = (newValue: number) => {
     setValue(newValue);
   };
 
@@ -94,7 +86,7 @@ export default function LibraryPlaylist() {
 
   return (
     <Container>
-      <div className='header'>
+      {/* <div className='header'>
         <h2 className='title'>Playlist</h2>
         <Tabs
           sx={{
@@ -131,7 +123,13 @@ export default function LibraryPlaylist() {
             {...a11yProps(1)}
           />
         </Tabs>
-      </div>
+      </div> */}
+      <PageTabs
+        title='Playlist'
+        value={value}
+        onChange={handleChange}
+        options={[{ label: 'Tất cả' }, { label: 'Của tôi' }]}
+      />
       <TabPanel value={value} index={0}>
         {renderPlaylists}
       </TabPanel>

@@ -9,6 +9,7 @@ interface Props {
   is_selected?: boolean;
   is_dragging?: boolean;
   enable_select_multiple?: boolean;
+  is_from_history?: boolean;
 }
 
 export const Container = styled.div`
@@ -173,7 +174,8 @@ export const Container = styled.div`
       min-width: 40px;
     }
 
-    & .more-action {
+    & .more-action,
+    & .delete-btn {
       opacity: 0;
       visibility: hidden;
       /* display: none; */
@@ -186,12 +188,19 @@ export const Container = styled.div`
       position: absolute;
       top: 50%;
       transform: translateY(-50%);
-      right: 1rem;
 
       svg {
         color: #fff;
         font-size: 2rem;
       }
+    }
+
+    & .more-action {
+      right: ${(props: Props) => (props.is_from_history ? '5rem' : '1rem')};
+    }
+
+    & .delete-btn {
+      right: 1rem;
     }
   }
 
@@ -232,10 +241,13 @@ export const Container = styled.div`
       & .duration {
         opacity: 0;
         visibility: hidden;
+        min-width: ${(props: Props) =>
+          props.is_from_history ? '80px' : '40px'};
         /* display: none; */
       }
 
-      & .more-action {
+      & .more-action,
+      & .delete-btn {
         opacity: 1;
         visibility: visible;
 

@@ -49,7 +49,7 @@ const PlayerQueue = () => {
     if (!current_song) {
       dispatch(resetHistorySongs());
     }
-  }, [current_song]);
+  }, [current_song?.id]);
 
   useEffect(() => {
     if (tab === 'recent') {

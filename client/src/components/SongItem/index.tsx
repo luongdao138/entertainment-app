@@ -2,7 +2,7 @@ import React, { useRef, useEffect } from 'react';
 import { Container } from './style';
 import { FiMusic } from 'react-icons/fi';
 import { BsFillPlayFill } from 'react-icons/bs';
-import { MdMoreHoriz, MdDragIndicator } from 'react-icons/md';
+import { MdMoreHoriz, MdDragIndicator, MdClose } from 'react-icons/md';
 import { AiOutlineHeart, AiFillHeart } from 'react-icons/ai';
 import { Checkbox, Menu } from '@mui/material';
 import { Song, SongDetail, SongPrivacy } from '../../services/song';
@@ -24,11 +24,11 @@ import { AudioSong } from '../../redux/audioPlayer/audioPlayerSlice';
 import MyTooltip from '../Tooltip';
 interface Props {
   song: Song;
-  focusSong: string | null;
-  changeFocusSong: (song_id: string) => void;
-  toggleSelectedSong: (song_id: string) => void;
-  clearSelectedSongs: () => void;
-  selectedSongs: string[];
+  focusSong?: string | null;
+  changeFocusSong?: (song_id: string) => void;
+  toggleSelectedSong?: (song_id: string) => void;
+  clearSelectedSongs?: () => void;
+  selectedSongs?: string[];
   is_dragging?: boolean;
   can_change_privacy?: boolean;
   can_edit_song?: boolean;
@@ -44,6 +44,8 @@ interface Props {
   onAddSongsToPlayerQueue: (song: AudioSong) => void;
   onAddSongsToPlayNext: (song: AudioSong) => void;
   scrollToCurrentSong?: boolean;
+  is_from_history?: boolean;
+  can_play_with_lyric?: boolean;
 }
 
 const SongItem: React.FC<Props> = ({
@@ -58,6 +60,7 @@ const SongItem: React.FC<Props> = ({
   can_change_privacy,
   can_delete_song,
   can_edit_song,
+  can_play_with_lyric,
   changeSelectedSong,
   handleRemoveSongOutOfPlaylist,
   handleOpenEditSongForm,
@@ -68,6 +71,7 @@ const SongItem: React.FC<Props> = ({
   onAddSongsToPlayNext,
   onAddSongsToPlayerQueue,
   scrollToCurrentSong,
+  is_from_history,
 }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const current_song = useAppSelector(getAudioCurrentSongSelector);
@@ -82,9 +86,9 @@ const SongItem: React.FC<Props> = ({
   const handleClose = () => {
     setAnchorEl(null);
   };
-  const isSelected = selectedSongs.includes(song.id);
+  const isSelected = selectedSongs?.includes(song.id);
   const isFocused = focusSong === song.id;
-  const isShowCheckbox = selectedSongs.length > 0;
+  const isShowCheckbox = selectedSongs && selectedSongs.length > 0;
   const isActive = isFocused || isSelected;
   const is_current_audio = current_song?.id === song.id;
 
@@ -97,18 +101,18 @@ const SongItem: React.FC<Props> = ({
 
   const handleClickSong = () => {
     if (enable_select_multiple) {
-      clearSelectedSongs();
-      changeFocusSong(song.id);
+      clearSelectedSongs?.();
+      changeFocusSong?.(song.id);
     }
   };
 
   const handleSelectSong = () => {
-    toggleSelectedSong(song.id);
+    toggleSelectedSong?.(song.id);
   };
 
   const handleClickCheckbox = (e: React.MouseEvent<HTMLElement>) => {
     e.stopPropagation();
-    changeFocusSong(song.id);
+    changeFocusSong?.(song.id);
   };
 
   const handleClickFavourite = async (e: React.MouseEvent<HTMLElement>) => {
@@ -215,6 +219,7 @@ const SongItem: React.FC<Props> = ({
           handleOpenDeleteConfirmModal={handleOpenDeleteConfirmModal}
           onAddSongsToPlayNext={onAddSongsToPlayNext}
           onAddSongsToPlayerQueue={onAddSongsToPlayerQueue}
+          can_play_with_lyric={can_play_with_lyric}
         />
       </Menu>
       <Container
@@ -228,15 +233,18 @@ const SongItem: React.FC<Props> = ({
         is_current_audio={is_current_audio}
         ref={containerRef}
         onDoubleClick={handleDoubleClickSong}
+        is_from_history={is_from_history}
       >
         <div className='song-left'>
-          <div className='music-icon' onDoubleClick={disableClickEvent}>
-            {can_drag && enable_select_multiple ? (
-              <MdDragIndicator style={{ fontSize: '2rem' }} />
-            ) : (
-              <FiMusic />
-            )}
-          </div>
+          {!is_from_history && (
+            <div className='music-icon' onDoubleClick={disableClickEvent}>
+              {can_drag && enable_select_multiple ? (
+                <MdDragIndicator style={{ fontSize: '2rem' }} />
+              ) : (
+                <FiMusic />
+              )}
+            </div>
+          )}
 
           {enable_select_multiple && (
             <div className='song-checkbox' onDoubleClick={disableClickEvent}>
@@ -314,6 +322,14 @@ const SongItem: React.FC<Props> = ({
               <MdMoreHoriz />
             </button>
           </MyTooltip>
+
+          {is_from_history && (
+            <MyTooltip title='Xóa' placement='top'>
+              <button className='delete-btn'>
+                <MdClose />
+              </button>
+            </MyTooltip>
+          )}
         </div>
       </Container>
     </>

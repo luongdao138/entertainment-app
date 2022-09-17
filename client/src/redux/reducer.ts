@@ -10,6 +10,7 @@ import audioPlayerReducer from './audioPlayer/audioPlayerSlice';
 import lyricReducer from './lyric/lyricSlice';
 import { persistReducer } from 'redux-persist';
 import storage from 'redux-persist/lib/storage';
+import historyReducer from './history/historySlice';
 
 const persistedAudioPlayerReducer = persistReducer(
   {
@@ -31,6 +32,7 @@ const rootReducer = combineReducers({
   songDetail: songDetaiReducer,
   audioPlayer: persistedAudioPlayerReducer,
   lyric: lyricReducer,
+  history: historyReducer,
 });
 
 export default rootReducer;

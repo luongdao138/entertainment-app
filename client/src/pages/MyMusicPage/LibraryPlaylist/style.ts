@@ -4,7 +4,7 @@ export const Container = styled.div`
   padding-top: 2rem;
   padding-bottom: 3rem;
 
-  & .header {
+  /* & .header {
     min-height: 5.2rem;
     border-bottom: 1px solid hsla(0, 0%, 100%, 0.1);
     margin-bottom: 2rem;
@@ -17,7 +17,7 @@ export const Container = styled.div`
       padding-right: 2rem;
       border-right: 1px solid hsla(0, 0%, 100%, 0.1);
     }
-  }
+  } */
 
   & .playlist-list {
     display: grid;

@@ -91,6 +91,9 @@ const songSlice = createSlice({
         state.uploaded.data = state.uploaded.data.map((s) =>
           s.id === action.payload ? { ...s, is_liked: !s.is_liked } : s
         );
+        state.history.data = state.history.data.map((s) =>
+          s.id === action.payload ? { ...s, is_liked: !s.is_liked } : s
+        );
       })
       .addCase(getHistorySongsAction.fulfilled, (state, action) => {
         state.history.data = [...state.history.data, ...action.payload.data];

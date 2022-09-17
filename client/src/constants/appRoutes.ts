@@ -10,6 +10,9 @@ const appRoutes = {
   VERIFY_ACCOUNT: '/account/verify',
   FORGOT_PASSWORD: '/account/forgotPassword',
   LIBRARY_PLAYLIST: '/mymusic/library/playlist',
+  HISTORY: '/mymusic/history',
+  HISTORY_SONG: '/mymusic/history/song',
+  HISTORY_PLAYLIST: '/mymusic/history/playlist',
 };
 
 export default appRoutes;

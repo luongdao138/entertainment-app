@@ -135,7 +135,7 @@ const Sidebar = () => {
                 </Link>
               </MenuItem>
               <MenuItem>
-                <Link to='/'>
+                <Link to={appRoutes.HISTORY}>
                   {/* <MdOutlineLibraryMusic /> */}
                   <RecentIcon />
                   <span>Gần đây</span>
