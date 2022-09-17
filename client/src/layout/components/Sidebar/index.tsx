@@ -128,7 +128,7 @@ const Sidebar = () => {
                 </Link>
               </MenuItem>
               <MenuItem>
-                <Link to='/'>
+                <Link to={appRoutes.LIBRARY_PLAYLIST}>
                   {/* <MdOutlineLibraryMusic /> */}
                   <PlaylistIcon />
                   <span>Playlist</span>

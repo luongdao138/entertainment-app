@@ -9,7 +9,6 @@ import { getPrivatePlaylists } from '../../redux/playlist/playlistActions';
 import { getLibraryPlaylist } from '../../redux/playlist/playlistSelector';
 import appRoutes from '../../constants/appRoutes';
 import { Container, NavigationItem } from './style';
-import { toast } from 'react-toastify';
 import MyTooltip from '../../components/Tooltip';
 
 const MyMusicPage = () => {
