@@ -1,13 +1,13 @@
-import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { Playlist, PlaylistDetail } from "../../services/playlist";
-import { Song, SongDetail } from "../../services/song";
-import { v4 as uuid } from "uuid";
+import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { Playlist, PlaylistDetail } from '../../services/playlist';
+import { Song, SongDetail } from '../../services/song';
+import { v4 as uuid } from 'uuid';
 
 import {
   changeFavourite,
   getRecommendedSongsAction,
-} from "../song/songActions";
-import { AudioPlaybackRateType, ReplayMode } from "../../constants/options";
+} from '../song/songActions';
+import { AudioPlaybackRateType, ReplayMode } from '../../constants/options';
 
 export type AudioSong = Song | SongDetail;
 export type AudioPlaylist = Playlist | PlaylistDetail;
@@ -20,7 +20,6 @@ interface SliceState {
     volume: number;
     duration: number;
     current_time: number;
-    is_last_song: boolean;
     playback_rate: AudioPlaybackRateType;
   };
   current_song: AudioSong | null;
@@ -43,6 +42,7 @@ interface SliceState {
     data: AudioPlaylist | null;
   };
   audio_list_songs: AudioSong[];
+  can_auto_play: boolean;
 }
 
 export interface ChangeSongDataParams {
@@ -72,12 +72,11 @@ const initialState: SliceState = {
     volume: 1,
     current_time: 0,
     playback_rate: {
-      desc: "Bình thường",
+      desc: 'Bình thường',
       value: 1.0,
-      label: "1x",
+      label: '1x',
     },
     replay_mode: ReplayMode.NONE,
-    is_last_song: false,
   },
   next_list: {
     data: [],
@@ -89,10 +88,11 @@ const initialState: SliceState = {
     data: null,
   },
   audio_list_songs: [],
+  can_auto_play: false,
 };
 
 const audioPlayerSlice = createSlice({
-  name: "audioPlayer",
+  name: 'audioPlayer',
   reducers: {
     changeAudioCurrentSong(
       state,
@@ -156,13 +156,13 @@ const audioPlayerSlice = createSlice({
     },
     changeAudioCurrentState(
       state,
-      action: PayloadAction<{ new_state: Partial<SliceState["audio_state"]> }>
+      action: PayloadAction<{ new_state: Partial<SliceState['audio_state']> }>
     ) {
       state.audio_state = { ...state.audio_state, ...action.payload.new_state };
     },
     changeAudioCurrentMeta(
       state,
-      action: PayloadAction<{ new_meta: Partial<SliceState["audio_meta"]> }>
+      action: PayloadAction<{ new_meta: Partial<SliceState['audio_meta']> }>
     ) {
       state.audio_meta = { ...state.audio_meta, ...action.payload.new_meta };
     },
@@ -204,6 +204,12 @@ const audioPlayerSlice = createSlice({
       state.current_playlist.data = null;
       state.current_song = null;
       state.audio_list_songs = [];
+      state.audio_meta = initialState.audio_meta;
+      state.audio_state = initialState.audio_state;
+      state.can_auto_play = initialState.can_auto_play;
+    },
+    changeCanAutoPlay(state, action: PayloadAction<boolean>) {
+      state.can_auto_play = action.payload;
     },
   },
   extraReducers(builder) {
@@ -249,5 +255,6 @@ export const {
   addSongsToPlayerList,
   resetAudioPlayer,
   changeAudioCurrentSongData,
+  changeCanAutoPlay,
 } = audioPlayerSlice.actions;
 export default audioPlayerSlice.reducer;

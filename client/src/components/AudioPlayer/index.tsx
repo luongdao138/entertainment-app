@@ -1,29 +1,29 @@
-import React, { useEffect, useMemo, useRef } from "react";
-import { toast } from "react-toastify";
-import { playbackRateOptions, ReplayMode } from "../../constants/options";
-import { useAudioContext } from "../../context/AudioContext";
+import React, { useEffect, useMemo, useRef } from 'react';
+import { toast } from 'react-toastify';
+import { ReplayMode } from '../../constants/options';
+import { useAudioContext } from '../../context/AudioContext';
 import {
+  getAudioCanAutoPlay,
   getAudioCurrentListSongs,
   getAudioCurrentPlaylistSelector,
   getAudioCurrentSongSelector,
   getAudioMetaSelector,
   getAudioStateSelector,
   getAudioVolumeSelector,
-} from "../../redux/audioPlayer/audioPlayerSelectors";
+} from '../../redux/audioPlayer/audioPlayerSelectors';
 import {
   changeAudioCurrentMeta,
   changeAudioCurrentState,
-} from "../../redux/audioPlayer/audioPlayerSlice";
-import { useAppDispatch, useAppSelector } from "../../redux/hooks";
+} from '../../redux/audioPlayer/audioPlayerSlice';
+import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 
 const AudioPlayer = () => {
   const current_song = useAppSelector(getAudioCurrentSongSelector);
   const current_playlist = useAppSelector(getAudioCurrentPlaylistSelector);
   const audio_volume = useAppSelector(getAudioVolumeSelector);
   const audio_list_songs = useAppSelector(getAudioCurrentListSongs);
-  const { playback_rate, is_last_song, replay_mode } = useAppSelector(
-    getAudioStateSelector
-  );
+  const { playback_rate, replay_mode } = useAppSelector(getAudioStateSelector);
+  const can_auto_play = useAppSelector(getAudioCanAutoPlay);
   const { is_audio_playing } = useAppSelector(getAudioMetaSelector);
 
   const { audioRef, handlePlayAudio, handleMoveToNextSong } = useAudioContext();
@@ -35,7 +35,6 @@ const AudioPlayer = () => {
     if (replay_mode !== ReplayMode.ONE) {
       handleMoveToNextSong(true);
     } else {
-      console.log("Play again: ", is_last_song);
       // người dùng đang bật chế độ nghe lại một bài => khi bài hát này kết thúc thì phát lại chính bài hát này
       audioRef.current?.load();
       audioRef.current?.play();
@@ -48,14 +47,14 @@ const AudioPlayer = () => {
     if (current_song?.url && audioRef?.current) {
       const handleAudioLoadedMetadata = () => {
         console.log(
-          "Audio event fire: loadedmetadata, song name: ",
+          'Audio event fire: loadedmetadata, song name: ',
           current_song.name
         );
       };
 
       const handleAudioLoadedData = () => {
         console.log(
-          "Audio event fire: loadeddata, song name: ",
+          'Audio event fire: loadeddata, song name: ',
           current_song.name
         );
 
@@ -72,7 +71,8 @@ const AudioPlayer = () => {
 
         // tự động phát bài hát mỗi khi data được load thành công
         // trong một số trường hợp ko đc auto play bài hát => cần xem xét sau, hiện tại luôn bật chức năng autoplay bài hát
-        if (replay_mode === ReplayMode.NONE && is_last_song) {
+        if (!can_auto_play) {
+          console.log('Stop here');
           // nếu ko bật chế độ phát lại và đây là bài cuối cùng => return
           return;
         }
@@ -81,14 +81,14 @@ const AudioPlayer = () => {
 
       const handleAudioEmptied = () => {
         console.log(
-          "Audio event fire: emptied, song name: ",
+          'Audio event fire: emptied, song name: ',
           current_song.name
         );
       };
 
       const handleAudioCanPlay = () => {
         console.log(
-          "Audio event fire: canplay, song name: ",
+          'Audio event fire: canplay, song name: ',
           current_song.name
         );
 
@@ -106,14 +106,14 @@ const AudioPlayer = () => {
 
       const handleAudioCanPlayThrough = () => {
         console.log(
-          "Audio event fire: canplaythrough, song name: ",
+          'Audio event fire: canplaythrough, song name: ',
           current_song.name
         );
       };
 
       const handleAudioError = () => {
-        toast.error("Có lỗi xảy ra, không thể phát bài hát");
-        console.log("Audio event fire: error, song name: ", current_song.name);
+        toast.error('Có lỗi xảy ra, không thể phát bài hát');
+        console.log('Audio event fire: error, song name: ', current_song.name);
         dispatch(
           changeAudioCurrentMeta({
             new_meta: {
@@ -126,29 +126,29 @@ const AudioPlayer = () => {
       };
 
       const handleAudioPlay = () => {
-        console.log("Audio event fire: play, song name: ", current_song.name);
-        dispatch(
-          changeAudioCurrentMeta({ new_meta: { is_audio_playing: true } })
-        );
+        console.log('Audio event fire: play, song name: ', current_song.name);
+        // dispatch(
+        //   changeAudioCurrentMeta({ new_meta: { is_audio_playing: true } })
+        // );
       };
 
       const handleAudioPause = () => {
-        console.log("Audio event fire: pause, song name: ", current_song.name);
-        dispatch(
-          changeAudioCurrentMeta({ new_meta: { is_audio_playing: false } })
-        );
+        console.log('Audio event fire: pause, song name: ', current_song.name);
+        // dispatch(
+        //   changeAudioCurrentMeta({ new_meta: { is_audio_playing: false } })
+        // );
       };
 
       const handleAudioPlaying = () => {
         console.log(
-          "Audio event fire: playing, song name: ",
+          'Audio event fire: playing, song name: ',
           current_song.name
         );
       };
 
       const handleAudioDurationChange = () => {
         console.log(
-          "Audio event fire: durationchange, song name: ",
+          'Audio event fire: durationchange, song name: ',
           current_song.name
         );
 
@@ -162,14 +162,14 @@ const AudioPlayer = () => {
 
       const handleAudioVolumeChange = () => {
         console.log(
-          "Audio event fire: volumechange, song name: ",
+          'Audio event fire: volumechange, song name: ',
           current_song.name
         );
       };
 
       const handleAudioSeeking = () => {
         console.log(
-          "Audio event fire: seeking, song name: ",
+          'Audio event fire: seeking, song name: ',
           current_song.name
         );
 
@@ -186,99 +186,87 @@ const AudioPlayer = () => {
       };
 
       const handleAudioSeeked = () => {
-        console.log("Audio event fire: seeked, song name: ", current_song.name);
+        console.log('Audio event fire: seeked, song name: ', current_song.name);
       };
 
       const handleAudioEnded = () => {
-        console.log("Audio event fire: ended, song name: ", current_song.name);
+        console.log('Audio event fire: ended, song name: ', current_song.name);
         handleAudioEndRef.current?.();
       };
 
       const handleRateChange = () => {
         console.log(
-          "Audio event fire: ratechange, song name: ",
+          'Audio event fire: ratechange, song name: ',
           current_song.name
         );
-
-        if (audioRef.current !== null) {
-          dispatch(
-            changeAudioCurrentState({
-              new_state: {
-                playback_rate: playbackRateOptions.find(
-                  (o) => o.value === audioRef.current?.playbackRate
-                ),
-              },
-            })
-          );
-        }
       };
 
       // load data
       audioRef.current.addEventListener(
-        "loadedmetadata",
+        'loadedmetadata',
         handleAudioLoadedMetadata
       );
-      audioRef.current.addEventListener("loadeddata", handleAudioLoadedData);
-      audioRef.current.addEventListener("emptied", handleAudioEmptied);
-      audioRef.current.addEventListener("canplay", handleAudioCanPlay);
+      audioRef.current.addEventListener('loadeddata', handleAudioLoadedData);
+      audioRef.current.addEventListener('emptied', handleAudioEmptied);
+      audioRef.current.addEventListener('canplay', handleAudioCanPlay);
       audioRef.current.addEventListener(
-        "canplaythrough",
+        'canplaythrough',
         handleAudioCanPlayThrough
       );
-      audioRef.current.addEventListener("error", handleAudioError);
-      audioRef.current.addEventListener("play", handleAudioPlay);
-      audioRef.current.addEventListener("pause", handleAudioPause);
-      audioRef.current.addEventListener("error", handleAudioPlaying);
+      audioRef.current.addEventListener('error', handleAudioError);
+      audioRef.current.addEventListener('play', handleAudioPlay);
+      audioRef.current.addEventListener('pause', handleAudioPause);
+      audioRef.current.addEventListener('error', handleAudioPlaying);
 
       // video state change
       // audioRef.current.addEventListener('timeupdate', handleAudioTimeUpdate);
       audioRef.current.addEventListener(
-        "volumechange",
+        'volumechange',
         handleAudioVolumeChange
       );
       audioRef.current.addEventListener(
-        "durationchange",
+        'durationchange',
         handleAudioDurationChange
       );
-      audioRef.current.addEventListener("ended", handleAudioEnded);
-      audioRef.current.addEventListener("ratechange", handleRateChange);
-      audioRef.current.addEventListener("seeking", handleAudioSeeking);
-      audioRef.current.addEventListener("seeking", handleAudioSeeked);
+      audioRef.current.addEventListener('ended', handleAudioEnded);
+      audioRef.current.addEventListener('ratechange', handleRateChange);
+      audioRef.current.addEventListener('seeking', handleAudioSeeking);
+      audioRef.current.addEventListener('seeking', handleAudioSeeked);
 
       return () => {
         audioRef.current?.removeEventListener(
-          "loadedmetadata",
+          'loadedmetadata',
           handleAudioLoadedMetadata
         );
         audioRef.current?.removeEventListener(
-          "loadeddata",
+          'loadeddata',
           handleAudioLoadedData
         );
-        audioRef.current?.removeEventListener("emptied", handleAudioEmptied);
-        audioRef.current?.removeEventListener("canplay", handleAudioCanPlay);
+        audioRef.current?.removeEventListener('emptied', handleAudioEmptied);
+        audioRef.current?.removeEventListener('canplay', handleAudioCanPlay);
         audioRef.current?.removeEventListener(
-          "canplaythrough",
+          'canplaythrough',
           handleAudioCanPlayThrough
         );
-        audioRef.current?.removeEventListener("error", handleAudioError);
-        audioRef.current?.removeEventListener("play", handleAudioPlay);
-        audioRef.current?.removeEventListener("error", handleAudioPlaying);
+        audioRef.current?.removeEventListener('error', handleAudioError);
+        audioRef.current?.removeEventListener('play', handleAudioPlay);
+        audioRef.current?.removeEventListener('error', handleAudioPlaying);
 
         // audioRef.current?.removeEventListener(
         //   'timeupdate',
         //   handleAudioTimeUpdate
         // );
         audioRef.current?.removeEventListener(
-          "volumechange",
+          'volumechange',
           handleAudioVolumeChange
         );
         audioRef.current?.removeEventListener(
-          "durationchange",
+          'durationchange',
           handleAudioDurationChange
         );
-        audioRef.current?.removeEventListener("ended", handleAudioEnded);
-        audioRef.current?.removeEventListener("seeking", handleAudioSeeking);
-        audioRef.current?.removeEventListener("seeking", handleAudioSeeked);
+        audioRef.current?.removeEventListener('ended', handleAudioEnded);
+        audioRef.current?.removeEventListener('seeking', handleAudioSeeking);
+        audioRef.current?.removeEventListener('seeking', handleAudioSeeked);
       };
     }
   }, [
@@ -286,7 +274,7 @@ const AudioPlayer = () => {
     current_song?.id,
     current_playlist?.id,
     replay_mode,
-    is_last_song,
+    can_auto_play,
   ]);
 
   // mỗi khi thay đổi bài hát thì sẽ thay đổi trạng thái thành loading
@@ -314,6 +302,10 @@ const AudioPlayer = () => {
   }, [audio_volume]);
 
   useEffect(() => {
+    if (audioRef.current) audioRef.current.playbackRate = playback_rate.value;
+  }, [playback_rate]);
+
+  useEffect(() => {
     if (audioRef.current) {
       if (is_audio_playing) {
         audioRef.current.play();
@@ -328,7 +320,7 @@ const AudioPlayer = () => {
   const Audio = useMemo(() => {
     return (
       <audio
-        preload="metadata"
+        preload='metadata'
         controls
         ref={audioRef}
         src={current_queue_song?.url}
@@ -336,14 +328,14 @@ const AudioPlayer = () => {
       >
         <p>
           Your browser does not support HTML audio, but you can still
-          <a href={current_song.url} download target="_blank">
+          <a href={current_song.url} download target='_blank'>
             download the music
           </a>
           .
         </p>
       </audio>
     );
-  }, [current_queue_song?.id, audio_volume, playback_rate]);
+  }, [current_queue_song?.id, audio_volume, playback_rate, is_audio_playing]);
 
   return Audio;
 };

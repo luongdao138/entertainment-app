@@ -9,7 +9,10 @@ import AudioPlayer from '../../../components/AudioPlayer';
 import { useAudioContext } from '../../../context/AudioContext';
 import { useNavigate } from 'react-router-dom';
 import { useAppSelector } from '../../../redux/hooks';
-import { getAudioCurrentSongSelector } from '../../../redux/audioPlayer/audioPlayerSelectors';
+import {
+  getAudioCurrentSongSelector,
+  getAudioMetaSelector,
+} from '../../../redux/audioPlayer/audioPlayerSelectors';
 import AudioPlaybackRate from '../../../components/AudioPlayer/AudioPlaybackRate';
 import AudioLyric from '../../../components/AudioPlayer/AudioLyric';
 import AudioAlarm from '../../../components/AudioAlarm';
@@ -33,6 +36,7 @@ const Player = () => {
     useState<boolean>(false);
 
   const navigate = useNavigate();
+  const { is_audio_playing } = useAppSelector(getAudioMetaSelector);
   const current_song = useAppSelector(getAudioCurrentSongSelector);
   const { open_lyric } = useLyricContext();
 
@@ -57,7 +61,6 @@ const Player = () => {
   useEffect(() => {
     if (open_player) {
       const handleClickBackspace = (e: KeyboardEvent) => {
-        console.log({ target: e.target, currentTarget: e.currentTarget });
         if (
           (e.target as any)?.nodeName === 'INPUT' ||
           (e.target as any)?.nodeName === 'TEXTAREA'
@@ -75,7 +78,7 @@ const Player = () => {
         removeEventListener('keydown', handleClickBackspace);
       };
     }
-  }, [open_player]);
+  }, [open_player, is_audio_playing]);
 
   useEffect(() => {
     return () => {

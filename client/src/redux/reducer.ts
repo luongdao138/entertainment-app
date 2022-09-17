@@ -8,6 +8,18 @@ import songReducer from './song/songSlice';
 import songDetaiReducer from './songDetail/songDetailSlice';
 import audioPlayerReducer from './audioPlayer/audioPlayerSlice';
 import lyricReducer from './lyric/lyricSlice';
+import { persistReducer } from 'redux-persist';
+import storage from 'redux-persist/lib/storage';
+
+const persistedAudioPlayerReducer = persistReducer(
+  {
+    key: 'audioPlayer',
+    storage,
+    blacklist: ['audio_meta', 'can_auto_play'],
+    // stateReconciler: autoMergeLevel2,
+  },
+  audioPlayerReducer
+);
 
 const rootReducer = combineReducers({
   auth: authReducer,
@@ -17,7 +29,7 @@ const rootReducer = combineReducers({
   playlistDetail: playlistDetailReducer,
   category: categoryReducer,
   songDetail: songDetaiReducer,
-  audioPlayer: audioPlayerReducer,
+  audioPlayer: persistedAudioPlayerReducer,
   lyric: lyricReducer,
 });
 

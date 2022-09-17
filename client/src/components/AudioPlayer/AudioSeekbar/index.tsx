@@ -1,17 +1,26 @@
 import React, { useEffect, useState } from 'react';
 import { useAudioContext } from '../../../context/AudioContext';
+import useLocalStorage from '../../../hooks/useLocalstorage';
 import {
   getAudioMetaSelector,
   getAudioStateSelector,
 } from '../../../redux/audioPlayer/audioPlayerSelectors';
-import { useAppSelector } from '../../../redux/hooks';
+import { changeAudioCurrentState } from '../../../redux/audioPlayer/audioPlayerSlice';
+import { useAppDispatch, useAppSelector } from '../../../redux/hooks';
 import { disableClickEvent } from '../../../utils/common';
 import { formatSongDuration } from '../../../utils/formatTime';
 import MySlider from '../../Slider';
 import { Container } from './style';
 
 const AudioSeekbar = () => {
-  const [current_time, setCurrentTime] = useState<number>(0);
+  const dispatch = useAppDispatch();
+  // const { current_time: initial_current_time } = useAppSelector(
+  //   getAudioStateSelector
+  // );
+  const [current_time, setCurrentTime] = useLocalStorage<number>(
+    'music_app_current_time',
+    0
+  );
 
   const { duration } = useAppSelector(getAudioStateSelector);
   const { is_audio_loaded, is_audio_error } =
@@ -31,7 +40,6 @@ const AudioSeekbar = () => {
       const new_value = !Array.isArray(value) ? value : value[0];
 
       const new_current_time = (new_value * duration) / 100;
-      // handleChangeAudioCurrentTime(new_current_time, true);
       setCurrentTime(new_current_time);
       audioRef.current.currentTime = new_current_time;
       setTempCurrentTime(null);
@@ -67,12 +75,32 @@ const AudioSeekbar = () => {
     };
     audioRef.current?.addEventListener('timeupdate', handleAudioTimeUpdate);
 
+    window.addEventListener('beforeunload', () => {});
+
     return () => {
       audioRef.current?.removeEventListener(
         'timeupdate',
         handleAudioTimeUpdate
       );
     };
+  }, []);
+
+  // useEffect(() => {
+  //   const handleBeforeUnload = () => {
+  //     dispatch(
+  //       changeAudioCurrentState({
+  //         new_state: { current_time: audioRef.current?.currentTime ?? 0 },
+  //       })
+  //     );
+  //   };
+  //   window.addEventListener('beforeunload', handleBeforeUnload);
+  //   return () => {
+  //     window.removeEventListener('beforeunload', handleBeforeUnload);
+  //   };
+  // }, []);
+
+  useEffect(() => {
+    if (audioRef.current) audioRef.current.currentTime = current_time;
   }, []);
 
   return (

@@ -262,6 +262,7 @@ const SongItem: React.FC<Props> = ({
             className='song-thumbnail'
             onClick={() => {
               if (can_click_play) {
+                console.log({ can_click_play });
                 onClickSongAudio?.(song);
               }
             }}

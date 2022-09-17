@@ -1,26 +1,26 @@
-import React, { useRef } from "react";
+import React, { useRef } from 'react';
 import {
   BsFillPlayFill,
   BsPauseFill,
   BsShuffle,
   BsFillSkipEndFill,
   BsFillSkipStartFill,
-} from "react-icons/bs";
-import { FiRepeat } from "react-icons/fi";
-import { TbRepeatOnce } from "react-icons/tb";
+} from 'react-icons/bs';
+import { FiRepeat } from 'react-icons/fi';
+import { TbRepeatOnce } from 'react-icons/tb';
 import {
   getAudioArchivedListSelector,
   getAudioMetaSelector,
   getAudioStateSelector,
-} from "../../../redux/audioPlayer/audioPlayerSelectors";
-import { changeAudioCurrentState } from "../../../redux/audioPlayer/audioPlayerSlice";
-import { useAppDispatch, useAppSelector } from "../../../redux/hooks";
-import { ActionItemButton, Container } from "./style";
-import { RotatingLines } from "react-loader-spinner";
-import { disableClickEvent } from "../../../utils/common";
-import { useAudioContext } from "../../../context/AudioContext";
-import { ReplayMode } from "../../../constants/options";
-import MyTooltip from "../../Tooltip";
+} from '../../../redux/audioPlayer/audioPlayerSelectors';
+import { changeAudioCurrentState } from '../../../redux/audioPlayer/audioPlayerSlice';
+import { useAppDispatch, useAppSelector } from '../../../redux/hooks';
+import { ActionItemButton, Container } from './style';
+import { RotatingLines } from 'react-loader-spinner';
+import { disableClickEvent } from '../../../utils/common';
+import { useAudioContext } from '../../../context/AudioContext';
+import { ReplayMode } from '../../../constants/options';
+import MyTooltip from '../../Tooltip';
 
 const AudioAction = () => {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -29,8 +29,7 @@ const AudioAction = () => {
   const audio_meta = useAppSelector(getAudioMetaSelector);
   const archive_list = useAppSelector(getAudioArchivedListSelector);
   const {
-    handlePlayAudio,
-    handlePauseAudio,
+    handleToggleAudioPlayState,
     handleMoveToNextSong,
     handleMoveToPrevSong,
   } = useAudioContext();
@@ -67,11 +66,7 @@ const AudioAction = () => {
     disableClickEvent(e);
     if (audio_meta.is_audio_loading) return;
 
-    if (audio_meta.is_audio_playing) {
-      handlePauseAudio();
-    } else {
-      handlePlayAudio();
-    }
+    handleToggleAudioPlayState();
   };
 
   const handleClickNextSong = (e: React.MouseEvent<HTMLElement>) => {
@@ -101,9 +96,9 @@ const AudioAction = () => {
     <Container ref={containerRef}>
       {/* Shuffle songs */}
       <MyTooltip
-        placement="top"
+        placement='top'
         title={
-          audio_state.is_shuffle ? "Tắt phát ngẫu nhiên" : "Bật phát ngẫu nhiên"
+          audio_state.is_shuffle ? 'Tắt phát ngẫu nhiên' : 'Bật phát ngẫu nhiên'
         }
         PopperProps={{
           container: containerRef.current,
@@ -111,7 +106,7 @@ const AudioAction = () => {
       >
         <ActionItemButton
           active={audio_state.is_shuffle}
-          className="action-item"
+          className='action-item'
           onClick={handleClickShuffle}
         >
           <BsShuffle />
@@ -120,31 +115,31 @@ const AudioAction = () => {
 
       {/* Go to previous song in queue */}
       <ActionItemButton
-        className="action-item"
+        className='action-item'
         onClick={handleClickPrevSong}
         disabled={audio_meta.is_audio_error || is_first_song}
       >
-        <BsFillSkipStartFill className="big-icon" />
+        <BsFillSkipStartFill className='big-icon' />
       </ActionItemButton>
 
       {/* Play or pause song */}
       <button
         disabled={audio_meta.is_audio_error}
-        className="play-state"
+        className='play-state'
         onClick={handleClickPlayButton}
       >
         {audio_meta.is_audio_loading ? (
           <RotatingLines
-            strokeColor="#ffffff"
-            strokeWidth="5"
-            animationDuration="0.75"
-            width="15"
+            strokeColor='#ffffff'
+            strokeWidth='5'
+            animationDuration='0.75'
+            width='15'
             visible={true}
           />
         ) : audio_meta.is_audio_playing ? (
           <BsPauseFill />
         ) : (
-          <BsFillPlayFill className="icon" />
+          <BsFillPlayFill className='icon' />
         )}
         {/* <BsPauseFill /> */}
         {/* <BsFillPlayFill /> */}
@@ -153,29 +148,29 @@ const AudioAction = () => {
       {/* Goto next song in playlist queue */}
       <ActionItemButton
         onClick={handleClickNextSong}
-        className="action-item"
+        className='action-item'
         disabled={audio_meta.is_audio_error}
       >
-        <BsFillSkipEndFill className="big-icon" />
+        <BsFillSkipEndFill className='big-icon' />
       </ActionItemButton>
 
       {/* Replay all */}
       <MyTooltip
-        placement="top"
+        placement='top'
         PopperProps={{
           container: containerRef.current,
         }}
         title={
           audio_state.replay_mode === ReplayMode.NONE
-            ? "Bật phát lại tất cả"
+            ? 'Bật phát lại tất cả'
             : audio_state.replay_mode === ReplayMode.ALL
-            ? "Bật phát lại một bài"
-            : "Tắt phát lại"
+            ? 'Bật phát lại một bài'
+            : 'Tắt phát lại'
         }
       >
         <ActionItemButton
           active={audio_state.replay_mode !== ReplayMode.NONE}
-          className="action-item"
+          className='action-item'
           onClick={handleChangeReplaceMode}
         >
           {getReplaceIcon}

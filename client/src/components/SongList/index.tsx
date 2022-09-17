@@ -35,7 +35,6 @@ import {
 } from '../../services/playlist';
 import { logout } from '../../redux/auth/authSlice';
 import { toast } from 'react-toastify';
-import FullscreenLoading from '../Loading/FullScreenLoading';
 import _ from 'lodash';
 import {
   removeSongOutOfFavourite,

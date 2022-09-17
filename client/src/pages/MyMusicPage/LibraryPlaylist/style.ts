@@ -30,7 +30,7 @@ export const Container = styled.div`
       border-radius: 4px;
       transition: all 0.1s ease-in-out;
       cursor: pointer;
-      min-height: 348px;
+      min-height: 200px;
       display: flex;
       align-items: center;
       justify-content: center;

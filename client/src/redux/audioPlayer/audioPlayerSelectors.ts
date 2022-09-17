@@ -48,3 +48,8 @@ export const getAudioCurrentListSongs = createSelector(
   getRoot,
   (state) => state.audio_list_songs
 );
+
+export const getAudioCanAutoPlay = createSelector(
+  getRoot,
+  (state) => state.can_auto_play
+);
