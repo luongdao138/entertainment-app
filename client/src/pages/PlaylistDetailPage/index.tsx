@@ -17,12 +17,16 @@ import {
   getRecommendedSongsActions,
   removeSongOutOfPlaylistAction,
 } from '../../redux/playlistDetail/playlistDetailActions';
-import { useLocation, useNavigate, useParams } from 'react-router-dom';
+import {
+  useLocation,
+  useNavigate,
+  useParams,
+  useSearchParams,
+} from 'react-router-dom';
 import PlaylistDetailInfor from '../../components/PlaylistDetailInfor';
 import SongList from '../../components/SongList';
 import appRoutes from '../../constants/appRoutes';
 import { calcTotalPlaylistTime } from '../../utils/formatTime';
-import useReloadWhenLogout from '../../hooks/useReloadWhenLogout';
 import { useAudioContext } from '../../context/AudioContext';
 import { AudioSong } from '../../redux/audioPlayer/audioPlayerSlice';
 import {
@@ -42,6 +46,9 @@ const PlaylistDetailPage = () => {
   const { playlist_id } = useParams();
   const navigate = useNavigate();
   const location: any = useLocation();
+  const [searchParams] = useSearchParams();
+
+  const target_song_id = searchParams.get('song_id');
 
   const playlist_detail = useAppSelector(getPlaylistDetailSelector);
   const playlist_songs = useAppSelector(getPlaylistSongsSelector);
@@ -66,8 +73,6 @@ const PlaylistDetailPage = () => {
     playlist_detail?.id;
 
   const { handleClickSongAudio } = useAudioContext();
-
-  useReloadWhenLogout();
 
   useEffect(() => {
     // if (isFirstRenderRef.current) {
@@ -110,7 +115,6 @@ const PlaylistDetailPage = () => {
       playlist_songs.length > 0 &&
       is_full_load
     ) {
-      console.log('Change image audio');
       if (playlist_songs.length === 0) return;
       const shuffled_playlist_songs = _.shuffle(playlist_songs);
       handleClickSongAudio({
@@ -182,6 +186,7 @@ const PlaylistDetailPage = () => {
                 enable_select_multiple
                 onClickSongAudio={onClickSongAudio}
                 scrollToCurrentSong={is_current_queue_song}
+                target_song_id={target_song_id}
               />
 
               <div className='song-count'>

@@ -46,6 +46,7 @@ interface Props {
   scrollToCurrentSong?: boolean;
   is_from_history?: boolean;
   can_play_with_lyric?: boolean;
+  target_song_id?: string | null;
   deleteHistorySong?: (song_id: string) => void;
 }
 
@@ -73,6 +74,7 @@ const SongItem: React.FC<Props> = ({
   onAddSongsToPlayerQueue,
   scrollToCurrentSong,
   is_from_history,
+  target_song_id,
   deleteHistorySong,
 }) => {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -144,6 +146,16 @@ const SongItem: React.FC<Props> = ({
   };
 
   useEffect(() => {
+    if (song.id === target_song_id) {
+      if (containerRef.current) {
+        scrollTo({
+          top: containerRef.current.offsetTop - 200,
+          behavior: 'smooth',
+        });
+      }
+      return;
+    }
+
     if (current_song?.id === song.id && scrollToCurrentSong) {
       if (containerRef.current) {
         scrollTo({

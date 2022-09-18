@@ -48,6 +48,7 @@ const PlayerQueue = () => {
     changeTab('player');
     if (!current_song) {
       dispatch(resetHistorySongs());
+      handleCloseQueue();
     }
   }, [current_song?.id]);
 

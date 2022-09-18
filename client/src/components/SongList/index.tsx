@@ -61,6 +61,7 @@ interface Props {
   onClickSongAudio?: (song_id: Song | SongDetail) => void;
   enable_select_multiple?: boolean;
   scrollToCurrentSong?: boolean;
+  target_song_id?: string | null;
 }
 
 const SongList: React.FC<Props> = ({
@@ -80,6 +81,7 @@ const SongList: React.FC<Props> = ({
   enable_select_multiple,
   onClickSongAudio,
   scrollToCurrentSong,
+  target_song_id,
 }) => {
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
   const [moreAnchorEl, setMoreAnchorEl] = useState<HTMLElement | null>(null);
@@ -309,6 +311,12 @@ const SongList: React.FC<Props> = ({
     return handleReset;
   }, [playlist_id]);
 
+  useEffect(() => {
+    if (target_song_id) {
+      setFocusSong(target_song_id);
+    }
+  }, [target_song_id]);
+
   return (
     <Container>
       {/* Add loading when making request */}
@@ -508,6 +516,7 @@ const SongList: React.FC<Props> = ({
                             onAddSongsToPlayNext={onAddSongsToPlayNext}
                             onAddSongsToPlayerQueue={onAddSongsToPlayerQueue}
                             scrollToCurrentSong={scrollToCurrentSong}
+                            target_song_id={target_song_id}
                           />
                         </div>
                       )}
