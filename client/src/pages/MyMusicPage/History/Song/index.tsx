@@ -4,7 +4,10 @@ import SongItemSkeleton from '../../../../components/Skeleton/SongItem';
 import SongItem from '../../../../components/SongItem';
 import { useAudioContext } from '../../../../context/AudioContext';
 import { AudioSong } from '../../../../redux/audioPlayer/audioPlayerSlice';
-import { getHistorySongActions } from '../../../../redux/history/historyActions';
+import {
+  deleteHistorySongAction,
+  getHistorySongActions,
+} from '../../../../redux/history/historyActions';
 import {
   getHistorySongsPaginationSelector,
   getHistorySongsSelector,
@@ -61,6 +64,10 @@ const HistorySong = () => {
     });
   };
 
+  const handleDeleteHistorySong = (song_id: string) => {
+    dispatch(deleteHistorySongAction({ song_id }));
+  };
+
   useEffect(() => {
     return () => {
       dispatch(clearMetaData(getHistorySongActions.typePrefix));
@@ -84,6 +91,7 @@ const HistorySong = () => {
             is_from_history
             can_play_with_lyric
             key={song.id}
+            deleteHistorySong={handleDeleteHistorySong}
           />
         ))}
 

@@ -46,6 +46,7 @@ interface Props {
   scrollToCurrentSong?: boolean;
   is_from_history?: boolean;
   can_play_with_lyric?: boolean;
+  deleteHistorySong?: (song_id: string) => void;
 }
 
 const SongItem: React.FC<Props> = ({
@@ -72,6 +73,7 @@ const SongItem: React.FC<Props> = ({
   onAddSongsToPlayerQueue,
   scrollToCurrentSong,
   is_from_history,
+  deleteHistorySong,
 }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const current_song = useAppSelector(getAudioCurrentSongSelector);
@@ -325,7 +327,10 @@ const SongItem: React.FC<Props> = ({
 
           {is_from_history && (
             <MyTooltip title='Xóa' placement='top'>
-              <button className='delete-btn'>
+              <button
+                className='delete-btn'
+                onClick={() => deleteHistorySong?.(song.id)}
+              >
                 <MdClose />
               </button>
             </MyTooltip>

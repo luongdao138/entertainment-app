@@ -10,6 +10,7 @@ import userRouter from './routes/user';
 import songRouter from './routes/song';
 import playlistRouter from './routes/playlist';
 import categoryRouter from './routes/category';
+import historyRouter from './routes/history';
 import verifyTokenMiddleware from './middlewares/verifyJwt';
 import prisma from './config/prisma';
 import { removeAccents } from './utils/formatText';
@@ -280,6 +281,7 @@ app.use('/user', userRouter);
 app.use('/song', songRouter);
 app.use('/playlist', playlistRouter);
 app.use('/category', categoryRouter);
+app.use('/history', historyRouter);
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {

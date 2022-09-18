@@ -31,7 +31,8 @@ const apiEndpoints = {
   GET_RECOMMENDED_PLAYLIST_SONGS: '/playlist/recommend/:playlist_id',
   GET_RECOMMENDED_SONGS: '/song/recommend/:song_id',
   GET_SONG_LYRIC: '/song/lyric',
-  HISTORY_SONGS: '/song/history',
+  HISTORY_SONGS: '/history/song',
+  DELETE_HISTORY_SONG: '/history/song/:song_id',
 };
 
 export default apiEndpoints;

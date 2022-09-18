@@ -1,6 +1,7 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { Pagination } from '../../services/common';
 import { Song } from '../../services/song';
+import { deleteHistorySongAction } from '../history/historyActions';
 import {
   changeFavourite,
   deleteUploadSongAction,
@@ -123,6 +124,18 @@ const songSlice = createSlice({
       .addCase(getHistorySongsAction.fulfilled, (state, action) => {
         state.history.data = [...state.history.data, ...action.payload.data];
         state.history.pagination = action.payload.pagination;
+      })
+      .addCase(deleteHistorySongAction.fulfilled, (state, action) => {
+        const is_included = state.history.data.some(
+          (s) => s.id === action.payload.song_id
+        );
+        if (is_included) {
+          state.history.pagination.total_count =
+            state.history.pagination.total_count - 1;
+          state.history.data = state.history.data.filter(
+            (s) => s.id !== action.payload.song_id
+          );
+        }
       });
   },
   initialState,

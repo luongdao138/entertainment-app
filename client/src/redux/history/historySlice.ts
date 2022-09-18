@@ -4,7 +4,10 @@ import { Pagination } from '../../services/common';
 import { Playlist } from '../../services/playlist';
 import { Song } from '../../services/song';
 import { changeFavourite } from '../song/songActions';
-import { getHistorySongActions } from './historyActions';
+import {
+  deleteHistorySongAction,
+  getHistorySongActions,
+} from './historyActions';
 
 interface SliceState {
   song: {
@@ -53,6 +56,13 @@ const historySlice = createSlice({
       .addCase(changeFavourite.fulfilled, (state, action) => {
         state.song.data = state.song.data.map((s) =>
           s.id === action.payload ? { ...s, is_liked: !s.is_liked } : s
+        );
+      })
+      .addCase(deleteHistorySongAction.fulfilled, (state, action) => {
+        state.song.pagination.total_count =
+          state.song.pagination.total_count - 1;
+        state.song.data = state.song.data.filter(
+          (s) => s.id !== action.payload.song_id
         );
       });
   },

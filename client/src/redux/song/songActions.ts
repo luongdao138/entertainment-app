@@ -1,5 +1,10 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { toast } from 'react-toastify';
+import {
+  getHistorySongs,
+  GetHistorySongsParams,
+  GetHistorySongsResponse,
+} from '../../services/history';
 import * as services from '../../services/song';
 import { logout } from '../auth/authSlice';
 import { RootState } from '../store';
@@ -156,13 +161,13 @@ export const getRecommendedSongsAction = createAsyncThunk<
 );
 
 export const getHistorySongsAction = createAsyncThunk<
-  services.GetHistorySongsResponse,
-  services.GetHistorySongsParams
+  GetHistorySongsResponse,
+  GetHistorySongsParams
 >(
   SONG_ACTION_TYPES.GET_HISTORY_SONGS,
   async (params, { rejectWithValue, dispatch }) => {
     try {
-      const res = await services.getHistorySongs(params);
+      const res = await getHistorySongs(params);
       return res;
     } catch (error: any) {
       toast.error(error.response?.data.msg || 'Có lỗi xảy ra');

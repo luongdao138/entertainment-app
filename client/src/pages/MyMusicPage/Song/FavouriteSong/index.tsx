@@ -12,7 +12,10 @@ import { Link } from 'react-router-dom';
 import { Song, SongDetail } from '../../../../services/song';
 import _ from 'lodash';
 import { useAudioContext } from '../../../../context/AudioContext';
-import { resetFavouriteSongs } from '../../../../redux/song/songSlice';
+import {
+  resetFavouriteSongs,
+  resetUploadedSongs,
+} from '../../../../redux/song/songSlice';
 import { clearMetaData } from '../../../../redux/metadata/actions';
 import { createMetaSelector } from '../../../../redux/metadata/selectors';
 import InfiniteScroll from 'react-infinite-scroll-component';
@@ -49,6 +52,7 @@ const FavouriteSong = () => {
     return () => {
       dispatch(clearMetaData(getFavouriteSong.typePrefix));
       dispatch(resetFavouriteSongs());
+      dispatch(resetUploadedSongs());
     };
   }, []);
 

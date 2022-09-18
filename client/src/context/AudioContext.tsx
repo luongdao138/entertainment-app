@@ -32,7 +32,7 @@ import { useAuthContext } from './AuthContext';
 import { v4 as uuid } from 'uuid';
 import { toast } from 'react-toastify';
 import { playbackRateOptions, ReplayMode } from '../constants/options';
-import { addSongToHistory } from '../services/song';
+import { addSongToHistory } from '../services/history';
 
 export interface ClickAudioParams {
   song: AudioSong;

@@ -24,7 +24,10 @@ import { useAudioContext } from '../../../../context/AudioContext';
 import { AudioSong } from '../../../../redux/audioPlayer/audioPlayerSlice';
 import { createMetaSelector } from '../../../../redux/metadata/selectors';
 import InfiniteScroll from 'react-infinite-scroll-component';
-import { resetUploadedSongs } from '../../../../redux/song/songSlice';
+import {
+  resetFavouriteSongs,
+  resetUploadedSongs,
+} from '../../../../redux/song/songSlice';
 import { clearMetaData } from '../../../../redux/metadata/actions';
 import SongItemSkeleton from '../../../../components/Skeleton/SongItem';
 
@@ -111,6 +114,7 @@ const UploadedSong = () => {
     return () => {
       dispatch(clearMetaData(getUploadedSong.typePrefix));
       dispatch(resetUploadedSongs());
+      dispatch(resetFavouriteSongs());
     };
   }, []);
 
