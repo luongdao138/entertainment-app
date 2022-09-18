@@ -13,6 +13,7 @@ import useCopyToClipboard from '../../hooks/useCopyToClipboard';
 import { logout } from '../../redux/auth/authSlice';
 import { useAppDispatch } from '../../redux/hooks';
 import { getAllSongsOfPlaylist, Playlist } from '../../services/playlist';
+import MusicShare from '../MusicShare';
 import { Container } from './style';
 
 interface Props {
@@ -95,6 +96,8 @@ const PlaylistItemMenu: React.FC<Props> = ({
               <span>Xóa playlist</span>
             </li>
           )}
+
+          <MusicShare is_song={false} id={playlist.id} />
         </ul>
       </Container>
     </>

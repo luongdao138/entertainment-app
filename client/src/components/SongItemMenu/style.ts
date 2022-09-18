@@ -3,6 +3,8 @@ import styled from 'styled-components';
 export const Container = styled.div`
   background-color: #432275;
   width: 280px;
+  border-radius: 8px;
+  overflow: hidden;
 
   & .menu-info {
     img {
@@ -70,7 +72,7 @@ export const Container = styled.div`
   }
 
   & .menu-list {
-    padding-bottom: 1rem;
+    /* padding-bottom: 1rem; */
     & li {
       padding: 10px 20px 10px 14px;
       display: flex;

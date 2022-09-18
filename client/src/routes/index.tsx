@@ -6,6 +6,8 @@ import appRoutes from '../constants/appRoutes';
 import MainLayout from '../layout/MainLayout';
 import RetrievePassword from '../pages/Auth/RetrievePassword';
 import VerifyAccount from '../pages/Auth/VerifyAccount';
+import PlaylistEmbedPage from '../pages/Embed/Playlist';
+import SongEmbedPage from '../pages/Embed/Song';
 import HomePage from '../pages/HomePage';
 import MyMusicPage from '../pages/MyMusicPage';
 import HistoryPage from '../pages/MyMusicPage/History';
@@ -66,6 +68,13 @@ const AppRouter = () => {
 
         <Route path='*' element={<Navigate to={appRoutes.HOME} />} />
       </Route>
+
+      {/* Những route ko nằm trong main layout */}
+      <Route path='embed/song/:song_id' element={<SongEmbedPage />} />
+      <Route
+        path='embed/playlist/:playlist_id'
+        element={<PlaylistEmbedPage />}
+      />
     </Routes>
   );
 };

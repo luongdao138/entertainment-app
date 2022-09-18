@@ -13,6 +13,7 @@ import useCopyToClipboard from '../../hooks/useCopyToClipboard';
 import { AudioSong } from '../../redux/audioPlayer/audioPlayerSlice';
 import { AddSongToPlayerParams } from '../../context/AudioContext';
 import { TbMicrophone2 } from 'react-icons/tb';
+import MusicShare from '../MusicShare';
 interface Props {
   song: Song;
   can_delete_song?: boolean;
@@ -177,6 +178,8 @@ const SongItemMenu: React.FC<Props> = ({
             <span>Xóa</span>
           </li>
         )}
+
+        <MusicShare is_song={true} id={song.id} />
       </ul>
     </Container>
   );

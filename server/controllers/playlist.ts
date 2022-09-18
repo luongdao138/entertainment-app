@@ -578,7 +578,6 @@ const playlistController = {
     try {
       const user = req.user;
       const { playlist_id } = req.params;
-      console.log({ playlist_id });
 
       // kiểm tra xem playlist này có tồn tại hay không
       const playlist = await prisma.playlist.findFirst({

@@ -399,6 +399,41 @@ const songController = {
       const user = req.user;
       const { song_id } = req.params;
 
+      // trường hợp người dùng chưa đăng nhập
+      if (!user) {
+        const song = await prisma.song.findFirst({
+          where: {
+            id: song_id,
+            is_deleted: false,
+          },
+          include: {
+            user: {
+              select: {
+                id: true,
+                profile_photo: true,
+                full_name: true,
+              },
+            },
+            belong_categories: {
+              select: {
+                id: true,
+                name: true,
+              },
+            },
+            lyric: {
+              select: {
+                id: true,
+              },
+            },
+          },
+        });
+        if (!song)
+          return res.status(404).json({ msg: 'Bài hát không tồn tại' });
+
+        return res.json({ data: song });
+      }
+
+      // trường hợp người dùng đã đăng nhập
       const song = await prisma.song.findFirst({
         where: {
           id: song_id,

@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import playlistController from '../controllers/playlist';
 import verifyTokenMiddleware from '../middlewares/verifyJwt';
+import verifyNoTokenMiddleware from '../middlewares/verifyJwtNoToken';
 
 const router = Router();
 router.post('/', verifyTokenMiddleware, playlistController.createNewPlaylist);
@@ -31,7 +32,7 @@ router.post(
 );
 router.get(
   '/getSong/:playlist_id',
-  verifyTokenMiddleware,
+  verifyNoTokenMiddleware,
   playlistController.getAllSongsOfPlaylist
 );
 router.put(
@@ -41,7 +42,7 @@ router.put(
 );
 router
   .route('/:play_list_id')
-  .get(verifyTokenMiddleware, playlistController.getPlaylistDetail)
+  .get(verifyNoTokenMiddleware, playlistController.getPlaylistDetail)
   .put(verifyTokenMiddleware, playlistController.editPlaylist)
   .delete(verifyTokenMiddleware, playlistController.deletePlaylist);
 

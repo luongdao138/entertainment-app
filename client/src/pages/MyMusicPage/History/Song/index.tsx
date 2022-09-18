@@ -60,7 +60,7 @@ const HistorySong = () => {
       list_songs: [song],
       song,
       is_from_recommend: true,
-      disabled_history: true,
+      disabled_history: false,
     });
   };
 
