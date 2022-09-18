@@ -165,7 +165,7 @@ const PlaylistItem: React.FC<Props> = ({
   };
 
   useEffect(() => {
-    clearMetaData(deletePlaylist.typePrefix);
+    dispatch(clearMetaData(deletePlaylist.typePrefix));
   }, []);
 
   return (

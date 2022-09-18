@@ -129,8 +129,8 @@ const PlaylistDetailPage = () => {
 
     return () => {
       window.history.replaceState({}, document.title);
-      clearMetaData(getPlaylistDetailAction.typePrefix);
-      clearMetaData(getPlaylistSongsAction.typePrefix);
+      dispatch(clearMetaData(getPlaylistDetailAction.typePrefix));
+      dispatch(clearMetaData(getPlaylistSongsAction.typePrefix));
     };
   }, [location.state, is_full_load]);
 

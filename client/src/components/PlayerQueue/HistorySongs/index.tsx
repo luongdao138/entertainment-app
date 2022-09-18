@@ -3,7 +3,10 @@ import { Container } from './style';
 import { Song } from '../../../services/song';
 import QueueSongItem from '../QueueSongItem';
 import { useAppDispatch, useAppSelector } from '../../../redux/hooks';
-import { getAudioMetaSelector } from '../../../redux/audioPlayer/audioPlayerSelectors';
+import {
+  getAudioCurrentSongSelector,
+  getAudioMetaSelector,
+} from '../../../redux/audioPlayer/audioPlayerSelectors';
 import {
   getUserHistorySongsPaginationSelector,
   getUserHistorySongsSelector,
@@ -24,6 +27,7 @@ const getHistorySongsMetaSelector = createMetaSelector(getHistorySongsAction);
 
 const HistorySong: React.FC<Props> = ({ changeToPlayerTab }) => {
   const dispatch = useAppDispatch();
+  const current_song = useAppSelector(getAudioCurrentSongSelector);
   const { limit, page, total_count } = useAppSelector(
     getUserHistorySongsPaginationSelector
   );
@@ -31,11 +35,16 @@ const HistorySong: React.FC<Props> = ({ changeToPlayerTab }) => {
   const [current_page, setCurrentPage] = useState<number>(page);
   const { is_audio_loading } = useAppSelector(getAudioMetaSelector);
   const songs = useAppSelector(getUserHistorySongsSelector);
+
+  // không lấy bài hát đang phát
+  const rendered_songs = songs.filter((s) => s.id !== current_song?.id);
+  const total_songs =
+    rendered_songs.length < songs.length ? total_count - 1 : total_count;
+
   const historySongsMeta = useAppSelector(getHistorySongsMetaSelector);
   const isFirstRenderRef = useRef<boolean>(true);
   const has_more_songs =
-    !historySongsMeta.pending && songs.length < total_count;
-  console.log({ has_more_songs });
+    !historySongsMeta.pending && rendered_songs.length < total_songs;
 
   const onClickQueueSong = (song: Song) => {
     if (!is_audio_loading) {
@@ -73,13 +82,13 @@ const HistorySong: React.FC<Props> = ({ changeToPlayerTab }) => {
   return (
     <Container style={{ overflow: 'auto' }}>
       <InfiniteScroll
-        dataLength={songs.length}
+        dataLength={rendered_songs.length}
         hasMore={has_more_songs}
         loader={null}
         next={handleGetMoreSongs}
         scrollableTarget='player-queue-history-songs'
       >
-        {songs.map((song) => (
+        {rendered_songs.map((song) => (
           <QueueSongItem
             key={song.id}
             song={song}

@@ -64,8 +64,13 @@ export interface UploadSongResponse {
   song: Song;
 }
 
+export interface GetUploadedSongParams {
+  page: number;
+  limit: number;
+}
 export interface GetUploadedSongResponse {
   songs: Song[];
+  pagination: Pagination;
 }
 export interface GetSongDetailParams {
   song_id: string;
@@ -128,17 +133,23 @@ export const uploadSong = async (
   return res.data;
 };
 
-export const getUploadedSong = async (): Promise<GetUploadedSongResponse> => {
+export const getUploadedSong = async (
+  params: GetUploadedSongParams
+): Promise<GetUploadedSongResponse> => {
   const res = await privateClient.get<GetUploadedSongResponse>(
-    apiEndpoints.GET_UPLOADED_SONG
+    apiEndpoints.GET_UPLOADED_SONG,
+    { params }
   );
 
   return res.data;
 };
 
-export const getFavouriteSong = async (): Promise<GetUploadedSongResponse> => {
+export const getFavouriteSong = async (
+  params: GetUploadedSongParams
+): Promise<GetUploadedSongResponse> => {
   const res = await privateClient.get<GetUploadedSongResponse>(
-    apiEndpoints.GET_FAVOURITE_SONG
+    apiEndpoints.GET_FAVOURITE_SONG,
+    { params }
   );
 
   return res.data;

@@ -1,4 +1,5 @@
 import { Response } from 'express';
+import { isNil } from 'lodash';
 import prisma from '../config/prisma';
 import { removeAccents } from '../utils/formatText';
 
@@ -54,58 +55,111 @@ const songController = {
     }
   },
   async getUploadedSong(req: any, res: Response) {
+    try {
+      const user = req.user;
+      const page =
+        !isNil(req.query.page) && !isNaN(req.query.page)
+          ? Number(req.query.page)
+          : 1;
+      const limit =
+        !isNil(req.query.limit) && !isNaN(req.query.limit)
+          ? Number(req.query.limit)
+          : 20;
+
+      const total_count = await prisma.song.count({
+        where: {
+          user_id: user.id,
+          is_deleted: false,
+        },
+      });
+      let songs = await prisma.song.findMany({
+        where: {
+          user_id: user.id,
+          is_deleted: false,
+        },
+        include: {
+          belong_categories: {
+            select: {
+              id: true,
+            },
+          },
+          lyric: {
+            select: {
+              id: true,
+            },
+          },
+        },
+
+        orderBy: {
+          created_at: 'desc',
+        },
+        take: limit,
+        skip: (page - 1) * limit,
+      });
+
+      const user_favourite_songs = await prisma.favouriteSong.findMany({
+        where: {
+          user_id: user.id,
+          song: {
+            is_deleted: false,
+          },
+        },
+        select: {
+          song_id: true,
+        },
+      });
+
+      songs = songs.map((song) => {
+        const new_song = {
+          ...song,
+          is_liked: user_favourite_songs.some((fs) => fs.song_id === song.id),
+        };
+        return new_song;
+      });
+
+      return res.json({
+        songs,
+        pagination: {
+          total_count,
+          page,
+          limit,
+        },
+      });
+    } catch (error) {
+      console.log(error);
+      return res.status(500).json({ msg: 'Có lỗi xảy ra' });
+    }
+  },
+  async getFavouriteSong(req: any, res: Response) {
     const user = req.user;
+    const page =
+      !isNil(req.query.page) && !isNaN(req.query.page)
+        ? Number(req.query.page)
+        : 1;
+    const limit =
+      !isNil(req.query.limit) && !isNaN(req.query.limit)
+        ? Number(req.query.limit)
+        : 20;
 
-    let songs = await prisma.song.findMany({
-      where: {
-        user_id: user.id,
-        is_deleted: false,
-      },
-      include: {
-        belong_categories: {
-          select: {
-            id: true,
-          },
-        },
-        lyric: {
-          select: {
-            id: true,
-          },
-        },
-      },
-
-      orderBy: {
-        created_at: 'desc',
-      },
-    });
-
-    const user_favourite_songs = await prisma.favouriteSong.findMany({
+    const total_count = await prisma.favouriteSong.count({
       where: {
         user_id: user.id,
         song: {
           is_deleted: false,
+          OR: [
+            {
+              user_id: user.id,
+            },
+            {
+              NOT: {
+                user_id: user.id,
+              },
+              privacy: 'public',
+            },
+          ],
         },
       },
-      select: {
-        song_id: true,
-      },
     });
-
-    songs = songs.map((song) => {
-      const new_song = {
-        ...song,
-        is_liked: user_favourite_songs.some((fs) => fs.song_id === song.id),
-      };
-      return new_song;
-    });
-
-    return res.json({
-      songs,
-    });
-  },
-  async getFavouriteSong(req: any, res: Response) {
-    const user = req.user;
-
     const favourite_songs = await prisma.favouriteSong.findMany({
       where: {
         user_id: user.id,
@@ -144,12 +198,14 @@ const songController = {
       orderBy: {
         created_at: 'desc',
       },
+      take: limit,
+      skip: (page - 1) * limit,
     });
 
     let songs = favourite_songs.map((fs) => fs.song);
     songs = songs.map((song) => ({ ...song, is_liked: true }));
 
-    return res.json({ songs });
+    return res.json({ songs, pagination: { total_count, page, limit } });
   },
   async addOrRemoveFavourite(req: any, res: Response) {
     const user = req.user;

@@ -22,3 +22,13 @@ export const getUserHistorySongsPaginationSelector = createSelector(
   getRoot,
   (state) => state.history.pagination
 );
+
+export const getUploadedSongsPaginationSelector = createSelector(
+  getRoot,
+  (state) => state.uploaded.pagination
+);
+
+export const getFavouriteSongsPaginationSelector = createSelector(
+  getRoot,
+  (state) => state.favourite.pagination
+);

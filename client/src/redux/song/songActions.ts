@@ -46,12 +46,12 @@ export const uploadSong = createAsyncThunk<
 
 export const getUploadedSong = createAsyncThunk<
   services.GetUploadedSongResponse,
-  void
+  services.GetUploadedSongParams
 >(
   SONG_ACTION_TYPES.GET_UPLOADED_SONG,
   async (params, { rejectWithValue, dispatch }) => {
     try {
-      const res = await services.getUploadedSong();
+      const res = await services.getUploadedSong(params);
       return res;
     } catch (error: any) {
       if (error.response?.status === 403) {
@@ -67,12 +67,12 @@ export const getUploadedSong = createAsyncThunk<
 
 export const getFavouriteSong = createAsyncThunk<
   services.GetUploadedSongResponse,
-  void
+  services.GetUploadedSongParams
 >(
   SONG_ACTION_TYPES.GET_FAVOURITE_SONG,
   async (params, { rejectWithValue, dispatch }) => {
     try {
-      const res = await services.getFavouriteSong();
+      const res = await services.getFavouriteSong(params);
       return res;
     } catch (error: any) {
       if (error.response?.status === 403) {

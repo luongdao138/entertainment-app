@@ -31,7 +31,7 @@ const HistorySong = () => {
 
   useEffect(() => {
     return () => {
-      clearMetaData(getHistorySongActions.typePrefix);
+      dispatch(clearMetaData(getHistorySongActions.typePrefix));
     };
   }, []);
 

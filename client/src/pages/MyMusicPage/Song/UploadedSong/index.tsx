@@ -5,7 +5,10 @@ import {
   deleteUploadSongAction,
   getUploadedSong,
 } from '../../../../redux/song/songActions';
-import { getUsersUploadedSongs } from '../../../../redux/song/songSelectors';
+import {
+  getUsersUploadedSongs,
+  getUploadedSongsPaginationSelector,
+} from '../../../../redux/song/songSelectors';
 import Progress from '../../../../components/LinearProgress';
 import { useUploadContext } from '../../../../context/UploadContext';
 import { MAX_SONG_UPLOADED } from '../../../../constants';
@@ -19,6 +22,12 @@ import ConfirmDialog from '../../../../components/ConfirmDialog';
 import useDeleteFile from '../../../../hooks/useDeleteFile';
 import { useAudioContext } from '../../../../context/AudioContext';
 import { AudioSong } from '../../../../redux/audioPlayer/audioPlayerSlice';
+import { createMetaSelector } from '../../../../redux/metadata/selectors';
+import InfiniteScroll from 'react-infinite-scroll-component';
+import { resetUploadedSongs } from '../../../../redux/song/songSlice';
+import { clearMetaData } from '../../../../redux/metadata/actions';
+
+const getUploadedSongMetaSelector = createMetaSelector(getUploadedSong);
 
 const UploadedSong = () => {
   const { openUploadForm } = useUploadContext();
@@ -29,12 +38,22 @@ const UploadedSong = () => {
   const deleteFile = useDeleteFile();
   // const firstRenderRef = useRef<boolean>(true);
   const songs = useAppSelector(getUsersUploadedSongs);
+  const uploadedSongMeta = useAppSelector(getUploadedSongMetaSelector);
+  const { limit, page, total_count } = useAppSelector(
+    getUploadedSongsPaginationSelector
+  );
   const { authUser } = useAuthContext();
   const [openConfirmDeleteSongModal, setOpenDeleteSongConfirmModal] =
     useState<boolean>(false);
   const { handleClickSongAudio } = useAudioContext();
-
   const total_songs_uploaded = songs.length;
+
+  const has_more_songs =
+    total_songs_uploaded < total_count && !uploadedSongMeta.pending;
+
+  const fetchNextSongs = () => {
+    if (has_more_songs) dispatch(getUploadedSong({ limit, page: page + 1 }));
+  };
 
   const handleOpenDeleteConfirmModal = () => {
     setOpenDeleteSongConfirmModal(true);
@@ -84,7 +103,12 @@ const UploadedSong = () => {
     //   return;
     // }
 
-    dispatch(getUploadedSong());
+    dispatch(getUploadedSong({ page: 1, limit }));
+
+    return () => {
+      dispatch(clearMetaData(getUploadedSong.typePrefix));
+      dispatch(resetUploadedSongs());
+    };
   }, []);
 
   return (
@@ -126,12 +150,10 @@ const UploadedSong = () => {
               ) : (
                 <>
                   <span>
-                    Đã tải lên: {total_songs_uploaded}/{MAX_SONG_UPLOADED}
+                    Đã tải lên: {total_count}/{MAX_SONG_UPLOADED}
                   </span>
                   <Progress
-                    value={Math.round(
-                      (total_songs_uploaded * 100) / MAX_SONG_UPLOADED
-                    )}
+                    value={Math.round((total_count * 100) / MAX_SONG_UPLOADED)}
                   />
                 </>
               )}
@@ -143,18 +165,27 @@ const UploadedSong = () => {
               </button>
             )}
           </div>
-          <SongList
-            songs={songs}
-            can_change_privacy
-            can_delete_song
-            can_edit_song
-            handleOpenEditSongForm={handleOpenEditSongForm}
-            handleOpenDeleteConfirmModal={handleOpenDeleteConfirmModal}
-            changeSelectedSong={changeSelectedSong}
-            can_remove_out_of_upload
-            enable_select_multiple
-            onClickSongAudio={onClickSongAudio}
-          />
+
+          <InfiniteScroll
+            dataLength={total_songs_uploaded}
+            loader={null}
+            next={fetchNextSongs}
+            hasMore={has_more_songs}
+            scrollThreshold={0.9}
+          >
+            <SongList
+              songs={songs}
+              can_change_privacy
+              can_delete_song
+              can_edit_song
+              handleOpenEditSongForm={handleOpenEditSongForm}
+              handleOpenDeleteConfirmModal={handleOpenDeleteConfirmModal}
+              changeSelectedSong={changeSelectedSong}
+              can_remove_out_of_upload
+              enable_select_multiple
+              onClickSongAudio={onClickSongAudio}
+            />
+          </InfiniteScroll>
         </Container>
       )}
     </>

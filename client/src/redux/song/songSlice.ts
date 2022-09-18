@@ -13,9 +13,11 @@ import {
 interface SliceState {
   uploaded: {
     data: Song[];
+    pagination: Pagination;
   };
   favourite: {
     data: Song[];
+    pagination: Pagination;
   };
   history: {
     data: Song[];
@@ -26,9 +28,19 @@ interface SliceState {
 const initialState: SliceState = {
   uploaded: {
     data: [],
+    pagination: {
+      limit: 20,
+      page: 1,
+      total_count: 1,
+    },
   },
   favourite: {
     data: [],
+    pagination: {
+      limit: 6,
+      page: 1,
+      total_count: 1,
+    },
   },
   history: {
     data: [],
@@ -66,18 +78,31 @@ const songSlice = createSlice({
       state.history.data = [];
       state.history.pagination = initialState.history.pagination;
     },
+    resetUploadedSongs(state) {
+      state.uploaded.data = [];
+      state.uploaded.pagination = initialState.uploaded.pagination;
+    },
+    resetFavouriteSongs(state) {
+      state.favourite.data = [];
+      state.favourite.pagination = initialState.favourite.pagination;
+    },
   },
   extraReducers(builder) {
     builder
       .addCase(getUploadedSong.fulfilled, (state, action) => {
-        state.uploaded.data = action.payload.songs;
+        state.uploaded.data = [...state.uploaded.data, ...action.payload.songs];
+        state.uploaded.pagination = action.payload.pagination;
       })
       .addCase(uploadSong.fulfilled, (state, action) => {
         state.uploaded.data.unshift(action.payload.song);
         state.favourite.data.unshift(action.payload.song);
       })
       .addCase(getFavouriteSong.fulfilled, (state, action) => {
-        state.favourite.data = action.payload.songs;
+        state.favourite.data = [
+          ...state.favourite.data,
+          ...action.payload.songs,
+        ];
+        state.favourite.pagination = action.payload.pagination;
       })
       .addCase(deleteUploadSongAction.fulfilled, (state, action) => {
         state.uploaded.data = state.uploaded.data.filter(
@@ -108,5 +133,7 @@ export const {
   resetHistorySongs,
   removeSongOutOfFavourite,
   removeUploadSongs,
+  resetFavouriteSongs,
+  resetUploadedSongs,
 } = songSlice.actions;
 export default songSlice.reducer;
