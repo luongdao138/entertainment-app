@@ -1,12 +1,13 @@
 import { Menu } from '@mui/material';
 import React from 'react';
-import { BsChevronRight, BsFacebook } from 'react-icons/bs';
+import { BsChevronRight } from 'react-icons/bs';
 import { RiShareForwardLine } from 'react-icons/ri';
 import { ImEmbed2 } from 'react-icons/im';
 import { Container, ShareMenuContainer } from './style';
 import useBoolean from '../../hooks/useBoolean';
 import Modal from '../Modal';
 import EmbedMusic from '../EmbedMusic';
+import { FacebookIcon, FacebookShareButton } from 'react-share';
 
 interface Props {
   is_song: boolean;
@@ -73,10 +74,22 @@ const MusicShare: React.FC<Props> = ({ id, is_song }) => {
         >
           <ShareMenuContainer>
             <ul>
-              <li className='share-item'>
-                <BsFacebook style={{ fontSize: '1.6rem' }} />
+              <FacebookShareButton
+                style={{
+                  width: '100%',
+                  padding: '10px 20px 10px 14px',
+                  fontSize: '14px',
+                }}
+                url={`${import.meta.env.VITE_CLIENT_URL}/${
+                  is_song ? 'song' : 'playlist'
+                }/${id}`}
+                className='share-item'
+                // quote='Dao Van Luong'
+                // hashtag='#abc'
+              >
+                <FacebookIcon size={20} round />
                 <span>Facebook</span>
-              </li>
+              </FacebookShareButton>
               <li onClick={onOpenEmbedMusic} className='share-item'>
                 <ImEmbed2 />
                 <span>Mã nhúng</span>

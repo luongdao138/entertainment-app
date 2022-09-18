@@ -2,6 +2,7 @@ import React from 'react';
 import { Link, Outlet, useLocation } from 'react-router-dom';
 import styled from 'styled-components';
 import appRoutes from '../../../constants/appRoutes';
+import Helmet from 'react-helmet';
 
 const Container = styled.div`
   & .tabs {
@@ -49,6 +50,9 @@ const Song = () => {
 
   return (
     <Container>
+      <Helmet>
+        <title>Nhạc cá nhân</title>
+      </Helmet>
       <div className='tabs'>
         <TagItem active={isFavouriteTab} to={appRoutes.MYMUSIC_SONG_FAVORITE}>
           Yêu thích

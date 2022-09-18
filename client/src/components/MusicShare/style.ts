@@ -55,8 +55,8 @@ export const ShareMenuContainer = styled.div`
     }
 
     &:hover {
-      background-color: hsla(0, 0%, 100%, 0.1);
-      color: #fff;
+      background-color: hsla(0, 0%, 100%, 0.1) !important;
+      color: #fff !important;
     }
   }
 `;

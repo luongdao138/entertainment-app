@@ -33,6 +33,7 @@ import _ from 'lodash';
 import { clearData } from '../../redux/playlistDetail/playlistDetailSlice';
 import { createMetaSelector } from '../../redux/metadata/selectors';
 import { clearMetaData } from '../../redux/metadata/actions';
+import Helmet from 'react-helmet';
 
 const PlaylistDetailPage = () => {
   const { authUser } = useAuthContext();
@@ -155,6 +156,9 @@ const PlaylistDetailPage = () => {
 
   return (
     <Container>
+      <Helmet>
+        <title>{playlist_detail.title} | Playlist</title>
+      </Helmet>
       <div className='detail-top'>
         <PlaylistDetailInfor
           playlist_detail={playlist_detail}
