@@ -209,7 +209,7 @@ const audioPlayerSlice = createSlice({
         initialState.audio_state.is_from_recommend;
       state.audio_state.is_from_recommend =
         initialState.audio_state.is_from_recommend;
-      state.can_auto_play = initialState.can_auto_play;
+      // state.can_auto_play = initialState.can_auto_play;
     },
     changeCanAutoPlay(state, action: PayloadAction<boolean>) {
       state.can_auto_play = action.payload;

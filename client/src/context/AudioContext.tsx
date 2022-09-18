@@ -44,6 +44,9 @@ export interface ClickAudioParams {
   // biến này nếu set thành true thì sẽ luôn luôn tính toán lại các yêu tố cho dù hai bài hát có giống nhau
   // đang dùng trong trường hợp khi click vào một playlist
   force_replace?: boolean;
+
+  // biến này dùng để biết được khi bật một bài hát thì có đưa bài hát trước đó vào history list ko
+  disabled_history?: boolean;
 }
 
 export interface AddSongToPlayerParams {
@@ -142,8 +145,8 @@ const AudioContextProvider = ({ children }: { children: React.ReactNode }) => {
       playlist,
       is_from_recommend,
       playlist_play_random,
-      // playlist_play_random,
       force_replace,
+      disabled_history,
     } = params;
     resetLastSong();
     if (song.id === current_song?.id && !force_replace) {
@@ -156,7 +159,7 @@ const AudioContextProvider = ({ children }: { children: React.ReactNode }) => {
       // trường hợp này user muốn đổi bài hát khác
 
       // trước tiên, ta phải thêm bài hát cũ vào lịch sử phát (nếu đây ko phải là bài hát đầu tiên)
-      if (current_song) {
+      if (current_song && !disabled_history) {
         handleSaveSongToHistory(current_song);
       }
 
@@ -284,13 +287,13 @@ const AudioContextProvider = ({ children }: { children: React.ReactNode }) => {
 
   const handleAddSongsToPlayerQueue = (params: AddSongToPlayerParams) => {
     const { songs, playlist, queue_playlist_id } = params;
-
     if (songs.length === 0) {
       toast.success('Đã thêm bài hát vào danh sách phát');
       return;
     }
 
     if (!openPlayer) {
+      resetLastSong();
       // khi danh sách phát đang rỗng
       if (playlist) {
         // trường hợp này là thêm cả playlist vào danh sách phát
@@ -735,6 +738,7 @@ const AudioContextProvider = ({ children }: { children: React.ReactNode }) => {
   };
 
   const handlePlayAudio = () => {
+    resetLastSong();
     dispatch(changeAudioCurrentMeta({ new_meta: { is_audio_playing: true } }));
   };
 
