@@ -26,6 +26,7 @@ import { createMetaSelector } from '../../../../redux/metadata/selectors';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import { resetUploadedSongs } from '../../../../redux/song/songSlice';
 import { clearMetaData } from '../../../../redux/metadata/actions';
+import SongItemSkeleton from '../../../../components/Skeleton/SongItem';
 
 const getUploadedSongMetaSelector = createMetaSelector(getUploadedSong);
 
@@ -47,6 +48,8 @@ const UploadedSong = () => {
     useState<boolean>(false);
   const { handleClickSongAudio } = useAudioContext();
   const total_songs_uploaded = songs.length;
+
+  console.log({ uploadedSongMeta });
 
   const has_more_songs =
     total_songs_uploaded < total_count && !uploadedSongMeta.pending;
@@ -135,7 +138,7 @@ const UploadedSong = () => {
         />
       )}
 
-      {!songs.length ? (
+      {!uploadedSongMeta.pending && songs.length === 0 ? (
         <NoSongContainer>
           <img src={emptyUploadImage} alt='' />
           <h3>Chưa có bài hát trong thư viện cá nhân</h3>
@@ -165,7 +168,6 @@ const UploadedSong = () => {
               </button>
             )}
           </div>
-
           <InfiniteScroll
             dataLength={total_songs_uploaded}
             loader={null}
@@ -186,6 +188,13 @@ const UploadedSong = () => {
               onClickSongAudio={onClickSongAudio}
             />
           </InfiniteScroll>
+          {uploadedSongMeta.pending && (
+            <div className='skeleton-container'>
+              {[...new Array(8)].map((_, index) => (
+                <SongItemSkeleton key={index} />
+              ))}
+            </div>
+          )}
         </Container>
       )}
     </>

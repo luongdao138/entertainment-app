@@ -37,7 +37,7 @@ const initialState: SliceState = {
   favourite: {
     data: [],
     pagination: {
-      limit: 6,
+      limit: 20,
       page: 1,
       total_count: 1,
     },
@@ -45,7 +45,7 @@ const initialState: SliceState = {
   history: {
     data: [],
     pagination: {
-      limit: 10,
+      limit: 20,
       page: 1,
       total_count: 1,
     },

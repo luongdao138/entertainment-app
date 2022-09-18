@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
 import InfiniteScroll from 'react-infinite-scroll-component';
+import SongItemSkeleton from '../../../../components/Skeleton/SongItem';
 import SongItem from '../../../../components/SongItem';
 import { getHistorySongActions } from '../../../../redux/history/historyActions';
 import {
@@ -53,6 +54,14 @@ const HistorySong = () => {
             key={song.id}
           />
         ))}
+
+        {historyMeta.pending && (
+          <div className='skeleton-container'>
+            {[...new Array(8)].map((_, index) => (
+              <SongItemSkeleton key={index} />
+            ))}
+          </div>
+        )}
       </InfiniteScroll>
     </Container>
   );

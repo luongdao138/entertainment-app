@@ -7,6 +7,12 @@ const Container = styled.div`
   & .tabs {
     margin-bottom: 3rem;
   }
+
+  & .skeleton-container {
+    display: grid;
+    gap: 2.4rem;
+    margin-top: 2rem;
+  }
 `;
 
 interface Props {

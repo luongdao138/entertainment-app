@@ -16,6 +16,7 @@ import { resetFavouriteSongs } from '../../../../redux/song/songSlice';
 import { clearMetaData } from '../../../../redux/metadata/actions';
 import { createMetaSelector } from '../../../../redux/metadata/selectors';
 import InfiniteScroll from 'react-infinite-scroll-component';
+import SongItemSkeleton from '../../../../components/Skeleton/SongItem';
 
 const getFavouriteSongsMetaSelector = createMetaSelector(getFavouriteSong);
 
@@ -59,27 +60,36 @@ const FavouriteSong = () => {
     });
   };
 
-  return songs.length === 0 ? (
+  return !favouriteSongMeta.pending && songs.length === 0 ? (
     <NoSongsContainer>
       <img src={emptyFavouriteIcon} alt='' />
       <h3>Chưa có bài hát yêu thích trong thư viện cá nhân</h3>
       <Link to='/'>Khám phá ngay</Link>
     </NoSongsContainer>
   ) : (
-    <InfiniteScroll
-      dataLength={total_songs_favourite}
-      hasMore={has_more_songs}
-      loader={null}
-      next={fetchNextSongs}
-      scrollThreshold={0.9}
-    >
-      <SongList
-        onClickSongAudio={handleClickFavouriteSongAudio}
-        songs={songs}
-        enable_select_multiple
-        can_change_favourite_songs
-      />
-    </InfiniteScroll>
+    <>
+      <InfiniteScroll
+        dataLength={total_songs_favourite}
+        hasMore={has_more_songs}
+        loader={null}
+        next={fetchNextSongs}
+        scrollThreshold={0.9}
+      >
+        <SongList
+          onClickSongAudio={handleClickFavouriteSongAudio}
+          songs={songs}
+          enable_select_multiple
+          can_change_favourite_songs
+        />
+      </InfiniteScroll>
+      {favouriteSongMeta.pending && (
+        <div className='skeleton-container'>
+          {[...new Array(8)].map((_, index) => (
+            <SongItemSkeleton key={index} />
+          ))}
+        </div>
+      )}
+    </>
   );
 };
 
