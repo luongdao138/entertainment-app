@@ -8,27 +8,35 @@ datasource db {
 }
 
 model User {
-  id                    String              @id @default(uuid())
-  full_name             String
-  profile_photo         String              @default("https://ca.slack-edge.com/T2JUP6F0A-U03L7HL9WBF-g6ea89c2bc88-512")
-  email                 String              @unique
-  phone                 String?
+  id String @id @default(uuid())
+
+  full_name       String
+  profile_photo   String    @default("https://ca.slack-edge.com/T2JUP6F0A-U03L7HL9WBF-g6ea89c2bc88-512")
+  email           String    @unique
+  phone           String?
+  date_of_birth   DateTime?
+  address         String?
+  title           String?
+  biography       String?
+  national        String?
+  realname        String?
+  short_biography String?
+
   password              String
   refresh_token         String?
-  is_premium            Boolean             @default(false)
-  is_verified           Boolean             @default(false)
-  address               String?
-  date_of_birth         DateTime?
-  title                 String?
+  is_premium            Boolean   @default(false)
+  is_verified           Boolean   @default(false)
   verify_token          String?
   forgot_password_token String?
-  is_deleted            Boolean             @default(false)
+  is_deleted            Boolean   @default(false)
   deleted_at            DateTime?
-  favourite_playlists   FavouritePlaylist[]
-  favourite_songs       FavouriteSong[]
-  history_songs         HistorySong[]
-  playlists             Playlist[]          @relation("created")
-  songs                 Song[]              @relation("uploaded")
+  is_artist             Boolean   @default(false) // trường này để phân biệt user có phải là nghệ sỹ hay ko 
+
+  favourite_playlists FavouritePlaylist[]
+  favourite_songs     FavouriteSong[]
+  history_songs       HistorySong[]
+  playlists           UserPlaylist[]
+  songs               Song[]              @relation("uploaded")
 }
 
 model Song {
@@ -67,11 +75,13 @@ model Playlist {
   is_deleted       Boolean             @default(false)
   deleted_at       DateTime?
   normalized_title String?
-  creator          User                @relation("created", fields: [creator_id], references: [id])
   liked_by         FavouritePlaylist[]
   has_songs        PlaylistSong[]
-  artists          Artist[]
   categories       Category[]
+  is_album         Boolean             @default(false) // trường này để phân biệt là album của 1 ca sỹ hay chỉ là tập hợp các bài hát của nhiều ca sỹ
+  is_offical       Boolean             @default(false) // trường này để phân biệt với playlist của user và playlist của admin
+
+  users UserPlaylist[]
 }
 
 model PlaylistSong {
@@ -115,35 +125,33 @@ model HistorySong {
   @@id([user_id, song_id])
 }
 
-model Artist {
-  id         String     @id @default(uuid())
-  name       String
-  thumbnail  String     @default("https://photo-zmp3.zmdcdn.me/artist_default_2.png")
-  birthday   DateTime?
-  biography  String?
-  national   String?
-  realname   String?
-  created_at DateTime   @default(now())
-  updated_at DateTime   @updatedAt
-  is_deleted Boolean    @default(false)
-  deleted_at DateTime?
-  play_lists Playlist[]
+model UserPlaylist {
+  user        User     @relation(fields: [user_id], references: [id])
+  user_id     String
+  playlist    Playlist @relation(fields: [playlist_id], references: [id])
+  playlist_id String
+
+  type       UserPlaylistType @default(personal)
+  created_at DateTime         @default(now())
+  updated_at DateTime         @updatedAt
+
+  @@id([user_id, playlist_id])
 }
 
 model Category {
-  id         String     @id @default(uuid())
-  name       String
-  thumbnail  String?
-  parentId   String?
-  created_at DateTime   @default(now())
-  updated_at DateTime   @updatedAt
-  is_deleted Boolean    @default(false)
-  deleted_at DateTime?
-  cover      String?
-  parent     Category?  @relation("NestCategory", fields: [parentId], references: [id])
-  children   Category[] @relation("NestCategory")
-  playlists  Playlist[]
-  has_songs  Song[]
+  id            String     @id @default(uuid())
+  name          String
+  thumbnail     String?
+  parent_id     String?
+  created_at    DateTime   @default(now())
+  updated_at    DateTime   @updatedAt
+  is_deleted    Boolean    @default(false)
+  deleted_at    DateTime?
+  cover         String?
+  parent        Category?  @relation("NestCategory", fields: [parent_id], references: [id])
+  children      Category[] @relation("NestCategory")
+  has_playlists Playlist[]
+  has_songs     Song[]
 }
 
 model Lyric {
@@ -177,4 +185,10 @@ model Word {
 enum Privacy {
   private
   public
+}
+
+enum UserPlaylistType {
+  own // chính artist này thể hiện những ca khúc có trong playlist này (chỉ dành cho user có là artist)
+  member // artist này góp mặt trong playlist này (gồm nhiều artist nữa) (chỉ dành cho user có là artist)
+  personal // đây chỉ là playlist cá nhân của một user (có thể là user bình thường, cũng có thể là artist)
 }

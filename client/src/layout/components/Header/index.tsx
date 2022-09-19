@@ -10,20 +10,23 @@ import { useAppDispatch, useAppSelector } from '../../../redux/hooks';
 import { Container } from './style';
 import { toast } from 'react-toastify';
 import { useUploadContext } from '../../../context/UploadContext';
-import { getUsersUploadedSongs } from '../../../redux/song/songSelectors';
 import { FaUser } from 'react-icons/fa';
 import { Link } from 'react-router-dom';
 import appRoutes from '../../../constants/appRoutes';
 import MyTooltip from '../../../components/Tooltip';
+import { HiOutlineArrowLeft, HiOutlineArrowRight } from 'react-icons/hi';
+import { useRouterContext } from '../../../context/RouterContext';
 
 const Header = () => {
-  const songs = useAppSelector(getUsersUploadedSongs);
   const { openUploadForm } = useUploadContext();
   const [avatarAnchorEl, setAvatarAnchorEl] =
     React.useState<null | HTMLElement>(null);
   const openAvatarMenu = Boolean(avatarAnchorEl);
   const { authUser, changeRedirectUrl } = useAuthContext();
   const dispatch = useAppDispatch();
+
+  const { is_first_route, is_last_route, moveToNextRoute, moveToPrevRoute } =
+    useRouterContext();
 
   const handleClickAvatar = (e: React.MouseEvent<HTMLButtonElement>) => {
     setAvatarAnchorEl(e.currentTarget);
@@ -53,6 +56,14 @@ const Header = () => {
     <Container>
       <div className='header-content'>
         <div className='header-left'>
+          {/* <div className='header-nav'>
+            <button disabled={is_first_route} onClick={moveToPrevRoute}>
+              <HiOutlineArrowLeft />
+            </button>
+            <button disabled={is_last_route} onClick={moveToNextRoute}>
+              <HiOutlineArrowRight />
+            </button>
+          </div> */}
           <div className='header-search'>
             <MdSearch className='search-icon' />
             <MdClose className='delete-icon' />

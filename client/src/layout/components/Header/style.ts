@@ -22,10 +22,36 @@ export const Container = styled.div`
 
   & .header-left {
     flex-grow: 1;
-    position: relative;
     max-width: 540px;
     width: 100%;
+    display: flex;
+    align-items: center;
 
+    .header-nav {
+      display: flex;
+      align-items: center;
+      margin-right: 2rem;
+      button {
+        display: flex;
+        align-items: center;
+        background-color: transparent;
+        color: #fff;
+        font-size: 2rem;
+
+        &:disabled {
+          cursor: default;
+          opacity: 0.3;
+        }
+      }
+
+      button + button {
+        margin-left: 2rem;
+      }
+    }
+    .header-search {
+      position: relative;
+      flex-grow: 1;
+    }
     input {
       width: 100%;
       height: 4rem;

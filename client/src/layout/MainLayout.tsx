@@ -1,32 +1,33 @@
-import { useState } from "react";
-import { Outlet } from "react-router-dom";
-import Player from "./components/Player";
-import PlayerQueue from "./components/PlayerQueue";
-import Sidebar from "./components/Sidebar";
-import styled from "styled-components";
-import Header from "./components/Header";
-import Modal from "../components/Modal";
-import SignUp from "../pages/Auth/SignUp";
-import Login from "../pages/Auth/Login";
-import { AuthType, useAuthContext } from "../context/AuthContext";
-import { useEffect, useMemo, useRef } from "react";
-import { useAppDispatch, useAppSelector } from "../redux/hooks";
-import { getUserInfo } from "../redux/auth/authActions";
-import UploadSongForm from "../components/UploadSongForm";
-import { useUploadContext } from "../context/UploadContext";
-import SignupSuccess from "../pages/Auth/SignupSuccess";
-import ForgotPassword from "../pages/Auth/ForgotPassword";
-import { useUploadPlaylistContext } from "../context/UploadPlaylistContext";
-import NewPlaylistForm from "../components/NewPlaylistForm";
-import { useAudioContext } from "../context/AudioContext";
-import { getAudioCurrentSongSelector } from "../redux/audioPlayer/audioPlayerSelectors";
-import LyricProvider from "../context/LyricContext";
-import LyricModal from "./components/LyricModal";
+import { useState } from 'react';
+import { Outlet } from 'react-router-dom';
+import Player from './components/Player';
+import PlayerQueue from './components/PlayerQueue';
+import Sidebar from './components/Sidebar';
+import styled from 'styled-components';
+import Header from './components/Header';
+import Modal from '../components/Modal';
+import SignUp from '../pages/Auth/SignUp';
+import Login from '../pages/Auth/Login';
+import { AuthType, useAuthContext } from '../context/AuthContext';
+import { useEffect, useMemo, useRef } from 'react';
+import { useAppDispatch, useAppSelector } from '../redux/hooks';
+import { getUserInfo } from '../redux/auth/authActions';
+import UploadSongForm from '../components/UploadSongForm';
+import { useUploadContext } from '../context/UploadContext';
+import SignupSuccess from '../pages/Auth/SignupSuccess';
+import ForgotPassword from '../pages/Auth/ForgotPassword';
+import { useUploadPlaylistContext } from '../context/UploadPlaylistContext';
+import NewPlaylistForm from '../components/NewPlaylistForm';
+import { useAudioContext } from '../context/AudioContext';
+import { getAudioCurrentSongSelector } from '../redux/audioPlayer/audioPlayerSelectors';
+import LyricProvider from '../context/LyricContext';
+import LyricModal from './components/LyricModal';
 import {
   useFullScreenHandle,
   FullScreenHandle,
   FullScreen,
-} from "react-full-screen";
+} from 'react-full-screen';
+import RouterContextProvider from '../context/RouterContext';
 
 interface StyleProps {
   openPlayer: boolean;
@@ -40,7 +41,7 @@ const Container = styled.div`
     background-color: #170f23;
     padding-left: var(--padding-section);
     padding-right: var(--padding-section);
-    padding-bottom: ${(props: StyleProps) => (props.openPlayer ? "90px" : 0)};
+    padding-bottom: ${(props: StyleProps) => (props.openPlayer ? '90px' : 0)};
 
     @media (min-width: 1590px) {
       padding-right: calc(var(--padding-section) + 330px);
@@ -60,7 +61,7 @@ const MainLayout = () => {
 
   const { openPlayer } = useAudioContext();
 
-  console.log("Main layout rerender");
+  console.log('Main layout rerender');
 
   const dispatch = useAppDispatch();
 
@@ -71,13 +72,13 @@ const MainLayout = () => {
   // const isFirstRenderRef = useRef<boolean>(true);
   const enterFullscreenMode = () => {
     handle.enter().catch(() => {
-      console.warn("Fullscreen mode not support");
+      console.warn('Fullscreen mode not support');
     });
   };
 
   const exitFullscreenMode = () => {
     handle.exit().catch(() => {
-      console.warn("Can not exit fullscreen mode");
+      console.warn('Can not exit fullscreen mode');
     });
   };
 
@@ -113,43 +114,45 @@ const MainLayout = () => {
   }, []);
 
   return (
-    <FullScreen handle={handle} onChange={onChangeFullScreenMode}>
-      <Container openPlayer={openPlayer}>
-        <Sidebar />
-        <Header />
+    <RouterContextProvider>
+      <FullScreen handle={handle} onChange={onChangeFullScreenMode}>
+        <Container openPlayer={openPlayer}>
+          <Sidebar />
+          <Header />
 
-        <Modal open={isOpenAuthModal} maxWidth="sm" onClose={closeAuthModal}>
-          {renderAuthLayout}
-        </Modal>
+          <Modal open={isOpenAuthModal} maxWidth='sm' onClose={closeAuthModal}>
+            {renderAuthLayout}
+          </Modal>
 
-        <Modal open={isOpenUploadForm} onClose={closeUploadForm}>
-          <UploadSongForm closeUploadModal={closeUploadForm} />
-        </Modal>
+          <Modal open={isOpenUploadForm} onClose={closeUploadForm}>
+            <UploadSongForm closeUploadModal={closeUploadForm} />
+          </Modal>
 
-        <Modal
-          maxWidth="xs"
-          open={isOpenUploadPlaylistForm}
-          onClose={closeUploadPlaylistForm}
-        >
-          <NewPlaylistForm closeUploadModal={closeUploadPlaylistForm} />
-        </Modal>
+          <Modal
+            maxWidth='xs'
+            open={isOpenUploadPlaylistForm}
+            onClose={closeUploadPlaylistForm}
+          >
+            <NewPlaylistForm closeUploadModal={closeUploadPlaylistForm} />
+          </Modal>
 
-        <LyricProvider>
-          {/* Màn hình lời bài hát (lyric) */}
-          <LyricModal
-            enterFullscreenMode={enterFullscreenMode}
-            exitFullscreenMode={exitFullscreenMode}
-            isFullscreenMode={isFullscreenMode}
-          />
-          {current_song && <Player />}
-          <PlayerQueue />
-        </LyricProvider>
+          <LyricProvider>
+            {/* Màn hình lời bài hát (lyric) */}
+            <LyricModal
+              enterFullscreenMode={enterFullscreenMode}
+              exitFullscreenMode={exitFullscreenMode}
+              isFullscreenMode={isFullscreenMode}
+            />
+            {current_song && <Player />}
+            <PlayerQueue />
+          </LyricProvider>
 
-        <div className="content">
-          <Outlet />
-        </div>
-      </Container>
-    </FullScreen>
+          <div className='content'>
+            <Outlet />
+          </div>
+        </Container>
+      </FullScreen>
+    </RouterContextProvider>
   );
 };
 
